@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!--
+    Copyright (c) 2010 IBM Corporation and others.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+   
+    Contributors:
+        IBM Corporation - initial API and implementation
+ -->
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"> 
+    <solid android:color="#3300CC" /> 
+    
+    <stroke android:width="0.2dp" android:color="#222222" />
+    <corners android:topLeftRadius="5sp" 
+        android:topRightRadius="5sp" android:bottomLeftRadius="5sp" 
+        android:bottomRightRadius="5sp"/> 
+    <padding android:left="10dp" android:top="5dp" android:right="10sp" 
+        android:bottom="5dp" /> 
+</shape>

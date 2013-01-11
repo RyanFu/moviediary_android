@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+>
+    <!-- <GridView
+        android:id="@+id/gridview_mymovierecord"
+        android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center"
+	    android:verticalSpacing="25dp"
+        android:background="@color/background" /> -->
+    <com.handmark.pulltorefresh.library.PullToRefreshGridView	
+        android:id="@+id/refreshgridview_mymovierecord"
+		android:background="@color/background"
+	    android:layout_width="fill_parent" 
+	    android:layout_height="fill_parent"
+	    android:numColumns="auto_fit"
+	    android:verticalSpacing="10sp"
+	    android:horizontalSpacing="10sp"
+	    android:columnWidth="90sp"
+	    android:stretchMode="columnWidth"
+	    android:gravity="center"
+	    android:listSelector="@drawable/button_background"
+	    />
+</LinearLayout>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+    <ImageView 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:src="@drawable/loginpage"
+        android:scaleType="fitXY" />
+    
+    <com.jumplife.loginactivity.LoginButton
+        android:id="@+id/login"
+        android:src="@drawable/login_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="370dp"
+        android:layout_centerHorizontal="true"
+        android:padding="10dp"
+        android:gravity="center" />
+    
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:textSize="22dp"
+        android:textColor="@color/white1"
+        android:text="登入" />
+      
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="8dp"
+        android:typeface="sans"
+        android:textStyle="bold"
+        android:textSize="16dp"
+        android:textColor="@color/white2"
+        android:text="本APP決不會未經允許將使用者內容分享至Facebook。" />
+    
+</RelativeLayout>

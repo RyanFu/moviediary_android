@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" 
+    android:background="@color/background"
+    >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/title_light"
+        android:lines="2"
+        android:text="@string/title"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:background="@color/background"        
+        android:scaleType="fitCenter" />
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textSize="18dp"
+        android:text="@string/description"
+        />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	   android:layout_width="fill_parent"
+	   android:layout_height="wrap_content"
+	   android:orientation="horizontal"
+       android:background="@color/title_light"
+       android:weightSum="1.0"
+	   >
+	   <Button 
+            android:id="@+id/button1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_margin="8dp"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:text="@string/download"/>
+	   <Button 
+            android:id="@+id/button2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_margin="8dp"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:text="@string/thanks"/>
+    </LinearLayout>
+    </LinearLayout>

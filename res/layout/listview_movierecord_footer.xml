@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content"
+	android:background="@color/white1"
+	>
+	 <com.jumplife.LineEditText.LineEditTextComment
+	     android:id="@+id/add_comment_text"
+	     android:layout_width="fill_parent"
+	     android:layout_height="wrap_content"
+	     android:layout_toLeftOf="@+id/add_comment_btn"
+	     android:layout_margin="5dp"
+	     android:background="@color/white1"
+	     android:focusable="true"
+	     android:focusableInTouchMode="true" 
+	     android:minLines="3"
+	     android:textSize="15dp"
+	     android:shadowRadius="3.0"
+	     android:hint="@string/add_comment_text_hint"                   
+	     /> 
+	  <ImageButton android:id="@+id/add_comment_btn"
+	      android:layout_width="wrap_content"
+	      android:layout_height="wrap_content"
+	      android:layout_centerVertical="true"
+	      android:layout_marginRight="1dp"
+	      android:background="@drawable/socialsend"
+	      android:scaleType="fitCenter"
+	      android:layout_alignParentRight="true"
+	      />
+	  </RelativeLayout>

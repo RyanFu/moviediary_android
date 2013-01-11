@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:orientation="vertical" android:background="@drawable/movie_waterfall_layout_shape"
+	>
+	<ImageView android:id="@+id/movie_poster"
+		android:layout_width="80dp" 
+		android:layout_height="110dp"
+		android:layout_centerHorizontal="true"
+        android:background="@drawable/movie_waterfall_layout_shape">
+	   
+    </ImageView>
+    
+    <TextView 
+            android:layout_below="@+id/movie_poster"
+            android:text="電影名稱"
+			android:id="@+id/movie_name" 
+			android:textColor="#2a2a2a"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_alignLeft="@+id/movie_poster"
+			android:layout_marginTop="5dp"
+			android:textSize="14sp"
+			android:lines="1">
+    </TextView>
+    
+    <ImageView 
+        android:id="@+id/chckin"
+        android:layout_below="@+id/movie_name"
+        android:layout_width="16dp" 
+        android:layout_height="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_alignLeft="@+id/movie_poster"
+        android:src="@drawable/checkin">
+    </ImageView>
+
+    <TextView
+        android:id="@+id/recordsCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/chckin"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/chckin"
+        android:textColor="@color/grey05"
+        android:text="0" />
+    
+    <View
+        android:layout_below="@+id/chckin" 
+        android:layout_height="5dp" 
+        android:layout_width="10dp"/>
+    
+    <TextView
+        android:id="@+id/loveCount_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/recordsCount"
+        android:layout_alignBottom="@+id/chckin"
+        android:textColor="@color/grey05"
+        android:text="　好評 " />
+    <TextView
+        android:id="@+id/loveCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/loveCount_text"
+        android:layout_alignBottom="@+id/chckin"
+        android:textColor="@color/grey05"
+        android:text="0" />
+
+</RelativeLayout>

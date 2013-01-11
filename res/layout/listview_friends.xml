@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:orientation="horizontal" android:background="@drawable/button_background"
+	android:gravity="center_vertical" 
+	android:paddingBottom="5sp"
+	>
+	<ImageView android:id="@+id/fb_icon"
+		android:layout_width="60sp" android:layout_height="60sp"
+		android:layout_gravity="center_vertical" 
+		android:src="@drawable/facebooknoprofile" 
+        android:background="@color/white1"></ImageView>
+	<RelativeLayout android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:orientation="vertical">
+
+		<TextView android:text="人名"
+			android:id="@+id/user_name" android:textColor="#2a2a2a"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_marginLeft="10sp" android:textSize="15sp"></TextView>
+		<TextView android:text="打卡收藏了 部電影"
+		    android:id="@+id/record_count"
+			android:textColor="#2a2a2a"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_marginLeft="10sp"
+			android:layout_marginTop="3sp" 
+			android:textSize="13sp"
+			android:layout_below="@+id/user_name"
+			></TextView>
+	
+	    
+    </RelativeLayout>
+
+	<RelativeLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="vertical">
+	
+        <ImageView android:id="@+id/cate_manag_list_image"
+        android:layout_alignParentRight="true"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical" android:layout_marginLeft="30sp"
+		android:src="@drawable/navigation_next" ></ImageView>
+		
+		
+		
+	</RelativeLayout>
+
+
+
+</LinearLayout>

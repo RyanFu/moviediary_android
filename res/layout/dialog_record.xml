@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollview_moreinfo"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background">
+    
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        >
+    
+    <RelativeLayout android:id="@+id/relativelayout_movietitle" 
+        android:background="@color/background"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <!-- Movie Poster -->
+        <ImageView android:id="@+id/imageview_movie_poster"
+	        android:layout_width="90dp"
+	        android:layout_height="129dp"
+	        
+	        android:contentDescription="TODO"
+	        android:layout_marginTop = "10dp"
+            android:layout_marginLeft = "10dp" 
+            android:src="@drawable/stub" 
+            android:background="@color/white1"/>
+
+
+        
+          <RadioGroup
+		    android:id="@+id/myRadioGroup"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/imageview_movie_poster"
+		    >
+		    <RadioButton
+		      android:id="@+id/myRadioButton1"
+		      android:layout_width="wrap_content"
+		      android:layout_height="wrap_content"
+		      android:text="好看"
+		      android:textColor="@color/black"
+		      android:checked="true"
+		    />
+		    <RadioButton
+		      android:id="@+id/myRadioButton2"
+		      android:layout_width="wrap_content"
+		      android:layout_height="wrap_content"
+		      android:text="普通"
+		      android:textColor="@color/black"
+		    />
+		    <RadioButton
+		      android:id="@+id/myRadioButton3"
+		      android:layout_width="wrap_content"
+		      android:layout_height="wrap_content"
+		      android:text="難看"
+		      android:textColor="@color/black"
+		    />
+		    </RadioGroup>
+        <TextView
+            android:id="@+id/textView_section_score"
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:layout_below="@+id/myRadioGroup"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingLeft="2dp"
+            android:textColor="@color/white1"
+            android:textSize="18dp"
+            android:gravity="center_vertical"
+            android:background="@color/grey05"
+            android:text="分享" />
+        <CheckBox
+			android:id="@+id/facebook"
+			android:layout_below="@+id/textView_section_score"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:checked="true"
+			android:text="Facebook 分享"
+			android:textColor="@color/black"
+			/>
+        <TextView
+            android:id="@+id/textView_section_comment"
+            android:layout_width="fill_parent"
+            android:layout_height="20dp"
+            android:layout_below="@+id/facebook"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:paddingLeft="2dp"
+            android:textColor="@color/white1"
+            android:textSize="18dp"
+            android:gravity="center_vertical"
+            android:background="@color/grey05"
+            android:text="評論" 
+            />
+        <ImageView 
+            android:id="@+id/imageview_userimg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_section_comment"
+            android:src="@drawable/person_color"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="2dp"
+            />
+        <EditText 
+            android:id="@+id/textview_descripe"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/imageview_userimg"
+            android:layout_toRightOf="@id/imageview_userimg"
+            android:paddingRight="2dp"
+            android:gravity="left"
+            android:hint="@+string/descripe"
+            android:lines="5"
+            />
+        <Button 
+            android:id="@+id/button_collect"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview_descripe"
+            android:layout_centerHorizontal="true"
+            android:text="@string/collect"
+            />        
+    </RelativeLayout>
+    
+    </LinearLayout>
+</ScrollView>
+
+

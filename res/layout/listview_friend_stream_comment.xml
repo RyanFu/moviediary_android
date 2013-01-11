@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:orientation="horizontal" android:background="@drawable/button_background_comment"
+    android:gravity="center_vertical" 
+    android:paddingBottom="5sp"
+    >
+    <ImageView android:id="@+id/user_avatar"
+        android:layout_width="55dp" android:layout_height="55dp"
+        android:layout_gravity="center_vertical" 
+        android:background="@color/white1"
+        android:scaleType="fitCenter"
+        android:src="@drawable/facebooknoprofile"></ImageView>
+    <RelativeLayout android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:orientation="vertical">
+
+        <TextView android:text="姓名"
+            android:id="@+id/user_name" android:textColor="#2a2a2a"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp" android:layout_marginBottom="5sp" android:textSize="14sp"></TextView>
+        <TextView android:text="回應"
+            android:id="@+id/user_comment"
+            android:textColor="#2a2a2a"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp" android:textSize="14sp"
+            android:layout_below="@+id/user_name"
+            ></TextView>
+        <TextView android:text="日期："
+            android:id="@+id/record_date"
+            android:textColor="#ACA899"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp" android:textSize="14sp"
+            android:layout_below="@+id/user_comment"
+            ></TextView>
+    
+        
+    </RelativeLayout>
+
+
+</LinearLayout>

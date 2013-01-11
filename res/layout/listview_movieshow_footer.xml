@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="wrap_content"
+	android:layout_width="fill_parent"
+	android:orientation="horizontal"
+	android:background="@color/white1">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:padding="15dp"
+            android:background="@color/white1"
+            android:gravity="center_horizontal"
+            android:textColor="@color/grey05"
+            android:textSize="18dp"
+            android:text="本 電 影 尚 未 有 人 打卡"/>
+    </LinearLayout> 

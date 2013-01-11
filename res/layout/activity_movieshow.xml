@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/white1" >
+    <include android:id="@+id/topBar" layout="@layout/topbar" android:layout_alignParentTop="true"/>
+    <ListView android:id="@+id/listview_checks"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topBar"
+        android:layout_above="@+id/relativelayout_check"
+        android:background="@color/background" >
+    </ListView>
+    <RelativeLayout android:id="@+id/relativelayout_check"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="#dd000000">
+        
+        <Button android:id="@+id/button_check"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp" 
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/button_checkin_selector_movieshow"
+            android:textColor="@color/white1"
+            android:textSize="20dp"
+            android:text="打  卡"/>
+        
+    </RelativeLayout>
+    </RelativeLayout>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="60sp"
+    android:layout_height="wrap_content" >
+<ImageView
+    android:id="@+id/imageview_galleryadapter" 
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:src="@drawable/stub" 
+    android:background="@color/white1"/>
+<TextView 
+    android:id="@+id/textview_galleryadapter"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+    android:layout_below="@id/imageview_galleryadapter"
+    android:layout_centerHorizontal="true"
+    android:text="電影名稱"
+    />
+</RelativeLayout>

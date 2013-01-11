@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/tabhost"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background"
+    >
+    <RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent" 
+        android:background="@color/background"
+        >
+        
+        <include android:id="@+id/topbar" layout="@layout/topbar" 
+            android:layout_alignParentTop="true"/>
+	    <FrameLayout
+            android:id="@android:id/tabcontent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/topbar"
+            android:layout_above="@android:id/tabs"
+            />
+        <TabWidget
+            android:id="@android:id/tabs"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            />
+
+        <ImageButton
+            android:id="@+id/imagebutton_search"
+            style="?android:attr/buttonStyleSmall"
+            android:scaleType="centerInside"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@+id/view_line2"
+            android:padding="10dp"
+            android:background="@drawable/button_setting_background" 
+            android:src="@drawable/search"
+            android:visibility="visible" />
+        <View 
+            android:id="@+id/view_line1"
+            android:layout_width="0.5dp"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@+id/imagebutton_search"
+            android:background="@color/grey05"
+            android:visibility="visible" />
+        <ImageButton
+            android:id="@+id/imagebutton_setting"
+            style="?android:attr/buttonStyleSmall"
+            android:scaleType="centerInside"
+            android:layout_width="50dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:padding="10dp"
+            android:background="@drawable/button_setting_background" 
+            android:src="@drawable/process_invert"/>
+        <View 
+            android:id="@+id/view_line2"
+            android:layout_width="0.5dp"
+            android:layout_height="40dp"
+            android:layout_toLeftOf="@+id/imagebutton_setting"
+            android:background="@color/grey05"
+            />
+
+     </RelativeLayout>
+</TabHost>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background" >
+	
+    <Button 
+        android:id="@+id/button_invite_friend"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        android:layout_alignParentTop="true"
+        android:text="邀請Facebook好友"/>
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        android:id="@+id/listview_record"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/button_invite_friend"
+        android:background="@color/background" />
+    <ImageButton android:id="@+id/refresh"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:background="@drawable/button_background"
+        android:src="@drawable/renew"/>
+    <LinearLayout android:id="@+id/progressBar_pull_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:background="@color/transparent100"
+        android:scaleType="fitCenter"
+        android:visibility="gone">
+        <ProgressBar  
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent100"
+            android:layout_margin="2dp" />
+        </LinearLayout>
+    </RelativeLayout>

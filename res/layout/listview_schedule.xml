@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:background="@color/title_dark"
+    >
+    <TextView android:id="@+id/textview_theatername"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:padding="5dp"
+        android:gravity="center|left"
+        android:textSize="15dp"
+        android:text="戲院名稱"/>
+    <Button android:id="@+id/button_booking"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/textview_theatername"
+        android:layout_alignBottom="@+id/textview_theatername"
+        android:layout_margin="3dp"
+        android:background="@drawable/button_like"
+        android:textSize="12dp"
+        android:textColor="@color/black"
+        android:text="訂票"/>
+    <LinearLayout android:id="@+id/linearlayout_schedule"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textview_theatername"
+        android:background="@color/white1"
+        android:orientation="vertical"
+        ></LinearLayout>
+    </RelativeLayout>

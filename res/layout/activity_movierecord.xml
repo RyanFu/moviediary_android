@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background"
+    >    
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        >
+    <include android:id="@+id/topBar" layout="@layout/topbar"/>
+    <ListView 
+        android:id="@+id/listview_tips"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="false"
+        android:cacheColorHint="#ffffffff"
+        android:transcriptMode="normal">
+    </ListView>
+    </LinearLayout>
+    <Button
+        android:id="@+id/edit"
+        style="?android:attr/buttonStyleSmall"
+        android:scaleType="centerInside"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:padding="10dp"
+        android:background="@drawable/button_setting_background"
+        android:visibility="gone"
+        android:textSize="16dp"
+        android:textColor="@color/white1" 
+        android:text="修改" /> 
+    <View 
+        android:id="@+id/view_line1"
+        android:layout_width="0.5dp"
+        android:layout_height="40dp"
+        android:layout_toLeftOf="@+id/edit"
+        android:background="@color/grey05"
+        />
+</RelativeLayout>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">電影櫃</string>
+    <string name="TopMovie">電影票房排行榜</string>
+    <string name="Movie">電影資訊</string>
+    <string name="FirstMovie">首輪電影</string>
+    <string name="SecondMovie">二輪電影</string>
+    <string name="Theater">各大影城</string>
+    <string name="recent">近期上映</string>
+    <string name="descripe">描述</string>
+    <string name="collect"><b>打卡</b></string>
+    <string name="fans">加入我們的 FB 粉絲團</string>
+    <string name="comment">APP 建議留言板</string>
+    <string name="logout">登出 FB</string>
+    <string name="add_comment_text_hint">新增留言</string>
+    <string name="commentHeader">留言板</string>
+    <string name="CheckDescripe">把剛看完電影的感動與朋友分享吧!\n選擇電影之後打卡分享海報與評價!</string>
+    <string name="Confirm">確定</string>
+    <string name="title">標題</string>
+    <string name="description">描述</string>
+    <string name="download">下載</string>
+    <string name="thanks">不用,謝謝</string>
+    
+    <string name="ga_api_key">UA-33141342-4</string>
+    <bool name="ga_auto_activity_tracking">true</bool>
+    <bool name="ga_debug">true</bool>
+    <item format="integer" name="ga_dispatchPeriod" type="integer">120</item>
+    <bool name="ga_dryRun">false</bool>
+</resources>

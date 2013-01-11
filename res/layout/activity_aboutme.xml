@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    <LinearLayout 
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+	    android:weightSum="0.99" >
+        <LinearLayout android:id="@+id/ll_feedback"
+            android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="0.33"
+		    android:background="@drawable/button_background_aboutme"
+            android:orientation="vertical"
+            android:paddingTop="15dp"
+            android:paddingBottom="12dp">
+            <ImageView 
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/feedback" />
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textColor="@color/background_deep"
+                android:textSize="15dp"
+                android:text="建議回饋" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/ll_facebook"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:background="@drawable/button_background_aboutme"
+            android:orientation="vertical"
+            android:paddingTop="15dp"
+            android:paddingBottom="12dp">
+            <ImageView 
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/facebook" />
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textColor="@color/background_deep"
+                android:textSize="15dp"
+                android:text="FB粉絲團" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/ll_declare"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:background="@drawable/button_background_aboutme"
+            android:orientation="vertical"
+            android:paddingTop="15dp"
+            android:paddingBottom="12dp">
+            <ImageView 
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/news" />
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textColor="@color/background_deep"
+                android:textSize="15dp"
+                android:text="電影報" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="0.99" >
+        <LinearLayout android:id="@+id/ll_movietime"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:background="@drawable/button_background_aboutme"
+            android:orientation="vertical"
+            android:paddingTop="15dp"
+            android:paddingBottom="12dp">
+            <ImageView 
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/movietime" />
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textColor="@color/background_deep"
+                android:textSize="15dp"
+                android:text="電影時刻表" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/ll_tvdrama"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:background="@drawable/button_background_aboutme"
+            android:orientation="vertical"
+            android:paddingTop="15dp"
+            android:paddingBottom="12dp">
+            <ImageView 
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/tvdrama" />
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textColor="@color/background_deep"
+                android:textSize="15dp"
+                android:text="電視連續劇" />
+        </LinearLayout>
+        <LinearLayout android:id="@+id/ll_tvvariety"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.33"
+            android:background="@drawable/button_background_aboutme"
+            android:orientation="vertical"
+            android:paddingTop="15dp"
+            android:paddingBottom="12dp">
+            <ImageView 
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@drawable/tvvariety" />
+            <TextView 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textColor="@color/background_deep"
+                android:textSize="15dp"
+                android:text="電視綜藝咖" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

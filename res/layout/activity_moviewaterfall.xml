@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+    
+    <RelativeLayout android:id="@+id/relativelayout_toptitle"
+            android:layout_width="fill_parent" 
+            android:layout_height="40dp" 
+            android:background="@drawable/button_return"
+            >   
+            <TextView android:id="@+id/topbar_text1"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true"
+	            android:layout_alignParentLeft="true"
+	            android:layout_marginLeft="10dp"
+	            android:textSize="20dp"
+	            android:textStyle="bold"
+	            android:text="標題"
+	            />
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_toRightOf="@+id/topbar_text1"
+                android:src="@drawable/white_down_triangle_icon" />
+            <Button
+                android:id="@+id/button_select"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignRight="@+id/imageView1"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:background="@drawable/button_profile_selector"
+                android:text="" />     
+            <ImageButton
+	            android:id="@+id/imagebutton_setting"
+	            style="?android:attr/buttonStyleSmall"
+	            android:scaleType="centerInside"
+	            android:layout_width="wrap_content"
+	            android:layout_height="40dp"
+	            android:layout_alignParentRight="true"
+	            android:layout_alignParentTop="true"
+	            android:padding="10dp"
+	            android:background="@drawable/button_setting_background" 
+	            android:src="@drawable/process_invert"/>            
+            <View 
+	            android:id="@+id/view_line2"
+	            android:layout_width="0.5dp"
+	            android:layout_height="40dp"
+	            android:layout_toLeftOf="@+id/imagebutton_setting"
+	            android:background="@color/grey05"/>
+        </RelativeLayout>
+    
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/waterfall_linear_layout"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:orientation="vertical" >
+            
+        <View xmlns:android="http://schemas.android.com/apk/res/android"  
+           android:background="@color/background"
+           android:layout_width="fill_parent" 
+           android:layout_height="fill_parent"
+            />
+    </LinearLayout>
+    
+    <ImageButton android:id="@+id/refresh"
+       android:layout_width="fill_parent"
+       android:layout_height="fill_parent"
+       android:scaleType="fitCenter"
+       android:visibility="gone"
+       android:background="@drawable/button_background"
+       android:src="@drawable/renew"/>
+
+</LinearLayout>

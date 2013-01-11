@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background"
+    android:orientation="vertical" >
+    
+    <include android:id="@+id/topBar" layout="@layout/topbar"/>
+    
+    <RelativeLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@drawable/button_background"
+	    >
+
+	    <TextView
+            android:id="@+id/textview_notificationkey"          
+            android:layout_width="wrap_content"  
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical|left"
+            android:textColor="@color/black"
+            android:textSize="18dp"
+            android:text="訊息通知開關" />
+
+        <ToggleButton 
+            android:id="@+id/togglebutton_notificationkey"         
+            android:layout_width="wrap_content"  
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:textOn="開啟"
+			android:textOff="關閉"
+			android:checked="true"/>
+        
+        </RelativeLayout>
+    <View 
+            android:id="@+id/view_line0"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/grey05"
+            />
+    <Button 
+        android:id="@+id/button_comment"
+        android:layout_width="fill_parent"  
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_background"
+        android:gravity="center_vertical|left"
+        android:drawableRight="@drawable/navigation_next"
+        android:drawablePadding="10dp"
+        android:textSize="18dp"
+        android:text="@string/comment"
+        android:visibility="gone" />
+    <View 
+            android:id="@+id/view_line1"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/grey05"
+            />
+    <Button 
+        android:id="@+id/button_fans"
+        android:layout_width="fill_parent"  
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_background"
+        android:gravity="center_vertical|left"
+        android:drawableRight="@drawable/navigation_next"
+        android:drawablePadding="10dp"
+        android:textSize="18dp"
+        android:text="@string/fans"
+        android:visibility="gone" />
+    <View 
+            android:id="@+id/view_line2"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/grey05"
+            />
+    <Button 
+        android:id="@+id/button_logout"
+        android:layout_width="fill_parent"  
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical|left"
+        android:background="@drawable/button_background"
+        android:drawableRight="@drawable/navigation_next"
+        android:drawablePadding="10dp"
+        android:textSize="18dp"
+        android:text="@string/logout" />
+    <View 
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/grey05"
+            />
+</LinearLayout>

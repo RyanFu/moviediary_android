@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="#eeeeee">
+	<!-- Movie Poster -->
+	<RelativeLayout
+        android:id="@+id/relativelayout_movie_info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/imageview_movie_poster"
+        android:layout_alignBottom="@+id/imageview_movie_poster"
+        android:layout_margin="5dp"
+        android:background="@drawable/button_profile_selector_record">
+        <ImageView
+            android:id="@+id/imageView_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/navigation_next" />
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageView_info"
+            android:layout_alignBottom="@+id/imageView_info"
+            android:layout_toLeftOf="@+id/imageView_info"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="15dp"
+            android:text="詳細內容"/> 
+                    
+    </RelativeLayout>
+    <ImageView android:id="@+id/imageview_movie_poster"
+        android:layout_width="90dp"
+        android:layout_height="130dp" 
+        android:layout_alignParentLeft="true"
+        android:scaleType="fitCenter"
+        android:padding="2dp"
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/stub" 
+        />      
+    <TextView
+            android:id="@+id/textView_chinese_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageview_movie_poster"
+            android:layout_toRightOf="@+id/imageview_movie_poster"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:singleLine="true"
+            android:maxEms="10"
+            android:textColor="@color/grey05"
+            android:textSize="18dp"
+            android:text="電影名稱" />
+        
+        <TextView
+            android:id="@+id/textView_english_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView_chinese_name"
+            android:layout_below="@+id/textView_chinese_name"
+            android:layout_marginTop="5dp"
+            android:singleLine="true"
+            android:maxEms="20"
+            android:textColor="@color/grey05"
+            android:textSize="18dp"
+            android:text="English Name" />
+        
+        <ImageView
+            android:id="@+id/imageView_level"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_alignLeft="@+id/textView_english_name"
+            android:layout_below="@+id/textView_english_name"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="3dp"
+            android:src="@drawable/stub" 
+            android:background="@drawable/button_profile_selector_record"
+             />
+        
+        <TextView
+            android:id="@+id/textView_runningtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageView_level"
+            android:layout_toRightOf="@+id/imageView_level"
+            android:layout_toLeftOf="@+id/imageView_info"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/light_grey"
+            android:textSize="15dp"
+            android:text="片長: 165分" />
+	
+    <RelativeLayout
+        android:id="@+id/relativelayout_check_info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relativelayout_movie_info"
+        android:layout_margin="5dp"
+        android:background="@drawable/button_profile_selector_record">
+         <RelativeLayout
+	        android:id="@+id/rl_check_info"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content">
+	        <ImageView
+	            android:id="@+id/imageView_next_info"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentRight="true"
+	            android:layout_centerVertical="true"
+	            android:src="@drawable/navigation_next" />
+			<ImageView android:id="@+id/user_avatar"
+		        android:layout_width="50dp" android:layout_height="50dp"
+		        android:layout_gravity="center_vertical" 
+		        android:layout_alignParentTop="true"
+		        android:layout_alignParentLeft="true"
+		        android:layout_margin="5dp"
+		        android:background="@color/white1"></ImageView>
+			<TextView android:id="@+id/user_name"
+	            android:layout_width="50dp" android:layout_height="wrap_content"
+	            android:layout_gravity="center_vertical" 
+	            android:layout_below="@+id/user_avatar"
+	            android:layout_alignRight="@+id/user_avatar"
+	            android:layout_alignLeft="@+id/user_avatar"
+	            android:maxLines="2"
+	            android:textSize="10sp"
+	            android:textStyle="bold"
+	            android:text="姓名..."
+	            android:background="@color/white1"/>	
+			<TextView
+			    android:id="@+id/textView_score"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_alignParentTop="true"
+			    android:layout_toRightOf="@+id/user_avatar"
+			    android:layout_marginTop="5dp"
+			    android:paddingLeft="2dp"
+			    android:textSize="16dp"
+			    android:gravity="center_vertical"
+			    android:textColor="@color/black"
+			    android:text="評價 : " />
+			
+			<TextView
+			    android:id="@+id/textView_comment"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_below="@+id/textView_score"
+			    android:layout_alignLeft="@+id/textView_score"
+			    android:layout_toLeftOf="@+id/imageView_next_info"
+			    android:layout_marginTop="5dp"
+			    android:paddingLeft="2dp"
+			    android:textSize="16dp"
+			    android:gravity="center_vertical"
+			    android:text="評論 : " 
+			    android:textColor="@color/black"/>
+			
+			<TextView
+			    android:id="@+id/textView_time"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_below="@+id/textView_comment"
+			    android:layout_alignLeft="@+id/textView_comment"
+			    android:layout_marginTop="5dp"
+			    android:paddingLeft="2dp"
+			    android:textSize="14dp"
+			    android:gravity="center_vertical"
+			    android:text="打卡時間..." 
+			    android:textColor="@color/light_grey"/>
+		</RelativeLayout>
+		<LinearLayout
+		    android:layout_height="35dp"
+		    android:layout_width="fill_parent"
+		    android:layout_below="@+id/rl_check_info"
+            android:layout_margin="1dp"
+            android:orientation="horizontal"
+            android:weightSum="1.0" >
+            <RelativeLayout android:id="@+id/rl_share"
+                android:layout_width="fill_parent" 
+                android:layout_height="fill_parent"
+                android:layout_weight="0.5"
+                android:layout_margin="2dp"
+                android:padding="2dp"
+                android:background="@drawable/button_fb_share_bg">
+			    <ImageView
+			        android:layout_width="wrap_content" 
+			        android:layout_height="23dp"
+			        android:layout_centerInParent="true"
+			        android:scaleType="fitCenter"
+			        android:src="@drawable/button_fb_share_image"/>
+		    </RelativeLayout>
+	        <RelativeLayout android:id="@+id/rl_like"
+                android:layout_width="fill_parent" 
+                android:layout_height="fill_parent"
+                android:layout_margin="2dp"
+                android:padding="2dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/button_like" >
+		        <ImageView android:id="@+id/imageview_like"
+                   android:layout_width="22dp" 
+                   android:layout_height="22dp"
+                   android:layout_margin="3dp"
+                   android:layout_centerVertical="true"
+                   android:layout_alignParentLeft="true"
+                   android:src="@drawable/md_like_short" />             
+               <TextView
+                   android:id="@+id/textView_like"
+                   android:layout_width="fill_parent"
+                   android:layout_height="wrap_content"
+                   android:layout_toRightOf="@+id/imageview_like"
+                   android:layout_centerVertical="true"
+                   android:gravity="left"
+                   android:textSize="16dp"
+                   android:text="0個人推本打卡" 
+                   android:textColor="@color/title_dark" />
+                </RelativeLayout>
+		    </LinearLayout>
+		
+	</RelativeLayout>
+	<TextView
+	    android:id="@+id/textView_tips"
+	    android:layout_width="fill_parent"
+	    android:layout_height="24dp"
+	    android:layout_below="@+id/relativelayout_check_info"
+	    android:paddingLeft="2dp"
+	    android:textColor="@color/white1"
+	    android:textSize="18dp"
+	    android:gravity="center_vertical"
+	    android:background="@color/steel_blue"
+	    android:text="留言" />
+    </RelativeLayout>
