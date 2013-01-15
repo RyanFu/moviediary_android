@@ -5,47 +5,86 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/background">
-	
-	<RelativeLayout android:id="@+id/relativelayout_toptitle"
-            android:layout_width="fill_parent" 
-            android:layout_height="40dp" 
-            android:background="@drawable/button_return"
-            >   
-            <TextView android:id="@+id/topbar_text1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="20dp"
-                    android:textStyle="bold"
-                    android:text="電影搜尋"
-                    />
-     
-            <ImageButton
-                android:id="@+id/imagebutton_setting"
-                style="?android:attr/buttonStyleSmall"
-                android:scaleType="centerInside"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:padding="10dp"
-                android:background="@drawable/button_setting_background" 
-                android:src="@drawable/process_invert"/>
-            
-            <View 
-                android:id="@+id/view_line2"
-                android:layout_width="0.5dp"
-                android:layout_height="40dp"
-                android:layout_toLeftOf="@+id/imagebutton_setting"
-                android:background="@color/grey05"/>
-                      
-    </RelativeLayout>
-			
-    <ListView
-        android:id="@+id/listview_movie"
+
+    <LinearLayout
+        android:id="@+id/ll_spread_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="@color/fake_tab_background"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:weightSum="1.0" >
+
+	    <Button android:id="@+id/button_spread_current"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.5"
+	        android:layout_margin="5dp"
+	        android:background="@color/transparent100"
+	        android:textColor="@color/black"
+	        android:textSize="20dp"
+	        android:text="活動列表" />
+	    <View 
+	        android:layout_width="0.1dp"
+	        android:layout_height="fill_parent"
+	        android:layout_marginTop="5dp"
+	        android:background="@color/deep_grey"
+	        />
+	    <Button android:id="@+id/button_spread_result"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="0.5"
+	        android:layout_margin="5dp"
+	        android:background="@color/transparent100"
+	        android:textColor="@color/white2"
+	        android:textSize="20dp"
+	        android:text="活動結果" />	    
+	    </LinearLayout>
+	
+	<LinearLayout android:id="@+id/ll_spread_arrow"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+        android:background="@color/fake_tab_background"
+	    android:orientation="horizontal"
+	    android:weightSum="1.0" >
+	    <View android:id="@+id/view_1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="5dp"
+	        android:layout_weight="0.5"
+	        android:layout_marginLeft="5dp"
+	        android:layout_marginRight="5dp"
+	        android:scaleType="fitCenter"
+	        android:background="@color/fake_tab_line"
+	        />
+	    <View android:id="@+id/view_2"
+	        android:layout_width="fill_parent"
+	        android:layout_height="5dp"
+	        android:layout_weight="0.5"
+	        android:layout_marginLeft="5dp"
+	        android:layout_marginRight="5dp"
+	        android:scaleType="fitCenter"
+	        android:background="@color/fake_tab_line"
+	        android:visibility="invisible"
+	        />
+        </LinearLayout>		
+        
+	<View android:id="@+id/line0"
+        android:layout_width="fill_parent" 
+        android:layout_height="0.1dp"
+        android:layout_below="@+id/ll_spread_button"
+        android:background="#545454"
+        />
+	
+    <ListView
+        android:id="@+id/listview_spread"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:background="@color/background" />
+    <ImageButton android:id="@+id/refresh"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:background="@drawable/button_background"
+        android:src="@drawable/renew"/>
 </LinearLayout>

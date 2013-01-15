@@ -54,6 +54,8 @@ public class MovieShowActivity extends TrackedActivity {
     private Button            buttonFriend;
     private Button            buttonAll;
     private Button            buttonCheck;
+    private View			  viewFriend;
+    private View			  viewAll;
     private RelativeLayout    relativeMovieInfo;
     private LoadDataTask      loadDataTask;
 
@@ -62,10 +64,16 @@ public class MovieShowActivity extends TrackedActivity {
     private int               movie_id;
     private RecordListAdapter recordListAdapter;
     private ArrayList<Record> recordList   = new ArrayList<Record>();
+    
+    private int functionFlag = 0;
+    private final int FLAG_ALL = 1;
+    private final int FLAG_FRIEND = 2;
+    
     public final static int   CHECK        = 1;
     public final static int   CHECK_SUCESS = 10;
     public final static int   CHECK_FAIL   = 11;
 
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,8 +93,12 @@ public class MovieShowActivity extends TrackedActivity {
         switch (requestCode) {
 	        case CHECK:
 	            if (resultCode == CHECK_SUCESS) {
-	                buttonAll.setBackgroundColor(getResources().getColor(R.color.white1));
-	                buttonFriend.setBackgroundColor(getResources().getColor(R.color.light_grey));
+	            	initBottonTextViewColor();
+                	initBottonImageViewVisible();
+                	functionFlag = FLAG_FRIEND;
+                	setBottonView();
+                    /*buttonFriend.setBackgroundColor(getResources().getColor(R.color.white1));
+                    buttonAll.setBackgroundColor(getResources().getColor(R.color.light_grey));*/
 	                LoadRecordTask loadRecordTask = new LoadRecordTask(false);
 	                loadRecordTask.execute();
 	            }
@@ -123,6 +135,8 @@ public class MovieShowActivity extends TrackedActivity {
         runningtime = (TextView) viewHeader.findViewById(R.id.textView_runningtime);
         buttonFriend = (Button) viewHeader.findViewById(R.id.button_friend);
         buttonAll = (Button) viewHeader.findViewById(R.id.button_all);
+    	viewAll = (View) viewHeader.findViewById(R.id.view_1);
+        viewFriend = (View) viewHeader.findViewById(R.id.view_2);
         relativeMovieInfo = (RelativeLayout) viewHeader.findViewById(R.id.relativelayout_movie_info);
     }
 
@@ -149,8 +163,8 @@ public class MovieShowActivity extends TrackedActivity {
             runningtime.setText("片長 : 未提供");
         else
             runningtime.setText("片長 : " + movie.getRunningTime() + "分");
-        buttonAll.setBackgroundColor(getResources().getColor(R.color.white1));
-        buttonFriend.setBackgroundColor(getResources().getColor(R.color.light_grey));
+        /*buttonAll.setBackgroundColor(getResources().getColor(R.color.white1));
+        buttonFriend.setBackgroundColor(getResources().getColor(R.color.light_grey));*/
 
         poster.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -178,8 +192,12 @@ public class MovieShowActivity extends TrackedActivity {
                 	newAct.setClass( MovieShowActivity.this, LoginActivity.class );
                 	MovieShowActivity.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE);
                 } else {
-                    buttonFriend.setBackgroundColor(getResources().getColor(R.color.white1));
-                    buttonAll.setBackgroundColor(getResources().getColor(R.color.light_grey));
+                	initBottonTextViewColor();
+                	initBottonImageViewVisible();
+                	functionFlag = FLAG_FRIEND;
+                	setBottonView();
+                    /*buttonFriend.setBackgroundColor(getResources().getColor(R.color.white1));
+                    buttonAll.setBackgroundColor(getResources().getColor(R.color.light_grey));*/
                     LoadRecordTask loadRecordTask = new LoadRecordTask(true);
                     loadRecordTask.execute();
                 }
@@ -189,8 +207,12 @@ public class MovieShowActivity extends TrackedActivity {
         buttonAll.setOnClickListener(new RelativeLayout.OnClickListener() {
             public void onClick(View v) {
                 EasyTracker.getTracker().trackEvent("電影打卡列表", "所有打卡", "", (long)0);
-                buttonAll.setBackgroundColor(getResources().getColor(R.color.white1));
-                buttonFriend.setBackgroundColor(getResources().getColor(R.color.light_grey));
+                initBottonTextViewColor();
+            	initBottonImageViewVisible();
+            	functionFlag = FLAG_ALL;
+            	setBottonView();
+                /*buttonAll.setBackgroundColor(getResources().getColor(R.color.white1));
+                buttonFriend.setBackgroundColor(getResources().getColor(R.color.light_grey));*/
                 LoadRecordTask loadRecordTask = new LoadRecordTask(false);
                 loadRecordTask.execute();
             }
@@ -235,6 +257,31 @@ public class MovieShowActivity extends TrackedActivity {
             listviewShow.addFooterView(viewFooter);
         else
             listviewShow.removeFooterView(viewFooter);
+        
+    	functionFlag = FLAG_ALL;
+        initBottonTextViewColor();
+    	initBottonImageViewVisible();
+    	setBottonView();
+    }
+
+    private void initBottonTextViewColor() {
+    	buttonAll.setTextColor(MovieShowActivity.this.getResources().getColor(R.color.fake_tab_button_text_normal));
+    	buttonFriend.setTextColor(MovieShowActivity.this.getResources().getColor(R.color.fake_tab_button_text_normal));
+    }
+    
+    private void initBottonImageViewVisible() {
+    	viewAll.setVisibility(View.INVISIBLE);
+    	viewFriend.setVisibility(View.INVISIBLE);
+    }
+    
+    private void setBottonView() {
+    	if(functionFlag == FLAG_ALL) {
+    		buttonAll.setTextColor(MovieShowActivity.this.getResources().getColor(R.color.fake_tab_button_text_press));
+    		viewAll.setVisibility(View.VISIBLE);
+    	} else if(functionFlag == FLAG_FRIEND) {	    	
+    		buttonFriend.setTextColor(MovieShowActivity.this.getResources().getColor(R.color.fake_tab_button_text_press));
+    		viewFriend.setVisibility(View.VISIBLE);
+    	}
     }
 
     class LoadDataTask extends AsyncTask<Integer, Integer, String> {

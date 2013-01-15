@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,13 +18,11 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.jumplife.jome.entity.Comment;
 import com.jumplife.loginactivity.FacebookIO;
@@ -47,7 +44,7 @@ public class FriendStream extends TrackedActivity {
     private int                           loginState = 0;
     
     private int page = 1;
-    private LinearLayout pullMore;
+    //private LinearLayout pullMore;
     private FriendStreamAdapter friendStreamAdapter;
 
     @Override
@@ -128,6 +125,16 @@ public class FriendStream extends TrackedActivity {
 
         });
 
+        recordListView.setOnRefreshListener(new OnRefreshListener2<ListView>() {
+           public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+            	new RefreshTask().execute();
+            }
+
+            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+            	new NextPageTask().execute();
+            }
+        });
+        
         recordListView.setOnItemClickListener(new OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -147,7 +154,7 @@ public class FriendStream extends TrackedActivity {
 
         });
 
-        recordListView.setOnLastItemVisibleListener(new OnLastItemVisibleListener() {
+        /*recordListView.setOnLastItemVisibleListener(new OnLastItemVisibleListener() {
 			public void onLastItemVisible() {
 				// TODO Auto-generated method stub
 				new NextPageTask().execute();
@@ -163,7 +170,7 @@ public class FriendStream extends TrackedActivity {
                 // Do work to refresh the list here.
                 new RefreshTask().execute();
             }
-        });
+        });*/
     }
 
     private void setListAdatper() {
@@ -174,7 +181,7 @@ public class FriendStream extends TrackedActivity {
     private void findViews() {
         recordListView = (PullToRefreshListView) findViewById(R.id.listview_record);
         buttonInviteFriend = (Button) findViewById(R.id.button_invite_friend);
-        pullMore = (LinearLayout)findViewById(R.id.progressBar_pull_more);
+        //pullMore = (LinearLayout)findViewById(R.id.progressBar_pull_more);
         imageButtonRefresh = (ImageButton) findViewById(R.id.refresh);
         imageButtonRefresh.setOnClickListener(new OnClickListener() {
             public void onClick(View arg0) {
@@ -281,7 +288,8 @@ public class FriendStream extends TrackedActivity {
         protected void onPostExecute(String result) {
             setView();
             if (objectList != null) {
-            	friendStreamAdapter.notifyDataSetChanged();
+            	setListAdatper();
+                setListener();
             	page += 1;
             }
             recordListView.onRefreshComplete();
@@ -294,7 +302,7 @@ public class FriendStream extends TrackedActivity {
 
 		@Override  
         protected void onPreExecute() {
-			pullMore.setVisibility(View.VISIBLE);
+			//pullMore.setVisibility(View.VISIBLE);
 			super.onPreExecute();  
         }  
         @Override
@@ -309,12 +317,14 @@ public class FriendStream extends TrackedActivity {
             super.onProgressUpdate(progress);  
         } 
 		protected void onPostExecute(String result) {
-			pullMore.setVisibility(View.GONE);
+			//pullMore.setVisibility(View.GONE);
 			if(objectList != null && objectList.size() > 0){
 				friendStreamAdapter.notifyDataSetChanged();
 				page += 1;
+	        	Log.d(null, "size : " + objectList.size());
     			// Call onRefreshComplete when the list has been refreshed.
         	}
+            recordListView.onRefreshComplete();
 			super.onPostExecute(result);
         }
 	}

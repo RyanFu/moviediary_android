@@ -15,10 +15,18 @@
    <color name="light_steel_blue">#44B0C4DE</color>
    <color name="light_Salmon">#44FFA07A</color>
    <color name="light_grey">#d3d3d3</color>
+   <color name="deep_grey">#535353</color>
    <color name="black">#000000</color>
    <color name="section_header">#373737</color>
    <color name="transparent100">#00000000</color>
    <color name="transparent">#33000000</color>
    <color name="translucent">#88000000</color>
    <color name="like">#d14329</color>
+   <color name="item_spread_shadow">#c1c1c1</color>
+   
+   <!-- fake tab button -->
+   <color name="fake_tab_button_text_normal">#6f6f6f</color>
+   <color name="fake_tab_button_text_press">#111111</color>
+   <color name="fake_tab_background">#cbcbcb</color>
+   <color name="fake_tab_line">#c21817</color>
 </resources>

@@ -42,6 +42,7 @@ public class MovieWaterfall extends TrackedActivity {
     private TextView         title;
     private Button           selectButton;
     private ImageButton      setting;
+    private ImageButton      search;
     private ImageButton      imageButtonRefresh;
     private QuickAction      quickAction;
     private LinearLayout     linearlayout;
@@ -103,6 +104,7 @@ public class MovieWaterfall extends TrackedActivity {
 
     private void initViews() {
         setting = (ImageButton) findViewById(R.id.imagebutton_setting);
+        search = (ImageButton) findViewById(R.id.imagebutton_search);
 
         ActionItem firstItem = new ActionItem(FLAG_FIRSTROUND, "首輪電影");
         ActionItem secondItem = new ActionItem(FLAG_SECONDROUND, "二輪電影");
@@ -187,6 +189,13 @@ public class MovieWaterfall extends TrackedActivity {
             public void onClick(View v) {
                 Intent intentCreate = new Intent().setClass(MovieWaterfall.this, Setting.class);
                 startActivityForResult(intentCreate, SETTING);
+            }
+        });
+        
+        search.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                Intent intentCreate = new Intent().setClass(MovieWaterfall.this, SearchMovieActivity.class);
+                startActivity(intentCreate);
             }
         });
 

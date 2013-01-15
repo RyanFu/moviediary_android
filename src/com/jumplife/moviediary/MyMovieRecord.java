@@ -59,7 +59,7 @@ public class MyMovieRecord extends TrackedActivity {
     private TextView              textviewRecordCount;
     private TextView              textviewFriendCount;
 
-    private LinearLayout 		  pullMore;
+    //private LinearLayout 		  pullMore;
     private PullToRefreshGridView recordGridView;
     private PullToRefreshListView listView;
     private RecordGridAdapter	  recordGridAdapter;
@@ -277,7 +277,7 @@ public class MyMovieRecord extends TrackedActivity {
 			topbarLayout.setVisibility(View.GONE);
 		}
 		
-		pullMore = (LinearLayout)findViewById(R.id.progressBar_pull_more);
+		//pullMore = (LinearLayout)findViewById(R.id.progressBar_pull_more);
 		recordGridView = (PullToRefreshGridView)findViewById(R.id.refreshgridview_mymovierecord);
 		buttonCheckins = (Button)findViewById(R.id.button_checkin);
 		buttonFriends = (Button)findViewById(R.id.button_friend);
@@ -486,7 +486,7 @@ public class MyMovieRecord extends TrackedActivity {
 
 		@Override  
         protected void onPreExecute() {
-			pullMore.setVisibility(View.VISIBLE);
+			//pullMore.setVisibility(View.VISIBLE);
 			super.onPreExecute();  
         }  
         @Override
@@ -501,7 +501,7 @@ public class MyMovieRecord extends TrackedActivity {
             super.onProgressUpdate(progress);  
         } 
 		protected void onPostExecute(String result) {
-			pullMore.setVisibility(View.GONE);
+			//pullMore.setVisibility(View.GONE);
 			if(recordList != null && recordList.size() > 0){
 				recordGridAdapter.notifyDataSetChanged();
 				page += 1;
@@ -534,7 +534,6 @@ public class MyMovieRecord extends TrackedActivity {
         @Override
         protected void onPostExecute(String result) {
             // 如果要取得的是打卡紀錄
-        	// 如果要取得的是打卡紀錄
             if (functionFlag == FLAG_CHECKIN) {
             	if ((recordList == null) || (user == null) || !Utility.IsSessionValid(MyMovieRecord.this)) {
                     recordGridView.setVisibility(View.GONE);

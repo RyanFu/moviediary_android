@@ -5,8 +5,8 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/background">
-    
-    <!-- <include android:id="@+id/topBar" layout="@layout/topbar"/> -->
+        
+    <include android:id="@+id/topBar" layout="@layout/topbar"/>
             
     <ListView
         android:id="@+id/listview_movie"

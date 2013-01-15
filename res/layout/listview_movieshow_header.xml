@@ -104,7 +104,7 @@
             android:textSize="15dp"
             android:text="片長: 165分" />
         
-    <LinearLayout android:id="@+id/ll_button"
+    <!-- <LinearLayout android:id="@+id/ll_button"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_below="@+id/relativelayout_movie_info"
@@ -132,5 +132,68 @@
             android:background="@color/light_grey"
             android:textSize="16dp"
             android:text="朋 友 打 卡"/>
-    </LinearLayout> 
+    </LinearLayout> -->
+    <LinearLayout
+        android:id="@+id/ll_spread_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relativelayout_movie_info"
+        android:background="@color/fake_tab_background"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:weightSum="1.0" >
+
+        <Button android:id="@+id/button_all"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_margin="5dp"
+            android:background="@color/transparent100"
+            android:textColor="@color/black"
+            android:textSize="16dp"
+            android:text="所 有 打 卡" />
+        <View 
+            android:layout_width="0.1dp"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="5dp"
+            android:background="@color/deep_grey"
+            />
+        <Button android:id="@+id/button_friend"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_margin="5dp"
+            android:background="@color/transparent100"
+            android:textColor="@color/white2"
+            android:textSize="16dp"
+            android:text="朋 友 打 卡" />      
+        </LinearLayout>
+    
+    <LinearLayout android:id="@+id/ll_spread_arrow"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_spread_button"
+        android:background="@color/fake_tab_background"
+        android:orientation="horizontal"
+        android:weightSum="1.0" >
+        <View android:id="@+id/view_1"
+            android:layout_width="fill_parent"
+            android:layout_height="5dp"
+            android:layout_weight="0.5"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitCenter"
+            android:background="@color/fake_tab_line"
+            />
+        <View android:id="@+id/view_2"
+            android:layout_width="fill_parent"
+            android:layout_height="5dp"
+            android:layout_weight="0.5"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:scaleType="fitCenter"
+            android:background="@color/fake_tab_line"
+            android:visibility="invisible"
+            />
+        </LinearLayout> 
     </RelativeLayout>

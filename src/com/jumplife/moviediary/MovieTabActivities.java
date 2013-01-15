@@ -58,17 +58,17 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
         topbarLayout = (LinearLayout) findViewById(R.id.topbar);
 
         topbar_text = (TextView) findViewById(R.id.topbar_text);
-        topbar_text.setText("電影打卡");
+        topbar_text.setText("活動快報");
 
         Gcm gcm = new Gcm(this);
         
         tabHost = getTabHost(); // The activity TabHost
         tabHost.setup();
 
+        tabSpread();
         tabActivityList();
-        tabMyList();
         tabCreate();
-        tabCheck();
+        tabMyList();
         tabNews();
 
         setting = (ImageButton) findViewById(R.id.imagebutton_setting);
@@ -84,7 +84,7 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
 
         line.setVisibility(View.GONE);
         search.setVisibility(View.GONE);
-        topbarLayout.setVisibility(View.GONE);
+        topbarLayout.setVisibility(View.VISIBLE);
         setting.setVisibility(View.GONE);
 
         tabHost.setOnTabChangedListener(this);
@@ -142,6 +142,18 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
             return super.onKeyDown(keyCode, event);
     }
 
+    private void tabSpread() {
+        View ActivitysTab = LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
+        ImageView image = (ImageView) ActivitysTab.findViewById(R.id.imageview_tabicon);
+        image.setImageResource(R.drawable.activitybar);
+        TextView ActivitysTabLabel = (TextView) ActivitysTab.findViewById(R.id.textview_tabicon);
+        ActivitysTabLabel.setText("活動快報");
+
+        Intent intentSpread = new Intent().setClass(this, SpreadActivity.class);
+        spec = tabHost.newTabSpec("tab4").setIndicator(ActivitysTab).setContent(intentSpread);
+        tabHost.addTab(spec);
+    }
+
     private void tabActivityList() {
         View ActivitysTab = LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         ImageView image = (ImageView) ActivitysTab.findViewById(R.id.imageview_tabicon);
@@ -177,19 +189,6 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
 
         Intent intentCreate = new Intent().setClass(this, FriendStream.class);
         spec = tabHost.newTabSpec("tab3").setIndicator(CreateTab).setContent(intentCreate);
-        tabHost.addTab(spec);
-    }
-
-    private void tabCheck() {
-        View ActivitysTab = LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
-        ImageView image = (ImageView) ActivitysTab.findViewById(R.id.imageview_tabicon);
-        image.setImageResource(R.drawable.search_dark);
-        TextView ActivitysTabLabel = (TextView) ActivitysTab.findViewById(R.id.textview_tabicon);
-        ActivitysTabLabel.setText("電影搜尋");
-
-        // Intent intentList = new Intent().setClass(this, MovieCheck.class);
-        Intent intentList = new Intent().setClass(this, SearchMovieActivity.class);
-        spec = tabHost.newTabSpec("tab4").setIndicator(ActivitysTab).setContent(intentList);
         tabHost.addTab(spec);
     }
 
@@ -256,12 +255,12 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
             }
         } else if (tabId == "tab4") {
             tabIdNumber = 3;
-            line.setVisibility(View.VISIBLE);
+            line.setVisibility(View.GONE);
             search.setVisibility(View.GONE);
             setting.setVisibility(View.VISIBLE);
             topbarLayout.setVisibility(View.VISIBLE);
             // topbarLayout.setVisibility(View.GONE);
-            topbar_text.setText("電影搜尋");
+            topbar_text.setText("活動快報");
         } else if (tabId == "tab5") {
             tabIdNumber = 4;
             line.setVisibility(View.GONE);

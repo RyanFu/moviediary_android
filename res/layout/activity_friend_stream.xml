@@ -14,11 +14,13 @@
         android:layout_alignParentTop="true"
         android:text="邀請Facebook好友"/>
     <com.handmark.pulltorefresh.library.PullToRefreshListView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
         android:id="@+id/listview_record"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/button_invite_friend"
-        android:background="@color/background" />
+        android:background="@color/background"
+        ptr:ptrMode="both" /> />
     <ImageButton android:id="@+id/refresh"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

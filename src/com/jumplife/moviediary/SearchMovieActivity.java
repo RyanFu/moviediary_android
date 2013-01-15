@@ -11,15 +11,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.jumplife.moviediary.entity.Movie;
-import com.jumplife.moviediary.promote.PromoteAPP;
 import com.jumplife.sectionlistview.MovieListAdapter;
 import com.jumplife.sqlite.SQLiteMovieDiary;
 
@@ -33,7 +33,8 @@ public class SearchMovieActivity extends TrackedActivity {
     private LoadDataTask     tast;
     private EditText         edittextSearchBar;
     private MovieListAdapter movieAdapter;
-
+    private TextView 		 topbar_text;
+    
     private static String    TAG       = "SearchMovieActivity";
 
     @Override
@@ -77,6 +78,8 @@ public class SearchMovieActivity extends TrackedActivity {
     }
 
     private void findViews() {
+        topbar_text = (TextView) findViewById(R.id.topbar_text);
+        topbar_text.setText("搜尋電影");
         movieListView = (ListView) findViewById(R.id.listview_movie);
         View header = View.inflate(this, R.layout.searchbar, null);
         movieListView.addHeaderView(header);
@@ -182,29 +185,6 @@ public class SearchMovieActivity extends TrackedActivity {
     @Override
     protected void onResume() {
         super.onResume();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-
-        	PromoteAPP promoteAPP = new PromoteAPP(SearchMovieActivity.this);
-        	if(!promoteAPP.isPromote) {
-	        	new AlertDialog.Builder(this).setTitle("- 離開程式? -")
-				.setPositiveButton("是", new DialogInterface.OnClickListener() {
-					// do something when the button is clicked
-					public void onClick(DialogInterface arg0, int arg1) {
-						SearchMovieActivity.this.finish();
-					}
-				})
-				.setNegativeButton("否", null)
-				.show();
-		    } else
-		    	promoteAPP.promoteAPPExe();
-
-            return true;
-        } else
-            return super.onKeyDown(keyCode, event);
     }
 
     public void showReloadDialog(final Context context) {
