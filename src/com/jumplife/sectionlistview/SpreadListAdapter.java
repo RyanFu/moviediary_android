@@ -4,18 +4,16 @@ import java.util.ArrayList;
 
 import com.jumplife.imageload.ImageLoader;
 import com.jumplife.moviediary.R;
-import com.jumplife.moviediary.entity.Movie;
 import com.jumplife.moviediary.entity.Spread;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public class SpreadListAdapter extends BaseAdapter{
 	
@@ -24,14 +22,14 @@ public class SpreadListAdapter extends BaseAdapter{
     public static final int FILTER_FOOT=1;//从后开始过滤  
     public static final int FILTER_BODY=2;//任意过滤  
     
-    Context mContext;
+    private Activity mActivity;
     private ArrayList<Spread> spreads;
 	private ImageLoader imageLoader;
 	
-	public SpreadListAdapter(Context mContext, ArrayList<Spread> spreadList){
+	public SpreadListAdapter(Activity mActivity, ArrayList<Spread> spreadList){
 		this.spreads = spreadList;
-		this.mContext = mContext;
-		imageLoader=new ImageLoader(mContext);
+		this.mActivity = mActivity;
+		imageLoader = new ImageLoader(mActivity, 0, R.drawable.post_background);
 	}
 
 	public int getCount() {
@@ -51,11 +49,13 @@ public class SpreadListAdapter extends BaseAdapter{
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
-		LayoutInflater myInflater = LayoutInflater.from(mContext);
+		LayoutInflater myInflater = LayoutInflater.from(mActivity);
 		View converView = myInflater.inflate(R.layout.listview_spread, null);
 		
 		ImageView poster = (ImageView)converView.findViewById(R.id.spread_image);
-		imageLoader.DisplayImage(spreads.get(position).getImageUrl(), poster);
+		DisplayMetrics displayMetrics = new DisplayMetrics();
+		mActivity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        imageLoader.DisplayImage(spreads.get(position).getImageUrl(), poster, displayMetrics.widthPixels);
 		
 		return converView;
 

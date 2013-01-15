@@ -95,7 +95,7 @@ public class MovieShowActivity extends TrackedActivity {
 	            if (resultCode == CHECK_SUCESS) {
 	            	initBottonTextViewColor();
                 	initBottonImageViewVisible();
-                	functionFlag = FLAG_FRIEND;
+                	functionFlag = FLAG_ALL;
                 	setBottonView();
                     /*buttonFriend.setBackgroundColor(getResources().getColor(R.color.white1));
                     buttonAll.setBackgroundColor(getResources().getColor(R.color.light_grey));*/

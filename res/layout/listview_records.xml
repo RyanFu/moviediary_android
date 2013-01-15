@@ -30,7 +30,7 @@
 			android:layout_width="wrap_content" android:layout_height="wrap_content"
 			android:layout_marginLeft="10dp" android:textSize="12dp"
 			android:layout_below="@+id/user_score"
-			></TextView>
+			android:maxLength="70" />
 	    
 		<ImageView android:id="@+id/imageview_like"
             android:layout_width="42dp" android:layout_height="22dp"

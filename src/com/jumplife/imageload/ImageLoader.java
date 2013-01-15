@@ -14,46 +14,57 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import com.jumplife.moviediary.R;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.ImageView;
-import com.jumplife.moviediary.R;
 
 public class ImageLoader {
     
-    MemoryCache memoryCache=new MemoryCache();
-    FileCache fileCache;
+	private MemoryCache memoryCache=new MemoryCache();
+    private FileCache fileCache;
+    private int REQUIRED_SIZE=70;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
-    ExecutorService executorService;
-    int REQUIRED_SIZE=70;
+    private ExecutorService executorService;
     private int width;
+    private Bitmap btStub;
     
     public ImageLoader(Context context){
-        fileCache=new FileCache(context);
-        executorService=Executors.newFixedThreadPool(5);
+        fileCache = new FileCache(context);
+        executorService = Executors.newFixedThreadPool(3);
+        btStub  = BitmapFactory.decodeResource(context.getResources(), R.drawable.stub);
     }
     
     public ImageLoader(Context context, int size){
-    	fileCache=new FileCache(context);
-        executorService=Executors.newFixedThreadPool(5);
+    	fileCache = new FileCache(context);
+        executorService = Executors.newFixedThreadPool(3);
         REQUIRED_SIZE = size;
+        btStub = BitmapFactory.decodeResource(context.getResources(), R.drawable.stub);
     }
     
-    final int stub_id= R.drawable.stub;
+    public ImageLoader(Context context, int size, int resStub){
+    	fileCache = new FileCache(context);
+        executorService = Executors.newFixedThreadPool(3);
+        if(size != 0)
+        	REQUIRED_SIZE = size;
+        btStub = BitmapFactory.decodeResource(context.getResources(), resStub);
+    }
+    
     public void DisplayImage(String url, ImageView imageView)
     {
     	imageViews.put(imageView, url);
         Bitmap bitmap=memoryCache.get(url);
         
-        if(bitmap!=null)
-            imageView.setImageBitmap(bitmap);
-        else
-        {
+        if(bitmap!=null) {
+            imageView.setImageBitmap(bitmap);        	
+        } else {
             queuePhoto(url, imageView);
-            imageView.setImageResource(stub_id);
+            imageView.setImageBitmap(btStub);
         }
     }
     
@@ -63,25 +74,24 @@ public class ImageLoader {
         Bitmap bitmap=memoryCache.get(url);
         
         this.width = width;
+        btStub = Bitmap.createScaledBitmap(btStub, width, btStub.getHeight() * width / btStub.getWidth(), true);
         
         if(bitmap!=null) {
             imageView.setImageBitmap(bitmap);
         
-            //Ben Test
-        	double height = (double)(width * ((double)bitmap.getHeight() / (double)bitmap.getWidth()));
+            double height = (double)(width * ((double)bitmap.getHeight() / (double)bitmap.getWidth()));
         
         	imageView.getLayoutParams().height = (int)height;
         	imageView.getLayoutParams().width = width;
         	
-        	imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        	imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
         }
         else {
             //queuePhoto(url, imageView);
         	queuePhoto(url, imageView, width);
-            imageView.setImageResource(stub_id);
+            imageView.setImageBitmap(btStub);
         }
-		
     }
         
     private void queuePhoto(String url, ImageView imageView)
@@ -101,13 +111,13 @@ public class ImageLoader {
         File f=fileCache.getFile(url);
         
         //from SD cache
-        Bitmap b = decodeFile(f);
-        if(b!=null)
-            return b;
+        Bitmap bitmap = decodeFile(f);
+        if(bitmap!=null)
+            return bitmap;
         
         //from web
         try {
-            Bitmap bitmap=null;
+        	bitmap = null;
             URL imageUrl = new URL(url);
             HttpURLConnection conn = (HttpURLConnection)imageUrl.openConnection();
             conn.setConnectTimeout(30000);
@@ -185,10 +195,12 @@ public class ImageLoader {
         public String url;
         public ImageView imageView;
         public int width;
-        public FillPhotoToLoad(String u, ImageView i, int width){
-            url=u; 
-            imageView=i;
-            width = width;
+        
+		@SuppressWarnings("unused")
+		public FillPhotoToLoad(String u, ImageView i, int width){
+			this.url=u; 
+            this.imageView=i;
+            this.width = width;
         }
     }
     
@@ -201,11 +213,11 @@ public class ImageLoader {
         public void run() {
             if(imageViewReused(photoToLoad))
                 return;
-            Bitmap bmp=getBitmap(photoToLoad.url);
-            memoryCache.put(photoToLoad.url, bmp);
+            Bitmap bitmap = getBitmap(photoToLoad.url);
+            memoryCache.put(photoToLoad.url, bitmap);
             if(imageViewReused(photoToLoad))
                 return;
-            BitmapDisplayer bd=new BitmapDisplayer(bmp, photoToLoad);
+            BitmapDisplayer bd=new BitmapDisplayer(bitmap, photoToLoad);
             Activity a=(Activity)photoToLoad.imageView.getContext();
             a.runOnUiThread(bd);
         }
@@ -220,16 +232,16 @@ public class ImageLoader {
         public void run() {
             if(imageViewReused(photoToLoad))
                 return;
-            Bitmap bmp=getBitmap(photoToLoad.url);
+            Bitmap bitmap = getBitmap(photoToLoad.url);
             
-            double height = (double)(width * ((double)bmp.getHeight() / (double)bmp.getWidth()));
+            double height = (double)(width * ((double)bitmap.getHeight() / (double)bitmap.getWidth()));
             
         	
             
-            memoryCache.put(photoToLoad.url, bmp);
+            memoryCache.put(photoToLoad.url, bitmap);
             if(imageViewReused(photoToLoad))
                 return;
-            FillBitmapDisplayer bd=new FillBitmapDisplayer(bmp, photoToLoad, width, (int)height);
+            FillBitmapDisplayer bd=new FillBitmapDisplayer(bitmap, photoToLoad, width, (int)height);
             Activity a=(Activity)photoToLoad.imageView.getContext();
             a.runOnUiThread(bd);
         }
@@ -254,15 +266,28 @@ public class ImageLoader {
     {
         Bitmap bitmap;
         PhotoToLoad photoToLoad;
-        public BitmapDisplayer(Bitmap b, PhotoToLoad p){bitmap=b;photoToLoad=p;}
-        public void run()
-        {
+        public BitmapDisplayer(Bitmap b, PhotoToLoad p) {
+        	bitmap = b;
+        	photoToLoad = p;
+        }
+        public void run() {
             if(imageViewReused(photoToLoad))
                 return;
-            if(bitmap!=null)
+            
+            /*AnimationSet anim = new AnimationSet(true);
+            ScaleAnimation scaleAnimation = new ScaleAnimation(0.2f, 1, 0.2f, 1,
+            		Animation.RELATIVE_TO_SELF, 0.5f,
+            		Animation.RELATIVE_TO_SELF, 0.5f);
+            anim.addAnimation(scaleAnimation);
+            anim.setDuration(600);*/
+            
+            if(bitmap!=null) {
                 photoToLoad.imageView.setImageBitmap(bitmap);
-            else
-                photoToLoad.imageView.setImageResource(stub_id);
+                //photoToLoad.imageView.startAnimation(anim);
+            } else {
+                photoToLoad.imageView.setImageBitmap(btStub);
+                //photoToLoad.imageView.startAnimation(anim);
+            }
         }
     }
     
@@ -298,10 +323,20 @@ public class ImageLoader {
 		imageView.setScaleType(ImageView.ScaleType.FIT_XY);
              */
             
-            if(bitmap!=null)
+            /*AnimationSet anim = new AnimationSet(true);
+            ScaleAnimation scaleAnimation = new ScaleAnimation(0.2f, 1, 0.2f, 1,
+            		Animation.RELATIVE_TO_SELF, 0.5f,
+            		Animation.RELATIVE_TO_SELF, 0.5f);
+            anim.addAnimation(scaleAnimation);
+            anim.setDuration(600);*/
+            
+            if(bitmap!=null) {
                 photoToLoad.imageView.setImageBitmap(bitmap);
-            else
-                photoToLoad.imageView.setImageResource(stub_id);
+                //photoToLoad.imageView.startAnimation(anim);
+            } else {
+                photoToLoad.imageView.setImageBitmap(btStub);
+                //photoToLoad.imageView.startAnimation(anim);
+            }
         }
     }
 

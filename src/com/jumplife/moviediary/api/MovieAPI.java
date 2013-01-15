@@ -36,6 +36,7 @@ import com.jumplife.moviediary.entity.Area;
 import com.jumplife.moviediary.entity.Movie;
 import com.jumplife.moviediary.entity.News;
 import com.jumplife.moviediary.entity.Record;
+import com.jumplife.moviediary.entity.Spread;
 import com.jumplife.moviediary.entity.Theater;
 import com.jumplife.moviediary.entity.User;
 
@@ -473,18 +474,10 @@ public class MovieAPI {
 "fb_id" => "3346731036355"
 }
 	 */
-	public boolean recordMovie(Record record) {
-		boolean result = false;
+	public int recordMovie(Record record) {
+		int result = -1;
 		
 		try {
-			/*
-			recordJson.put("comment", record.getComment());
-			recordJson.put("score", record.getScore());
-			recordJson.put("movie_id", record.getMovie().getId());
-			
-			requestJson.put("record", recordJson);
-			requestJson.put("fb_id", record.getUser().getAccount());
-			*/
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpPost httpPost = new HttpPost("http://106.187.101.252/api/v1/records.json");
 			
@@ -497,33 +490,22 @@ public class MovieAPI {
 		    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));
 			
 			//httpPost.setEntity(new ByteArrayEntity(requestJson.toString().getBytes("UTF8")));
-			HttpResponse response = httpClient.execute(httpPost);
-			
+			HttpResponse response = httpClient.execute(httpPost);			
 			StatusLine statusLine =  response.getStatusLine();
 			if (statusLine.getStatusCode() == 200){
-				result = true;
+				result = 1;
 			}
 			
-			//String message = getMessageFromServer("POST", "/api/v1/records.json", requestJson);
-			
-			//Log.d("MovieAPI message", message);
-			/*
-			JSONObject reponseJson = new JSONObject(message);
-			String status = reponseJson.getString("message"); 
-			
-			if(status.equalsIgnoreCase("success")) {
-				Log.d("movie", "success");
-				result = true;
+			BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+			String json = reader.readLine();
+			JSONObject recordJson = new JSONObject(json);
+			if(recordJson.has("message")) {
+				String alreadyExist = recordJson.getString("message");
+				if(alreadyExist.equals("already_exist")) {
+					result = 2;
+				}
 			}
-			*/
-		}
-		/*
-		catch (JSONException e) {
-			e.printStackTrace();
-			return result;
-		}
-		*/ 
-		catch (UnsupportedEncodingException e) {
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return result;
 		} catch (ClientProtocolException e)
@@ -534,11 +516,14 @@ public class MovieAPI {
 		{
 			e.printStackTrace();
 			return result;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		
+				
 		return result;
 	}
+		
 	public ArrayList<Record> getMovieFriendRecordList (String fbId, String movieId) {
 		ArrayList<Record> recordList = new ArrayList<Record> (10);
 		
@@ -1339,6 +1324,150 @@ public class MovieAPI {
 			return result;
 		}	
 		return result;
+	}
+	
+	// Spread
+	public ArrayList<Spread> getCurrentSpreadList() {
+		ArrayList<Spread> spreadList = new ArrayList<Spread>(10);
+		String message = getMessageFromServer("GET", "/api/v1/campaigns.json", null);
+		
+		if(message == null) {
+			return null;
+		}
+		else {
+			JSONArray spreadArray;
+
+			try
+			{
+				spreadArray = new JSONArray(message.toString());				
+				for (int i = 0; i < spreadArray.length() ; i++) {
+					Spread spread = new Spread();
+					spread.setId(spreadArray.getJSONObject(i).getInt("id"));
+					spread.setImageUrl(spreadArray.getJSONObject(i).getString("picture_out"));
+					spreadList.add(spread);
+				}
+			} 
+			catch (JSONException e){
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return spreadList;
+	}
+	
+	public ArrayList<Spread> getResultSpreadList() {
+		ArrayList<Spread> spreadList = new ArrayList<Spread>(10);
+		String message = getMessageFromServer("GET", "/api/v1/campaigns/announce_list.json", null);
+		
+		if(message == null) {
+			return null;
+		}
+		else {
+			JSONArray spreadArray;
+
+			try
+			{
+				spreadArray = new JSONArray(message.toString());				
+				for (int i = 0; i < spreadArray.length() ; i++) {
+					Spread spread = new Spread();
+					spread.setId(spreadArray.getJSONObject(i).getInt("id"));
+					spread.setImageUrl(spreadArray.getJSONObject(i).getString("picture_out"));
+					spreadList.add(spread);
+				}
+			} 
+			catch (JSONException e){
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return spreadList;
+	}
+	
+	public Spread getCurrentSpread(int spreadId) {
+		Spread spread = null;
+		
+		String message = getMessageFromServer("GET", "/api/v1/campaigns/" + spreadId + ".json", null);
+		
+		if(message == null) {
+			return null;
+		}
+		
+		try {
+			spread = new Spread();
+			
+			JSONObject spreadJson = new JSONObject(message);
+			
+			if(spreadJson.has("picture_out"))
+				spread.setImageUrl(spreadJson.getString("picture_out"));
+			
+			if(spreadJson.has("picture_in"))
+				spread.setSpreadPosterUrl(spreadJson.getString("picture_in"));
+				
+			if(spreadJson.has("title"))
+				spread.setSpreadTitle(spreadJson.getString("title"));
+			
+			if(spreadJson.has("description"))
+				spread.setSpreadTitleContent(spreadJson.getString("description"));
+			
+			if(spreadJson.has("time_active"))
+				spread.setSpreadTimeContent(spreadJson.getString("time_active"));
+			
+			if(spreadJson.has("measure"))
+				spread.setSpreadMethodStep(spreadJson.getString("measure"));
+			
+			if(spreadJson.has("teach_pic"))
+				spread.setSpreadMethodStepUrl(spreadJson.getString("teach_pic"));
+			
+			if(spreadJson.has("award_condition"))
+				spread.setSpreadMethodResult(spreadJson.getString("award_condition"));
+			
+			if(spreadJson.has("award"))
+				spread.setSpreadGiftContent(spreadJson.getString("award"));
+			
+			if(spreadJson.has("award_pic"))
+				spread.setSpreadGiftUrl(spreadJson.getString("award_pic"));
+			
+			if(spreadJson.has("precaution"))
+				spread.setSpreadNotifyContent(spreadJson.getString("precaution"));
+			
+			if(spreadJson.has("movie_id"))
+				spread.setMovieId(spreadJson.getString("movie_id"));						
+		} 
+		catch (JSONException e){
+			e.printStackTrace();
+			return null;
+		}	
+		return spread;
+	}
+	
+	public Spread getResultSpread(int spreadId) {
+		Spread spread = null;
+		
+		String message = getMessageFromServer("GET", "/api/v1/campaigns/" + spreadId + "/announce.json", null);
+		
+		if(message == null) {
+			return null;
+		}
+		
+		try {
+			spread = new Spread();
+			
+			JSONObject spreadJson = new JSONObject(message);
+			
+			if(spreadJson.has("picture_in"))
+				spread.setSpreadPosterUrl(spreadJson.getString("picture_in"));
+				
+			if(spreadJson.has("title"))
+				spread.setSpreadTitle(spreadJson.getString("title"));
+			
+			if(spreadJson.has("award_list"))
+				spread.setSpreadTitleContent(spreadJson.getString("award_list"));
+		} 
+		catch (JSONException e){
+			e.printStackTrace();
+			return null;
+		}	
+		return spread;
 	}
 	
 	public Movie movieJsonToClass (JSONObject movieJson) {

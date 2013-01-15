@@ -11,6 +11,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,6 +71,10 @@ public class RecordListAdapter extends BaseAdapter{
 		name.setText(records.get(position).getUser().getName());
 		score.setText("評價 :" + records.get(position).getScoreString());
 		user_comment.setText(records.get(position).getComment());
+		if(records.get(position).getComment().length() > 70) {
+			user_comment.setText(Html.fromHtml(records.get(position).getComment().subSequence(0, 60) + "<font color=\"#454545\">"
+					+ "   ...更多" + "</font>"));
+		}
 		textviewLike.setText(records.get(position).getLoveCount()+"");
 		if(records.get(position).getIsLovedByUser()) { 
 			//imageviewLike.setImageResource(R.drawable.facebook_like);

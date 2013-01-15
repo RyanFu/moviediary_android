@@ -4,24 +4,30 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
+
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.jumplife.imageload.ImageLoader;
-import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.Spread;
 
 public class SpreadInfoActivity extends TrackedActivity {
 
-    private TextView topbar_text;
     private TextView spreadTitle;
     private TextView spreadTitleContent;
     private TextView spreadTime;
@@ -32,13 +38,15 @@ public class SpreadInfoActivity extends TrackedActivity {
     private TextView spreadGiftContent;
     private TextView spreadNotify;
     private TextView spreadNotifyContent;
+    private TextView topbarText;
     private ImageView ivSpreadPoster;  
     private ImageView ivSpreadTime;
     private ImageView ivSpreadMethod;   
     private ImageView ivSpreadMethodStep;
     private ImageView ivSpreadGift;   
     private ImageView ivSpreadGiftContent;
-    private ImageView ivSpreadNotify;   
+    private ImageView ivSpreadNotify;
+    private Button buttonJoin;
     private LinearLayout llMethodContent;
     
     private ImageLoader imageLoader;
@@ -72,9 +80,11 @@ public class SpreadInfoActivity extends TrackedActivity {
         spreadId = extras.getInt("spread_id");
         functionFlag = extras.getInt("spread_type");
         
-        imageLoader = new ImageLoader(SpreadInfoActivity.this);
+        topbarText = (TextView) findViewById(R.id.topbar_text);
+        topbarText.setText("活動內容");
+
+        imageLoader = new ImageLoader(SpreadInfoActivity.this, 0, R.drawable.post_background);
         
-        topbar_text = (TextView) findViewById(R.id.topbar_text);
         spreadTitle = (TextView) findViewById(R.id.textview_title);
         spreadTitleContent = (TextView) findViewById(R.id.textview_title_content);
         spreadTime = (TextView) findViewById(R.id.textview_time);
@@ -94,13 +104,30 @@ public class SpreadInfoActivity extends TrackedActivity {
         ivSpreadGiftContent = (ImageView) findViewById(R.id.imageview_gift_content);
         ivSpreadNotify = (ImageView) findViewById(R.id.imageview_notify);
         
+        buttonJoin = (Button) findViewById(R.id.button_join);
+        buttonJoin.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+            	if(functionFlag == FLAG_CURRENT) {
+					Intent newAct = new Intent();
+					newAct.putExtra("movie_id", spread.getMovieId());					
+					newAct.setClass(SpreadInfoActivity.this, MovieShowActivity.class);
+					startActivity(newAct);
+                 } else if(functionFlag == FLAG_RESULT) {
+                	 Uri uri = Uri.parse("http://www.facebook.com/movietalked");
+                     Intent it = new Intent(Intent.ACTION_VIEW, uri);
+                     startActivity(it);
+                 }
+            }
+        });
+        
         llMethodContent = (LinearLayout) findViewById(R.id.ll_method_content);
     }
     
     private void setViews() {
-        topbar_text.setText("電影資訊");
         spreadTitle.setText("電影資訊");        
-        imageLoader.DisplayImage("", ivSpreadPoster);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        imageLoader.DisplayImage(spread.getSpreadPosterUrl(), ivSpreadPoster, displayMetrics.widthPixels);
         
         if(spread.getSpreadTitleContent() != null && !spread.getSpreadTitleContent().equals("")) {
 	        spreadTitleContent.setText(spread.getSpreadTitleContent());
@@ -126,7 +153,7 @@ public class SpreadInfoActivity extends TrackedActivity {
 	        }
 	        
 	        if(spread.getSpreadMethodStepUrl() != null && !spread.getSpreadMethodStepUrl().equals("")) {
-		        imageLoader.DisplayImage(spread.getSpreadMethodStepUrl(), ivSpreadMethodStep);
+	        	imageLoader.DisplayImage(spread.getSpreadMethodStepUrl(), ivSpreadMethodStep, displayMetrics.widthPixels);
 		        ivSpreadMethodStep.setVisibility(View.VISIBLE);
 	        }
         }
@@ -141,12 +168,12 @@ public class SpreadInfoActivity extends TrackedActivity {
 	        	spreadGiftContent.setVisibility(View.VISIBLE);
 	        }
 	        if(spread.getSpreadGiftUrl() != null && !spread.getSpreadGiftUrl().equals("")) {
-		        imageLoader.DisplayImage(spread.getSpreadGiftUrl(), ivSpreadGiftContent);
+		        imageLoader.DisplayImage(spread.getSpreadGiftUrl(), ivSpreadGiftContent, displayMetrics.widthPixels);
 		        ivSpreadGiftContent.setVisibility(View.VISIBLE);
 	        }
         }
         
-        if(spread.getSpreadNotifyContent() != null && spread.getSpreadNotifyContent().equals("")) {
+        if(spread.getSpreadNotifyContent() != null && !spread.getSpreadNotifyContent().equals("")) {
 	        spreadNotify.setVisibility(View.VISIBLE);
 	        ivSpreadNotify.setVisibility(View.VISIBLE);	        
 	        spreadNotifyContent.setText(spread.getSpreadNotifyContent());
@@ -154,37 +181,43 @@ public class SpreadInfoActivity extends TrackedActivity {
         }
     }
 
-    private void setListener() {
-    	 /*if(functionFlag == FLAG_CURRENT) {
-         	newAct.putExtra("spread_id", spreadCurrentList.get(position).getId());
-         	newAct.putExtra("spread_type", FLAG_CURRENT);
-             newAct.setClass(SpreadActivity.this, SpreadInfoActivity.class);
-             startActivity(newAct);
-         } else if(functionFlag == FLAG_RESULT) {
-         	newAct.putExtra("spread_id", spreadResultList.get(position).getId());
-         	newAct.putExtra("spread_type", FLAG_CURRENT);
-             newAct.setClass(SpreadActivity.this, SpreadInfoActivity.class);
-             startActivity(newAct);
-         } */               
+    private void setListener() {               
     }
 
-
-    private void setMethodContent() {
-    	llMethodContent.removeAllViews();
-    	for(int i=0; i<0; i++) {
-    		LayoutInflater myInflater = LayoutInflater.from(SpreadInfoActivity.this);
-    		View converView = myInflater.inflate(R.layout.item_spread_method, null);
-    		TextView textviewNo = (TextView) converView.findViewById(R.id.textview_no);
-    		TextView textviewContent = (TextView) converView.findViewById(R.id.textview_content);
-    		
-    		textviewNo.setText(i+1 + ".");
-    		textviewContent.setText("");
-    		llMethodContent.addView(converView);
+    @SuppressWarnings("deprecation")
+	private void setMethodContent() {
+    	if(spread.getSpreadMethodStep() != null) {
+    		llMethodContent.setVisibility(View.VISIBLE);
+	    	String[] method = spread.getSpreadMethodStep().split("#");
+	    	LayoutInflater myInflater = LayoutInflater.from(SpreadInfoActivity.this);
+	    	llMethodContent.removeAllViews();
+	    	
+	    	if(method.length > 0) {
+		    	for(int i=0; i<method.length; i++) {
+		    		View converView = myInflater.inflate(R.layout.item_spread_method, null);
+		    		TextView textviewNo = (TextView) converView.findViewById(R.id.textview_no);
+		    		TextView textviewContent = (TextView) converView.findViewById(R.id.textview_content);
+		    		
+		    		textviewNo.setText(i+1 + ".");
+		    		textviewContent.setText(method[i]);
+		    		llMethodContent.addView(converView, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		    	}
+	    	} else {
+	    		View converView = myInflater.inflate(R.layout.item_spread_method, null);
+	    		TextView textviewContent = (TextView) converView.findViewById(R.id.textview_content);
+	    		textviewContent.setText(spread.getSpreadMethodStep());
+	    		llMethodContent.addView(converView, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+	    	}
     	}
     }
     
     private void fetchData() {
     	MovieAPI movieAPI = new MovieAPI();
+    	if(functionFlag == FLAG_CURRENT) {
+            spread = movieAPI.getCurrentSpread(spreadId);
+    	} else if(functionFlag == FLAG_RESULT) {
+            spread = movieAPI.getResultSpread(spreadId);
+    	}   	
     }
 
     class LoadDataTask extends AsyncTask<Integer, Integer, String> {
@@ -223,13 +256,23 @@ public class SpreadInfoActivity extends TrackedActivity {
         @Override
         protected void onPostExecute(String result) {
             progressdialogInit.dismiss();
-            if (spread == null) {
-                showReloadDialog(SpreadInfoActivity.this);
-            } else {
-                setViews();
-                setListener();
-                setMethodContent();
-            }
+            if (functionFlag == FLAG_CURRENT) {
+            	if(spread.getSpreadPosterUrl() != null && spread.getMovieId() != null) {
+            		setViews();
+                    setListener();
+                    setMethodContent();
+            	} else
+            		showReloadDialog(SpreadInfoActivity.this);
+            } else if(functionFlag == FLAG_RESULT) {
+            	if(spread.getSpreadPosterUrl() != null) {
+            		setViews();
+                    setListener();
+                    setMethodContent();
+            	} else
+            		showReloadDialog(SpreadInfoActivity.this);
+            } else 
+            	showReloadDialog(SpreadInfoActivity.this);
+            
             super.onPostExecute(result);
         }
 

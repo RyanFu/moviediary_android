@@ -4,10 +4,12 @@
         android:layout_height="fill_parent"
         android:orientation="vertical"
         >
-    <include android:id="@+id/topBar" layout="@layout/topbar"/>
+    <include android:id="@+id/topBar" layout="@layout/topbar"
+        android:layout_alignParentTop="true"/>
     <ScrollView 
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
+	    android:layout_below="@+id/topBar"
 	    android:layout_above="@+id/relativelayout_check"
 	    android:background="@color/background">
 	    <LinearLayout 
@@ -19,7 +21,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitCenter"
-            android:src="@drawable/stub" />
+            android:src="@drawable/post_background" />
 		    <RelativeLayout 
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
@@ -48,7 +50,7 @@
 	                android:layout_alignTop="@+id/imageview_title"
 	                android:layout_marginLeft="8dp"
 	                android:textColor="@color/black"
-	                android:textSize="25dp"
+	                android:textSize="20dp"
 	                android:text="活動標題" />
 		        <TextView android:id="@+id/textview_title_content"
 	                android:layout_width="wrap_content"
@@ -58,7 +60,7 @@
 	                android:layout_marginTop="5dp"
 	                android:layout_marginBottom="20dp"
 	                android:textColor="@color/deep_grey"
-	                android:textSize="22dp"
+	                android:textSize="16dp"
 	                android:visibility="gone" />
 		        
 		        <ImageView android:id="@+id/imageview_time"
@@ -75,7 +77,7 @@
 	                android:layout_alignTop="@+id/imageview_time"
                     android:layout_marginLeft="8dp"
 	                android:textColor="@color/black"
-	                android:textSize="25dp"
+	                android:textSize="20dp"
 	                android:text="活動時間"
                     android:visibility="gone" />
 	            <TextView android:id="@+id/textview_time_content"
@@ -86,7 +88,7 @@
 	                android:layout_marginTop="5dp"
 	                android:layout_marginBottom="20dp"
                     android:textColor="@color/deep_grey"
-                    android:textSize="22dp"
+                    android:textSize="16dp"
                     android:visibility="gone" />
 	                            
 	            <ImageView android:id="@+id/imageview_method"
@@ -103,7 +105,7 @@
 	                android:layout_alignTop="@+id/imageview_method"
                     android:layout_marginLeft="8dp"
 	                android:textColor="@color/black"
-	                android:textSize="25dp"
+	                android:textSize="20dp"
 	                android:text="活動辦法"
                     android:visibility="gone" />
 	            <LinearLayout android:id="@+id/ll_method_content"
@@ -111,6 +113,7 @@
 	                android:layout_height="wrap_content"
                     android:layout_alignLeft="@+id/imageview_method"
 	                android:layout_below="@+id/textview_method"
+	                android:orientation="vertical"
 	                android:layout_marginBottom="5dp"
                     android:visibility="gone" />
 	            <ImageView android:id="@+id/imageview_method_step"
@@ -120,7 +123,7 @@
                     android:layout_alignLeft="@+id/textview_method"
 	                android:layout_marginRight="5dp"
 	                android:scaleType="fitCenter"
-	                android:src="@drawable/stub"
+	                android:src="@drawable/post_background"
                     android:visibility="gone" />
 	            <TextView android:id="@+id/textview_method_result"
 	                android:layout_width="wrap_content"
@@ -130,7 +133,7 @@
 	                android:layout_marginTop="5dp"
 	                android:layout_marginBottom="20dp"
                     android:textColor="@color/deep_grey"
-                    android:textSize="22dp"
+                    android:textSize="16dp"
                     android:visibility="gone" />
 	            
 	            <ImageView android:id="@+id/imageview_gift"
@@ -147,7 +150,7 @@
 	                android:layout_alignTop="@+id/imageview_gift"
                     android:layout_marginLeft="8dp"
 	                android:textColor="@color/black"
-	                android:textSize="25dp"
+	                android:textSize="20dp"
 	                android:text="活動贈品"
                     android:visibility="gone" />
 	            <TextView android:id="@+id/textview_gift_content"
@@ -158,7 +161,7 @@
 	                android:layout_marginTop="5dp"
 	                android:layout_marginBottom="5dp"
                     android:textColor="@color/deep_grey"
-                    android:textSize="22dp"
+                    android:textSize="16dp"
                     android:visibility="gone" />
 	            <ImageView android:id="@+id/imageview_gift_content"
 	                android:layout_width="fill_parent"
@@ -167,13 +170,13 @@
                     android:layout_alignLeft="@+id/textview_gift"
 	                android:layout_marginRight="5dp"
 	                android:scaleType="fitCenter"
-	                android:src="@drawable/stub"
+	                android:src="@drawable/post_background"
                     android:visibility="gone" />
 	            
 	            <ImageView android:id="@+id/imageview_notify"
                     android:layout_width="27dp"
                     android:layout_height="27dp"
-                    android:layout_below="@+id/imageview_gift_step"
+                    android:layout_below="@+id/imageview_gift_content"
                     android:scaleType="fitCenter"
                     android:src="@drawable/timeline_5"
                     android:visibility="gone" />
@@ -184,7 +187,7 @@
                     android:layout_alignTop="@+id/imageview_notify"
                     android:layout_marginLeft="8dp"
                     android:textColor="@color/black"
-                    android:textSize="25dp"
+                    android:textSize="20dp"
                     android:text="注意事項"
                     android:visibility="gone" />
                 <TextView android:id="@+id/textview_notify_content"
@@ -195,7 +198,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginBottom="20dp"
                     android:textColor="@color/deep_grey"
-                    android:textSize="22dp"
+                    android:textSize="16dp"
                     android:visibility="gone" />
                 
 				</RelativeLayout>

@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -175,12 +176,20 @@ public class MyMovieRecord extends TrackedActivity {
             }
         });
         recordGridView.setOnRefreshListener(new OnRefreshListener2<GridView>() {
-            public void onPullDownToRefresh(PullToRefreshBase<GridView> refreshView) {
+            @SuppressWarnings("deprecation")
+			public void onPullDownToRefresh(PullToRefreshBase<GridView> refreshView) {
+            	recordGridView.setLastUpdatedLabel(DateUtils.formatDateTime(getApplicationContext(),
+						System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+								| DateUtils.FORMAT_ABBREV_ALL));
                 functionFlag = FLAG_CHECKIN;
                 new RefreshTask().execute();
             }
 
-            public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
+            @SuppressWarnings("deprecation")
+			public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
+            	recordGridView.setLastUpdatedLabel(DateUtils.formatDateTime(getApplicationContext(),
+						System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+								| DateUtils.FORMAT_ABBREV_ALL));
                 functionFlag = FLAG_CHECKIN;
                 new NextPageTask().execute();
             }

@@ -147,28 +147,6 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
         commentStr = comment.getText().toString();
         PostRecordTask task = new PostRecordTask();
         task.execute();
-
-        if (facebook_check) {
-        	EasyTracker.getTracker().trackEvent("電影打卡", "收藏", "", (long)0);
-
-            Log.d(TAG, "facebook is checked");
-            int drawableId = R.drawable.fbgood;
-            if (score == MovieAPI.SCORE_GOOD) {
-                drawableId = R.drawable.fbgood;
-            } else if (score == MovieAPI.SCORE_NORMAL) {
-                drawableId = R.drawable.fbsoso;
-            } else if (score == MovieAPI.SCORE_BAD) {
-                drawableId = R.drawable.fbbad;
-            }
-
-            InputStream is = this.getResources().openRawResource(drawableId);
-            Bitmap sec = BitmapFactory.decodeStream(is);
-            sec = Bitmap.createScaledBitmap(sec, sec.getWidth(), sec.getHeight(), true);
-            Bitmap fst = posterDrawable;
-            fst = Bitmap.createScaledBitmap(fst, 291, 418, true);
-
-            fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), commentStr);
-        }
     }
 
     class PostRecordTask extends AsyncTask<Integer, Integer, String> {
@@ -195,8 +173,33 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
 
             user.setAccount(fb_id);
             Record record = new Record(-1, new Date(), score, commentStr, user, movie, 0, false);
-            if (movieAPI.recordMovie(record))
+            if (movieAPI.recordMovie(record) == 1) {
+
+                if (facebook_check) {
+                	EasyTracker.getTracker().trackEvent("電影打卡", "收藏", "", (long)0);
+
+                    Log.d(TAG, "facebook is checked");
+                    int drawableId = R.drawable.fbgood;
+                    if (score == MovieAPI.SCORE_GOOD) {
+                        drawableId = R.drawable.fbgood;
+                    } else if (score == MovieAPI.SCORE_NORMAL) {
+                        drawableId = R.drawable.fbsoso;
+                    } else if (score == MovieAPI.SCORE_BAD) {
+                        drawableId = R.drawable.fbbad;
+                    }
+
+                    InputStream is = CollectDialog.this.getResources().openRawResource(drawableId);
+                    Bitmap sec = BitmapFactory.decodeStream(is);
+                    sec = Bitmap.createScaledBitmap(sec, sec.getWidth(), sec.getHeight(), true);
+                    Bitmap fst = posterDrawable;
+                    fst = Bitmap.createScaledBitmap(fst, 291, 418, true);
+
+                    fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), commentStr);
+                }
+                
                 return "progress end";
+            } else if (movieAPI.recordMovie(record) == 2)
+            	return "double check";
             else
                 return "progress false";
         }
@@ -215,6 +218,10 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
                 Intent intent = new Intent(CollectDialog.this, MovieShowActivity.class);
                 setResult(MovieShowActivity.CHECK_SUCESS, intent);
                 CollectDialog.this.finish();
+            } else if (result.equals("double check")) {
+                Toast toast = Toast.makeText(CollectDialog.this, "已有相同打卡  可至電影櫃修改內容", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
             } else {
                 Toast toast = Toast.makeText(CollectDialog.this, "電影櫃打卡失敗", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);

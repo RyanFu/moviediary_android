@@ -85,7 +85,7 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
         line.setVisibility(View.GONE);
         search.setVisibility(View.GONE);
         topbarLayout.setVisibility(View.VISIBLE);
-        setting.setVisibility(View.GONE);
+        setting.setVisibility(View.VISIBLE);
 
         tabHost.setOnTabChangedListener(this);
         sharepre = new SharePreferenceIO(MovieTabActivities.this);

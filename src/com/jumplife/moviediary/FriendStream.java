@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -126,11 +127,19 @@ public class FriendStream extends TrackedActivity {
         });
 
         recordListView.setOnRefreshListener(new OnRefreshListener2<ListView>() {
-           public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+           @SuppressWarnings("deprecation")
+		public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+        	   recordListView.setLastUpdatedLabel(DateUtils.formatDateTime(getApplicationContext(),
+						System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+								| DateUtils.FORMAT_ABBREV_ALL));
             	new RefreshTask().execute();
             }
 
-            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+            @SuppressWarnings("deprecation")
+			public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+            	recordListView.setLastUpdatedLabel(DateUtils.formatDateTime(getApplicationContext(),
+						System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+								| DateUtils.FORMAT_ABBREV_ALL));
             	new NextPageTask().execute();
             }
         });

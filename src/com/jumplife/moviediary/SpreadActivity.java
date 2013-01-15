@@ -71,12 +71,12 @@ public class SpreadActivity extends TrackedActivity {
                 
                 if(functionFlag == FLAG_CURRENT && spreadCurrentList != null) {
                 	newAct.putExtra("spread_id", spreadCurrentList.get(position).getId());
-                	newAct.putExtra("spread_type", FLAG_CURRENT);
+                	newAct.putExtra("spread_type", functionFlag);
 	                newAct.setClass(SpreadActivity.this, SpreadInfoActivity.class);
 	                startActivity(newAct);
                 } else if(functionFlag == FLAG_RESULT && spreadResultList != null) {
                 	newAct.putExtra("spread_id", spreadResultList.get(position).getId());
-                	newAct.putExtra("spread_type", FLAG_CURRENT);
+                	newAct.putExtra("spread_type", functionFlag);
 	                newAct.setClass(SpreadActivity.this, SpreadInfoActivity.class);
 	                startActivity(newAct);
                 }                
@@ -86,12 +86,10 @@ public class SpreadActivity extends TrackedActivity {
 
     private void fetchData() {
     	MovieAPI movieAPI = new MovieAPI();
-    	if(functionFlag == FLAG_CURRENT && spreadCurrentList != null) { 
-
-            //spreadCurrentList = sqlMovie.getMovieList();	
+    	if(functionFlag == FLAG_CURRENT && spreadCurrentList != null) {
+            spreadCurrentList = movieAPI.getCurrentSpreadList();
     	} else if(functionFlag == FLAG_RESULT && spreadResultList != null) {
-
-            //spreadResultList = sqlMovie.getMovieList();
+            spreadResultList = movieAPI.getResultSpreadList();
     	}
     }
 
