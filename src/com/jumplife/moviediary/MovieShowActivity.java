@@ -87,6 +87,8 @@ public class MovieShowActivity extends TrackedActivity {
         	loadDataTask.execute();
         else
         	loadDataTask.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);
+        
+        
     }
 
     @Override
@@ -234,7 +236,7 @@ public class MovieShowActivity extends TrackedActivity {
         buttonCheck.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if (Utility.IsSessionValid(MovieShowActivity.this)) {
-                	EasyTracker.getTracker().trackEvent("電影打卡列表", "打卡", "", (long)0);
+                	
                     // createGooglePlayDialog();
                     // alertDialog.show();
                     ClickMovieTask task = new ClickMovieTask();
@@ -473,6 +475,8 @@ public class MovieShowActivity extends TrackedActivity {
                 uerImg.compress(Bitmap.CompressFormat.PNG, 50, bsUser);
                 intentMain.putExtra("userImage", bsUser.toByteArray());
             }
+            
+            EasyTracker.getTracker().trackEvent("電影打卡列表", "打卡", movie.getChineseName(), (long)0);
 
             intentMain.putExtra("id", movie.getId());
             intentMain.putExtra("chineseName", movie.getChineseName());
@@ -532,14 +536,17 @@ public class MovieShowActivity extends TrackedActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+	@Override
+    public void onStart() {
+      super.onStart();
+      EasyTracker.getInstance().activityStart(this);
+      EasyTracker.getTracker().trackView("/campaign/checkin/list");
     }
-
+    
     @Override
-    protected void onStop() {
-        super.onStop();
+    public void onStop() {
+      super.onStop();
+      EasyTracker.getInstance().activityStop(this);
     }
 
     @Override

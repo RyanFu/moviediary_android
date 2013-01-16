@@ -150,6 +150,7 @@ public class MovieInfo extends TrackedActivity {
         buttonCheck.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 EasyTracker.getTracker().trackEvent("電影資訊", "打卡", "", (long)0);
+                EasyTracker.getTracker().trackView("url_path");
                 if (Utility.IsSessionValid(MovieInfo.this)) {
                     // createGooglePlayDialog();
                     // alertDialog.show();

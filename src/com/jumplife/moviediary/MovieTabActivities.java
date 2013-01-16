@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
+
 import com.google.analytics.tracking.android.TrackedTabActivity;
 import com.jumplife.imageload.ImageLoader;
 import com.jumplife.loginactivity.LoginActivity;
@@ -142,7 +143,7 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
             return super.onKeyDown(keyCode, event);
     }
 
-    private void tabSpread() {
+    private void tabSpread() { 	
         View ActivitysTab = LayoutInflater.from(this).inflate(R.layout.custom_tab, null);
         ImageView image = (ImageView) ActivitysTab.findViewById(R.id.imageview_tabicon);
         image.setImageResource(R.drawable.activitybar);

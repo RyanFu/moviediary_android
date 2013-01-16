@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.jumplife.imageload.ImageLoader;
 import com.jumplife.moviediary.api.MovieAPI;
@@ -73,6 +74,8 @@ public class SpreadInfoActivity extends TrackedActivity {
         	taskLoad.execute();
         else
         	taskLoad.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);
+        
+        
     }
 
     private void findViews() {
@@ -108,11 +111,13 @@ public class SpreadInfoActivity extends TrackedActivity {
         buttonJoin.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
             	if(functionFlag == FLAG_CURRENT) {
+            		EasyTracker.getTracker().trackEvent("活動介紹", "參加活動", "點擊", (long)0);
 					Intent newAct = new Intent();
 					newAct.putExtra("movie_id", spread.getMovieId());					
 					newAct.setClass(SpreadInfoActivity.this, MovieShowActivity.class);
 					startActivity(newAct);
                  } else if(functionFlag == FLAG_RESULT) {
+                	 EasyTracker.getTracker().trackEvent("活動公布", "粉絲團", "點擊", (long)0);
                 	 Uri uri = Uri.parse("http://www.facebook.com/movietalked");
                      Intent it = new Intent(Intent.ACTION_VIEW, uri);
                      startActivity(it);
@@ -327,15 +332,17 @@ public class SpreadInfoActivity extends TrackedActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+	@Override
+    public void onStart() {
+      super.onStart();
+      EasyTracker.getInstance().activityStart(this);
+      EasyTracker.getTracker().trackView("/campaign/intro");
     }
-
+    
     @Override
-    protected void onStop() {
-        super.onStop();
-
+    public void onStop() {
+      super.onStop();
+      EasyTracker.getInstance().activityStop(this);
     }
 
     @Override

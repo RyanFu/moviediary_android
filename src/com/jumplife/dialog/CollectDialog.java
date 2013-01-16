@@ -72,6 +72,8 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
         	tast.execute();
         else
         	tast.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);
+        
+        
     }
 
     @Override
@@ -176,7 +178,7 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
             if (movieAPI.recordMovie(record) == 1) {
 
                 if (facebook_check) {
-                	EasyTracker.getTracker().trackEvent("電影打卡", "收藏", "", (long)0);
+                	EasyTracker.getTracker().trackEvent("電影打卡", "收藏", movie.getChineseName(), (long)0);
 
                     Log.d(TAG, "facebook is checked");
                     int drawableId = R.drawable.fbgood;
@@ -266,15 +268,17 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
+	@Override
+    public void onStart() {
+      super.onStart();
+      EasyTracker.getInstance().activityStart(this);
+      EasyTracker.getTracker().trackView("/movie/checkin");
     }
-
+    
     @Override
-    protected void onStop() {
-        super.onStop();
+    public void onStop() {
+      super.onStop();
+      EasyTracker.getInstance().activityStop(this);
     }
 
     @Override
