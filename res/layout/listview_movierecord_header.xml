@@ -150,6 +150,7 @@
 			    android:layout_alignLeft="@+id/textView_score"
 			    android:layout_toLeftOf="@+id/imageView_next_info"
 			    android:layout_marginTop="5dp"
+			    android:lineSpacingMultiplier="1.1"
 			    android:paddingLeft="2dp"
 			    android:textSize="17dp"
 			    android:gravity="center_vertical"
