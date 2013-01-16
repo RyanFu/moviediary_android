@@ -6,11 +6,17 @@
         >
     <include android:id="@+id/topBar" layout="@layout/topbar"
         android:layout_alignParentTop="true"/>
+    <View android:id="@+id/line0"
+        android:layout_width="fill_parent" 
+        android:layout_height="2dp"
+        android:layout_below="@+id/topBar"
+        android:background="#545454"
+        />
     <ScrollView 
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
-	    android:layout_below="@+id/topBar"
-	    android:layout_above="@+id/relativelayout_check"
+	    android:layout_below="@+id/line0"
+        android:layout_above="@+id/relativelayout_check"
 	    android:background="@color/background">
 	    <LinearLayout 
 	        android:layout_width="fill_parent"

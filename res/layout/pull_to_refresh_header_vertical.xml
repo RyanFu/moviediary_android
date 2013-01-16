@@ -44,7 +44,8 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearance"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/deep_grey" />
 
             <TextView
                 android:id="@+id/pull_to_refresh_sub_text"
@@ -52,7 +53,8 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:visibility="gone" />
+                android:visibility="gone"
+                android:textColor="@color/fake_tab_button_text_normal" />
         </LinearLayout>
     </FrameLayout>
 

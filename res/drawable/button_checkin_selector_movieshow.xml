@@ -3,14 +3,14 @@
     <item android:state_pressed="true" > <!-- pressed -->
         <shape>
             <gradient
-                android:startColor="#440000"
-                android:endColor="#440000"
+                android:startColor="@color/button_check_deep"
+                android:endColor="@color/button_check_light"
                 android:angle="270" />
             <corners  
                 android:radius="2dp" />
             
             <stroke  
-                android:width="1dp"  
+                android:width="2dp"  
                 android:color="#550000" />
             
             <size android:height="35dp" />
@@ -21,13 +21,13 @@
     <item android:state_focused="true"> <!-- focused --> 
         <shape>
             <gradient
-                android:startColor="#880000"
-                android:endColor="#880000"
+                android:startColor="@color/button_check_light"
+                android:endColor="@color/button_check_deep"
                 android:angle="270" />
             <corners  
-                android:radius="2dp" />
+                android:radius="4dp" />
             <stroke  
-                android:width="1dp"  
+                android:width="2dp"  
                 android:color="#550000" />
             
             <size android:height="35dp" />
@@ -37,13 +37,13 @@
     <item> <!-- default -->
         <shape>
             <gradient
-                android:startColor="#880000"
-                android:endColor="#880000"
+                android:startColor="@color/button_check_light"
+                android:endColor="@color/button_check_deep"
                 android:angle="270" />
             <corners  
-                android:radius="2dp" />
+                android:radius="4dp" />
             <stroke  
-                android:width="1dp"  
+                android:width="2dp"  
                 android:color="#550000" />
             
             <size android:height="35dp" />

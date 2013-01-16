@@ -33,7 +33,7 @@
 			android:maxLength="50" />
 	    
 		<ImageView android:id="@+id/imageview_like"
-            android:layout_width="42dp" android:layout_height="22dp"
+            android:layout_width="46dp" android:layout_height="23dp"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/user_comment"
             android:orientation="horizontal"
@@ -43,10 +43,10 @@
             android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:layout_alignRight="@+id/imageview_like"
             android:layout_alignBottom="@+id/imageview_like"
-            android:layout_marginRight="2dp"
+            android:layout_marginRight="4dp"
             android:gravity="center"
             android:textColor="@color/like"
-            android:textSize="16dp"
+            android:textSize="17dp"
             android:text="0" />
 		<!-- <LinearLayout android:id="@+id/linearlayout_like"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
