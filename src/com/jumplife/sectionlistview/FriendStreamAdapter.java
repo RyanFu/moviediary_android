@@ -11,7 +11,6 @@ import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.Record;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -21,7 +20,6 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class FriendStreamAdapter extends BaseAdapter{
@@ -72,6 +70,7 @@ public class FriendStreamAdapter extends BaseAdapter{
 			TextView name = (TextView)converView.findViewById(R.id.user_name);
 			TextView score = (TextView)converView.findViewById(R.id.user_score);
 			TextView user_comment = (TextView)converView.findViewById(R.id.user_comment);
+			TextView record_date = (TextView)converView.findViewById(R.id.record_date);
 			textviewLike = (TextView)converView.findViewById(R.id.textview_like);
 			imageviewLike = (ImageView)converView.findViewById(R.id.imageview_like);
 			//linearLike = (LinearLayout)converView.findViewById(R.id.linearlayout_like);
@@ -98,6 +97,8 @@ public class FriendStreamAdapter extends BaseAdapter{
 			
 			//linearLike.setOnClickListener(new ItemButton_Click(position));
 			imageviewLike.setOnClickListener(new ItemButton_Click(position));
+			DateFormat createFormatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+			record_date.setText(createFormatter.format(record.getCheckinTime()));
 			/*Record record = (Record) objects.get(position);
 			TextView user_score = (TextView)converView.findViewById(R.id.user_score);
 			user_score.setVisibility(View.GONE);
