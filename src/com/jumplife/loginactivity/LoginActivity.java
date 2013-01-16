@@ -60,6 +60,7 @@ public class LoginActivity extends Activity {
     public final static int LOGIN_ACTIVITY_REQUEST_CODE = 90;
     public final static int LOGIN_ACTIVITY_RESULT_CODE_SUCCESS = 95;
     public final static int LOGIN_ACTIVITY_RESULT_CODE_FAIL = 96;
+    public final static int LOGIN_ACTIVITY_REQUEST_CODE_LIKE = 100;
     
     final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
 
@@ -120,7 +121,7 @@ public class LoginActivity extends Activity {
         });        
         progressdialogInit.setCanceledOnTouchOutside(false);
         
-        if (Utility.mFacebook.isSessionValid()) {
+        if (Utility.IsSessionValid(LoginActivity.this)) {
         	progressdialogInit.show();
             requestUserData();
         }

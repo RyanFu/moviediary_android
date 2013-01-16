@@ -78,7 +78,10 @@
     <ListView
         android:id="@+id/listview_spread"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="fill_parent"        
+        android:layout_margin="5dp"
+        android:divider="@null"
+        android:dividerHeight="5dp"
         android:background="@color/background" />
     <ImageButton android:id="@+id/refresh"
         android:layout_width="fill_parent"

@@ -3,13 +3,15 @@ package com.jumplife.sectionlistview;
 import java.util.ArrayList;
 
 import com.jumplife.imageload.ImageLoader;
+import com.jumplife.loginactivity.LoginActivity;
+import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.R;
 import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.Record;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -19,12 +21,11 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class RecordListAdapter extends BaseAdapter{
 	
-    Context mContext;
+    private Activity mActivity;
     private String fbId;
 	private ArrayList<Record> records;
 	private ImageLoader imageLoader;
@@ -32,11 +33,11 @@ public class RecordListAdapter extends BaseAdapter{
 	private ImageView imageviewLike;
 	//private LinearLayout linearLike;
 	
-	public RecordListAdapter(Context mContext, ArrayList<Record> recordList, String fbId){
+	public RecordListAdapter(Activity mActivity, ArrayList<Record> recordList, String fbId){
 		this.records = recordList;
-		this.mContext = mContext;
+		this.mActivity = mActivity;
 		this.fbId = fbId;
-		imageLoader=new ImageLoader(mContext);
+		imageLoader=new ImageLoader(mActivity);
 	}
 
 	public int getCount() {
@@ -56,8 +57,8 @@ public class RecordListAdapter extends BaseAdapter{
 
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
-		LayoutInflater myInflater = LayoutInflater.from(mContext);
-		View converView = myInflater.inflate(R.layout.listview_records, null);
+		LayoutInflater myInflater = LayoutInflater.from(mActivity);
+		View converView = myInflater.inflate(R.layout.listview_movieshow, null);
 		ImageView user_avatar = (ImageView)converView.findViewById(R.id.user_avatar);
 		TextView name = (TextView)converView.findViewById(R.id.user_name);
 		TextView score = (TextView)converView.findViewById(R.id.user_score);
@@ -71,8 +72,8 @@ public class RecordListAdapter extends BaseAdapter{
 		name.setText(records.get(position).getUser().getName());
 		score.setText("評價 :" + records.get(position).getScoreString());
 		user_comment.setText(records.get(position).getComment());
-		if(records.get(position).getComment().length() > 70) {
-			user_comment.setText(Html.fromHtml(records.get(position).getComment().subSequence(0, 60) + "<font color=\"#454545\">"
+		if(records.get(position).getComment().length() > 50) {
+			user_comment.setText(Html.fromHtml(records.get(position).getComment().subSequence(0, 40) + "<font color=\"#818181\">"
 					+ "   ...更多" + "</font>"));
 		}
 		textviewLike.setText(records.get(position).getLoveCount()+"");
@@ -81,13 +82,13 @@ public class RecordListAdapter extends BaseAdapter{
 			//linearLike.setBackgroundResource(R.drawable.button_like_press);
 			//textviewLike.setTextColor(Color.DKGRAY);
 			imageviewLike.setImageResource(R.drawable.md_like);
-			textviewLike.setTextColor(mContext.getResources().getColor(R.color.white1));
+			textviewLike.setTextColor(mActivity.getResources().getColor(R.color.white1));
 		} else {
 			//imageviewLike.setImageResource(R.drawable.facebook_like_grey);
 			//linearLike.setBackgroundResource(R.drawable.button_like);
 			//textviewLike.setTextColor(Color.GRAY);
 			imageviewLike.setImageResource(R.drawable.md_unlike);
-			textviewLike.setTextColor(mContext.getResources().getColor(R.color.like));
+			textviewLike.setTextColor(mActivity.getResources().getColor(R.color.like));
 		}
 		
 		//linearLike.setOnClickListener(new ItemButton_Click(position));
@@ -105,29 +106,35 @@ public class RecordListAdapter extends BaseAdapter{
 		}
 
 		public void onClick(View v) {
-			if(records.get(position).getIsLovedByUser()) {
-	    		records.get(position).setLoveCount( records.get(position).getLoveCount() - 1 );
-	    		textviewLike.setText(records.get(position).getLoveCount()+"");
-	    		//textviewLike.setTextColor(Color.GRAY);
-	    		//imageviewLike.setImageResource(R.drawable.facebook_like_grey);
-	    		//linearLike.setBackgroundResource(R.drawable.button_like);
-	    		imageviewLike.setImageResource(R.drawable.md_unlike);
-				textviewLike.setTextColor(mContext.getResources().getColor(R.color.like));
-	    		Log.d("", "IsLovedByUser");
-	    	} else {
-	    		records.get(position).setLoveCount( records.get(position).getLoveCount() + 1 );
-	    		textviewLike.setText(records.get(position).getLoveCount()+"");
-	    		//textviewLike.setTextColor(Color.DKGRAY);
-	    		//imageviewLike.setImageResource(R.drawable.facebook_like);
-	    		//linearLike.setBackgroundResource(R.drawable.button_like_press);
-	    		imageviewLike.setImageResource(R.drawable.md_like);
-				textviewLike.setTextColor(mContext.getResources().getColor(R.color.white1));
-	    		Log.d("", "IsNotLovedByUser");
-	    	}
-			LikeTask likeTask = new LikeTask(records.get(position).getIsLovedByUser(), records.get(position).getId()+"");
-			likeTask.execute();
-			records.get(position).setIsLovedByUser(!records.get(position).getIsLovedByUser());
-	    	notifyDataSetChanged();
+			if (Utility.IsSessionValid(mActivity)) {
+				if(records.get(position).getIsLovedByUser()) {
+		    		records.get(position).setLoveCount( records.get(position).getLoveCount() - 1 );
+		    		textviewLike.setText(records.get(position).getLoveCount()+"");
+		    		//textviewLike.setTextColor(Color.GRAY);
+		    		//imageviewLike.setImageResource(R.drawable.facebook_like_grey);
+		    		//linearLike.setBackgroundResource(R.drawable.button_like);
+		    		imageviewLike.setImageResource(R.drawable.md_unlike);
+					textviewLike.setTextColor(mActivity.getResources().getColor(R.color.like));
+		    		Log.d("", "IsLovedByUser");
+		    	} else {
+		    		records.get(position).setLoveCount( records.get(position).getLoveCount() + 1 );
+		    		textviewLike.setText(records.get(position).getLoveCount()+"");
+		    		//textviewLike.setTextColor(Color.DKGRAY);
+		    		//imageviewLike.setImageResource(R.drawable.facebook_like);
+		    		//linearLike.setBackgroundResource(R.drawable.button_like_press);
+		    		imageviewLike.setImageResource(R.drawable.md_like);
+					textviewLike.setTextColor(mActivity.getResources().getColor(R.color.white1));
+		    		Log.d("", "IsNotLovedByUser");
+		    	}
+				LikeTask likeTask = new LikeTask(records.get(position).getIsLovedByUser(), records.get(position).getId()+"");
+				likeTask.execute();
+				records.get(position).setIsLovedByUser(!records.get(position).getIsLovedByUser());
+		    	notifyDataSetChanged();
+            } else {
+            	Intent newAct = new Intent(); 
+            	newAct.setClass( mActivity, LoginActivity.class );
+            	mActivity.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE_LIKE);
+            }
 		}
 	}
 	
@@ -144,7 +151,7 @@ public class RecordListAdapter extends BaseAdapter{
 		
         @Override  
         protected void onPreExecute() {
-        	progressdialogInit= ProgressDialog.show(mContext, "Load", "Loading…");
+        	progressdialogInit= ProgressDialog.show(mActivity, "Load", "Loading…");
             super.onPreExecute();  
         }  
           

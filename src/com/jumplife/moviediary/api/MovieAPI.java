@@ -1431,7 +1431,7 @@ public class MovieAPI {
 				spread.setSpreadNotifyContent(spreadJson.getString("precaution"));
 			
 			if(spreadJson.has("movie_id"))
-				spread.setMovieId(spreadJson.getString("movie_id"));						
+				spread.setMovieId(spreadJson.getInt("movie_id"));						
 		} 
 		catch (JSONException e){
 			e.printStackTrace();

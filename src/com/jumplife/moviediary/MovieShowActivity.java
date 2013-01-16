@@ -24,6 +24,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -54,6 +55,7 @@ public class MovieShowActivity extends TrackedActivity {
     private Button            buttonFriend;
     private Button            buttonAll;
     private Button            buttonCheck;
+	private ImageButton 	  imageButtonRefresh;
     private View			  viewFriend;
     private View			  viewAll;
     private RelativeLayout    relativeMovieInfo;
@@ -138,6 +140,17 @@ public class MovieShowActivity extends TrackedActivity {
     	viewAll = (View) viewHeader.findViewById(R.id.view_1);
         viewFriend = (View) viewHeader.findViewById(R.id.view_2);
         relativeMovieInfo = (RelativeLayout) viewHeader.findViewById(R.id.relativelayout_movie_info);
+        
+        imageButtonRefresh = (ImageButton)findViewById(R.id.refresh);
+		imageButtonRefresh.setOnClickListener(new OnClickListener() {
+			public void onClick(View arg0) {
+				loadDataTask = new LoadDataTask();
+				if(Build.VERSION.SDK_INT < 11)
+					loadDataTask.execute();
+		        else
+		        	loadDataTask.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);
+			}			
+		});
     }
 
     private void fetchData() {
@@ -288,12 +301,13 @@ public class MovieShowActivity extends TrackedActivity {
 
         private ProgressDialog         progressdialogInit;
         private final OnCancelListener cancelListener = new OnCancelListener() {
-                                                          public void onCancel(DialogInterface arg0) {
-                                                              Log.d("", "loadDataTask.getStatus() != AsyncTask.Status.FINISHED");
-                                                              LoadDataTask.this.cancel(true);
-                                                              finish();
-                                                          }
-                                                      };
+	          public void onCancel(DialogInterface arg0) {
+	              LoadDataTask.this.cancel(true);
+	              listviewShow.setVisibility(View.GONE);
+                  imageButtonRefresh.setVisibility(View.VISIBLE);
+	              finish();
+	          }
+	      };
 
         @Override
         protected void onPreExecute() {
@@ -322,9 +336,13 @@ public class MovieShowActivity extends TrackedActivity {
         protected void onPostExecute(String result) {
             progressdialogInit.dismiss();
             if (movie == null || recordList == null) {
-                showReloadDialog(MovieShowActivity.this);
+            	listviewShow.setVisibility(View.GONE);
+                imageButtonRefresh.setVisibility(View.VISIBLE);
+                //showReloadDialog(MovieShowActivity.this);
             } else {
                 setView();
+                listviewShow.setVisibility(View.VISIBLE);
+                imageButtonRefresh.setVisibility(View.GONE);
             }
             super.onPostExecute(result);
         }
@@ -335,11 +353,13 @@ public class MovieShowActivity extends TrackedActivity {
 
         private ProgressDialog         progressdialogInit;
         private final OnCancelListener cancelListener = new OnCancelListener() {
-                                                          public void onCancel(DialogInterface arg0) {
-                                                              Log.d("", "loadDataTask.getStatus() != AsyncTask.Status.FINISHED");
-                                                              LoadRecordTask.this.cancel(true);
-                                                          }
-                                                      };
+	          public void onCancel(DialogInterface arg0) {
+	              Log.d("", "loadDataTask.getStatus() != AsyncTask.Status.FINISHED");
+	              listviewShow.setVisibility(View.GONE);
+	              imageButtonRefresh.setVisibility(View.VISIBLE);
+	              LoadRecordTask.this.cancel(true);
+	          }
+	      };
 
         private final boolean          onlyfriend;
 
@@ -380,7 +400,9 @@ public class MovieShowActivity extends TrackedActivity {
         protected void onPostExecute(String result) {
             progressdialogInit.dismiss();
             if (recordList == null) {
-                showReloadDialog(MovieShowActivity.this);
+            	listviewShow.setVisibility(View.GONE);
+                imageButtonRefresh.setVisibility(View.VISIBLE);
+                //showReloadDialog(MovieShowActivity.this);
             } else {
                 if (recordList.size() == 0) {
                     listviewShow.removeFooterView(viewFooter);
@@ -391,6 +413,8 @@ public class MovieShowActivity extends TrackedActivity {
                     recordListAdapter = new RecordListAdapter(MovieShowActivity.this, recordList, fb_id);
                     listviewShow.setAdapter(recordListAdapter);
                 }
+                listviewShow.setVisibility(View.VISIBLE);
+                imageButtonRefresh.setVisibility(View.GONE);
             }
             super.onPostExecute(result);
         }

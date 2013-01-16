@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/white1" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white1" >
     <include android:id="@+id/topBar" layout="@layout/topbar" android:layout_alignParentTop="true"/>
     <ListView android:id="@+id/listview_checks"
         android:layout_width="fill_parent"
@@ -30,4 +30,11 @@
             android:text="打  卡"/>
         
     </RelativeLayout>
-    </RelativeLayout>
+    <ImageButton android:id="@+id/refresh"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:background="@drawable/button_background"
+        android:src="@drawable/renew"/>
+</RelativeLayout>

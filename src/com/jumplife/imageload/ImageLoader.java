@@ -28,10 +28,10 @@ public class ImageLoader {
     
 	private MemoryCache memoryCache=new MemoryCache();
     private FileCache fileCache;
-    private int REQUIRED_SIZE=70;
+    private int REQUIRED_SIZE = 0;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     private ExecutorService executorService;
-    private int width;
+    //private int width;
     private Bitmap btStub;
     
     public ImageLoader(Context context){
@@ -58,7 +58,7 @@ public class ImageLoader {
     public void DisplayImage(String url, ImageView imageView)
     {
     	imageViews.put(imageView, url);
-        Bitmap bitmap=memoryCache.get(url);
+        Bitmap bitmap = memoryCache.get(url);
         
         if(bitmap!=null) {
             imageView.setImageBitmap(bitmap);        	
@@ -71,9 +71,8 @@ public class ImageLoader {
     public void DisplayImage(String url, ImageView imageView, int width)
     {
         imageViews.put(imageView, url);
-        Bitmap bitmap=memoryCache.get(url);
+        Bitmap bitmap = memoryCache.get(url);
         
-        this.width = width;
         btStub = Bitmap.createScaledBitmap(btStub, width, btStub.getHeight() * width / btStub.getWidth(), true);
         
         if(bitmap!=null) {
@@ -90,7 +89,6 @@ public class ImageLoader {
         else {
             //queuePhoto(url, imageView);
         	queuePhoto(url, imageView, width);
-            imageView.setImageBitmap(btStub);
         }
     }
         
@@ -102,13 +100,13 @@ public class ImageLoader {
     
     private void queuePhoto(String url, ImageView imageView, int width)
     {
-        PhotoToLoad p=new PhotoToLoad(url, imageView);
-        executorService.submit(new PhotosLoader(p));
+        FillPhotoToLoad p=new FillPhotoToLoad(url, imageView, width);
+        executorService.submit(new FillPhotosLoader(p));
     }
     
     public Bitmap getBitmap(String url) 
     {
-        File f=fileCache.getFile(url);
+        File f = fileCache.getFile(url);
         
         //from SD cache
         Bitmap bitmap = decodeFile(f);
@@ -161,19 +159,20 @@ public class ImageLoader {
             
             //Find the correct scale value. It should be the power of 2.
             //final int REQUIRED_SIZE=70;
-            int width_tmp=o.outWidth, height_tmp=o.outHeight;
+            int width_tmp = o.outWidth, height_tmp = o.outHeight;
             int scale=1;
-            while(true){
-                if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
-                    break;
-                width_tmp/=2;
-                height_tmp/=2;
-                scale*=2;
+            if(REQUIRED_SIZE != 0) {
+	            while(true){
+	                if(width_tmp/2 < REQUIRED_SIZE || height_tmp/2 < REQUIRED_SIZE)
+	                    break;
+	                width_tmp /= 2;
+	                height_tmp /= 2;
+	                scale *= 2;
+	            }
             }
-            
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize=scale;
+            o2.inSampleSize = scale;
             return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
         } catch (FileNotFoundException e) {}
         return null;
@@ -196,7 +195,6 @@ public class ImageLoader {
         public ImageView imageView;
         public int width;
         
-		@SuppressWarnings("unused")
 		public FillPhotoToLoad(String u, ImageView i, int width){
 			this.url=u; 
             this.imageView=i;
@@ -226,23 +224,22 @@ public class ImageLoader {
     class FillPhotosLoader implements Runnable {
     	FillPhotoToLoad photoToLoad;
     	FillPhotosLoader(FillPhotoToLoad photoToLoad){
-            this.photoToLoad=photoToLoad;
+            this.photoToLoad = photoToLoad;
         }
         
         public void run() {
             if(imageViewReused(photoToLoad))
                 return;
             Bitmap bitmap = getBitmap(photoToLoad.url);
+            Log.d(null, "Bitmap Height : " + bitmap.getHeight() + " Width : " + bitmap.getWidth());
             
-            double height = (double)(width * ((double)bitmap.getHeight() / (double)bitmap.getWidth()));
-            
-        	
+            double height = (double)(photoToLoad.width * ((double)bitmap.getHeight() / (double)bitmap.getWidth()));       	
             
             memoryCache.put(photoToLoad.url, bitmap);
             if(imageViewReused(photoToLoad))
                 return;
-            FillBitmapDisplayer bd=new FillBitmapDisplayer(bitmap, photoToLoad, width, (int)height);
-            Activity a=(Activity)photoToLoad.imageView.getContext();
+            FillBitmapDisplayer bd = new FillBitmapDisplayer(bitmap, photoToLoad, photoToLoad.width, (int)height);
+            Activity a = (Activity)photoToLoad.imageView.getContext();
             a.runOnUiThread(bd);
         }
     }
@@ -311,9 +308,9 @@ public class ImageLoader {
             Log.d("Ben", "width: " + width);
         	Log.d("Ben", "height: " + (int)height);
             
-            photoToLoad.imageView.getLayoutParams().width = width + 50;
+            photoToLoad.imageView.getLayoutParams().width = width;
             photoToLoad.imageView.getLayoutParams().height = height;
-            photoToLoad.imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            photoToLoad.imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             
       
             /*

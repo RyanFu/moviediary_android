@@ -29,8 +29,8 @@ import com.jumplife.sharedpreferenceio.SharePreferenceIO;
 
 public class SpreadActivity extends TrackedActivity {
 
-    private ArrayList<Spread> spreadCurrentList = new ArrayList<Spread>();
-    private ArrayList<Spread> spreadResultList = new ArrayList<Spread>();
+    private ArrayList<Spread> spreadCurrentList = null;
+    private ArrayList<Spread> spreadResultList = null;
     private ListView spreadListView;
     private Button buttonCurrent;
     private Button buttonResult;
@@ -86,9 +86,9 @@ public class SpreadActivity extends TrackedActivity {
 
     private void fetchData() {
     	MovieAPI movieAPI = new MovieAPI();
-    	if(functionFlag == FLAG_CURRENT && spreadCurrentList != null) {
+    	if(functionFlag == FLAG_CURRENT && spreadCurrentList == null) {
             spreadCurrentList = movieAPI.getCurrentSpreadList();
-    	} else if(functionFlag == FLAG_RESULT && spreadResultList != null) {
+    	} else if(functionFlag == FLAG_RESULT && spreadResultList == null) {
             spreadResultList = movieAPI.getResultSpreadList();
     	}
     }
@@ -110,8 +110,9 @@ public class SpreadActivity extends TrackedActivity {
 		imageButtonRefresh = (ImageButton)findViewById(R.id.refresh);
 		imageButtonRefresh.setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
-				if(Build.VERSION.SDK_INT < 11)
-					tast.execute();
+				tast = new LoadDataTask();
+		        if(Build.VERSION.SDK_INT < 11)
+		        	tast.execute();
 		        else
 		        	tast.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);
 			}			

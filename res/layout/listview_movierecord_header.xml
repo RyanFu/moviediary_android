@@ -136,7 +136,7 @@
 			    android:layout_toRightOf="@+id/user_avatar"
 			    android:layout_marginTop="5dp"
 			    android:paddingLeft="2dp"
-			    android:textSize="16dp"
+			    android:textSize="17dp"
 			    android:gravity="center_vertical"
 			    android:textColor="@color/black"
 			    android:text="評價 : " />
@@ -150,7 +150,7 @@
 			    android:layout_toLeftOf="@+id/imageView_next_info"
 			    android:layout_marginTop="5dp"
 			    android:paddingLeft="2dp"
-			    android:textSize="16dp"
+			    android:textSize="17dp"
 			    android:gravity="center_vertical"
 			    android:text="評論 : " 
 			    android:textColor="@color/black"/>

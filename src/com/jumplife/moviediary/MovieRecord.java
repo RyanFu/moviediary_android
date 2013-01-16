@@ -40,6 +40,7 @@ import com.jumplife.imageload.ImageLoader;
 import com.jumplife.imageprocess.ImageProcess;
 import com.jumplife.jome.entity.Comment;
 import com.jumplife.loginactivity.FacebookIO;
+import com.jumplife.loginactivity.LoginActivity;
 import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.Movie;
@@ -104,6 +105,34 @@ public class MovieRecord extends TrackedActivity {
         	loadDataTask.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+        case LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE:
+        	if (Utility.IsSessionValid(MovieRecord.this) && resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_SUCCESS) {
+        		fb_id = Utility.usrId;
+	        }
+	        case LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE_LIKE:
+	        	if (Utility.IsSessionValid(MovieRecord.this) && resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_SUCCESS) {
+	        		if (record.getIsLovedByUser()) {
+	                    record.setLoveCount(record.getLoveCount() - 1);
+	                    likecount.setTextColor(MovieRecord.this.getResources().getColor(R.color.black));
+	                    likecount.setText(record.getLoveCount() + "個人推本打卡");
+	                    imageviewLike.setImageResource(R.drawable.md_unlike_short);
+	                } else {
+	                    record.setLoveCount(record.getLoveCount() + 1);
+	                    likecount.setTextColor(MovieRecord.this.getResources().getColor(R.color.title_dark));
+	                    likecount.setText(record.getLoveCount() + "個人推本打卡");
+	                    imageviewLike.setImageResource(R.drawable.md_like_short);
+	                }
+	                LikeTask likeTask = new LikeTask(record.getIsLovedByUser(), record.getId() + "");
+	                likeTask.execute();
+	                record.setIsLovedByUser(!record.getIsLovedByUser());
+		        }
+        }
+    }
+    
     private void setView() {
         movie = record.getMovie();
         topbar_text.setText("收藏");
@@ -145,20 +174,26 @@ public class MovieRecord extends TrackedActivity {
         });
         rlLike.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                if (record.getIsLovedByUser()) {
-                    record.setLoveCount(record.getLoveCount() - 1);
-                    likecount.setTextColor(MovieRecord.this.getResources().getColor(R.color.black));
-                    likecount.setText(record.getLoveCount() + "個人推本打卡");
-                    imageviewLike.setImageResource(R.drawable.md_unlike_short);
+            	if (Utility.IsSessionValid(MovieRecord.this)) {
+            		if (record.getIsLovedByUser()) {
+                        record.setLoveCount(record.getLoveCount() - 1);
+                        likecount.setTextColor(MovieRecord.this.getResources().getColor(R.color.black));
+                        likecount.setText(record.getLoveCount() + "個人推本打卡");
+                        imageviewLike.setImageResource(R.drawable.md_unlike_short);
+                    } else {
+                        record.setLoveCount(record.getLoveCount() + 1);
+                        likecount.setTextColor(MovieRecord.this.getResources().getColor(R.color.title_dark));
+                        likecount.setText(record.getLoveCount() + "個人推本打卡");
+                        imageviewLike.setImageResource(R.drawable.md_like_short);
+                    }
+                    LikeTask likeTask = new LikeTask(record.getIsLovedByUser(), record.getId() + "");
+                    likeTask.execute();
+                    record.setIsLovedByUser(!record.getIsLovedByUser());
                 } else {
-                    record.setLoveCount(record.getLoveCount() + 1);
-                    likecount.setTextColor(MovieRecord.this.getResources().getColor(R.color.title_dark));
-                    likecount.setText(record.getLoveCount() + "個人推本打卡");
-                    imageviewLike.setImageResource(R.drawable.md_like_short);
-                }
-                LikeTask likeTask = new LikeTask(record.getIsLovedByUser(), record.getId() + "");
-                likeTask.execute();
-                record.setIsLovedByUser(!record.getIsLovedByUser());
+                	Intent newAct = new Intent(); 
+                	newAct.setClass( MovieRecord.this, LoginActivity.class );
+                	MovieRecord.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE_LIKE);
+                }                
             }
         });
         relativeMovieInfo.setOnClickListener(new OnClickListener() {
@@ -186,8 +221,14 @@ public class MovieRecord extends TrackedActivity {
         });
         imagebuttonAdd.setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
-                addCommentTask = new AddCommentTask(textviewPublishContent.getText().toString());
-                addCommentTask.execute();
+            	if (!Utility.IsSessionValid(MovieRecord.this)) {
+                	Intent newAct = new Intent(); 
+                	newAct.setClass( MovieRecord.this, LoginActivity.class );
+                	MovieRecord.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE);
+                } else {
+                	addCommentTask = new AddCommentTask(textviewPublishContent.getText().toString());
+                    addCommentTask.execute();
+                }
             }
         });
 
