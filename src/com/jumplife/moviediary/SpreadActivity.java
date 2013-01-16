@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.Spread;
@@ -52,6 +53,9 @@ public class SpreadActivity extends TrackedActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spread_list);
+        
+       
+        
         shIO = new SharePreferenceIO(this);
         functionFlag = shIO.SharePreferenceO("tvchannel_flag", 1);
         
@@ -70,11 +74,14 @@ public class SpreadActivity extends TrackedActivity {
                 Intent newAct = new Intent();
                 
                 if(functionFlag == FLAG_CURRENT && spreadCurrentList != null) {
+                	EasyTracker.getTracker().trackEvent("活動列表", "進入活動介紹", "活動 id:" + spreadCurrentList.get(position).getId(), (long)0);
+                	
                 	newAct.putExtra("spread_id", spreadCurrentList.get(position).getId());
                 	newAct.putExtra("spread_type", functionFlag);
 	                newAct.setClass(SpreadActivity.this, SpreadInfoActivity.class);
 	                startActivity(newAct);
                 } else if(functionFlag == FLAG_RESULT && spreadResultList != null) {
+                	EasyTracker.getTracker().trackEvent("活動列表", "進入名單公布", "活動 id:" + spreadResultList.get(position).getId(), (long)0);
                 	newAct.putExtra("spread_id", spreadResultList.get(position).getId());
                 	newAct.putExtra("spread_type", functionFlag);
 	                newAct.setClass(SpreadActivity.this, SpreadInfoActivity.class);
@@ -255,14 +262,18 @@ public class SpreadActivity extends TrackedActivity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+	@Override
+    public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance().activityStart(this);
+		EasyTracker.getTracker().trackView("/campaign/index");
+		EasyTracker.getTracker().trackEvent("內部宣傳活動", "活動列表", null, (long)0);
     }
-
+    
     @Override
-    protected void onStop() {
-        super.onStop();
+    public void onStop() {
+      super.onStop();
+      EasyTracker.getInstance().activityStop(this);
     }
 
     @Override
@@ -315,4 +326,6 @@ public class SpreadActivity extends TrackedActivity {
         alert.show();
 
     }
+    
+
 }

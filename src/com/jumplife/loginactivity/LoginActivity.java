@@ -25,6 +25,8 @@ import org.json.JSONObject;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
 import com.facebook.android.Util;
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.TrackedActivity;
 import com.jumplife.loginactivity.SessionEvents.AuthListener;
 import com.jumplife.loginactivity.SessionEvents.LogoutListener;
 import com.jumplife.moviediary.R;
@@ -47,7 +49,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends TrackedActivity {
 
     /*
      * Your Facebook Application ID must be set before running this example See
@@ -74,6 +76,8 @@ public class LoginActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        
 
         if (APP_ID == null) {
             Util.showAlert(this, "Warning", "Facebook Applicaton ID must be "
@@ -281,5 +285,18 @@ public class LoginActivity extends Activity {
             LoginActivity.this.finish();
         }
         return super.onKeyDown(keyCode, event);
+    }
+    
+	@Override
+    public void onStart() {
+      super.onStart();
+      EasyTracker.getInstance().activityStart(this);
+      EasyTracker.getTracker().trackView("/facebook/login");
+    }
+    
+    @Override
+    public void onStop() {
+      super.onStop();
+      EasyTracker.getInstance().activityStop(this);
     }
 }
