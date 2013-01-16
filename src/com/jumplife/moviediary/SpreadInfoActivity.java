@@ -124,6 +124,11 @@ public class SpreadInfoActivity extends TrackedActivity {
                  }
             }
         });
+        if(functionFlag == FLAG_CURRENT) {
+        	buttonJoin.setText("前 往 活 動 頁 面");
+    	} else if(functionFlag == FLAG_RESULT) {
+    		buttonJoin.setText("前 往 粉 絲 團");
+    	}
         
         llMethodContent = (LinearLayout) findViewById(R.id.ll_method_content);
         llMethodResult =  (LinearLayout) findViewById(R.id.ll_method_result);

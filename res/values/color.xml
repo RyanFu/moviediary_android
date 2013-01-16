@@ -29,4 +29,8 @@
    <color name="fake_tab_button_text_press">#111111</color>
    <color name="fake_tab_background">#cbcbcb</color>
    <color name="fake_tab_line">#c21817</color>
+   
+   <!-- movie show and spread check color -->
+   <color name="button_check_deep">#b00101</color>
+   <color name="button_check_light">#ee1e1e</color>
 </resources>
