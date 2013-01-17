@@ -110,7 +110,7 @@ public class SpreadInfoActivity extends TrackedActivity {
         buttonJoin = (Button) findViewById(R.id.button_join);
         buttonJoin.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-            	if(functionFlag == FLAG_CURRENT) {
+            	if(functionFlag == FLAG_CURRENT && spread != null) {
             		EasyTracker.getTracker().trackEvent("活動介紹", "參加活動", "點擊", (long)0);
 					Intent newAct = new Intent();
 					newAct.putExtra("movie_id", spread.getMovieId());					
@@ -301,14 +301,14 @@ public class SpreadInfoActivity extends TrackedActivity {
         @Override
         protected void onPostExecute(String result) {
             progressdialogInit.dismiss();
-            if (functionFlag == FLAG_CURRENT) {
+            if (functionFlag == FLAG_CURRENT && spread != null) {
             	if(spread.getSpreadPosterUrl() != null && spread.getMovieId() != 0) {
             		setViews();
                     setListener();
                     setMethodContent();
             	} else
             		showReloadDialog(SpreadInfoActivity.this);
-            } else if(functionFlag == FLAG_RESULT) {
+            } else if(functionFlag == FLAG_RESULT && spread != null) {
             	if(spread.getSpreadPosterUrl() != null) {
             		setViews();
                     setListener();

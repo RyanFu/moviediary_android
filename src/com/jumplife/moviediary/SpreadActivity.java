@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -37,6 +38,7 @@ public class SpreadActivity extends TrackedActivity {
     private Button buttonResult;
     private View viewCurrent;
     private View viewResult;
+    private View viewFooter;
 	private ImageButton imageButtonRefresh;
     private LoadDataTask tast;
     private SpreadListAdapter spreadAdapter;
@@ -54,8 +56,6 @@ public class SpreadActivity extends TrackedActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spread_list);
         
-       
-        
         shIO = new SharePreferenceIO(this);
         functionFlag = shIO.SharePreferenceO("tvchannel_flag", 1);
         
@@ -68,51 +68,11 @@ public class SpreadActivity extends TrackedActivity {
         	tast.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);
     }
 
-    private void setListListener() {
-    	spreadListView.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent newAct = new Intent();
-                
-                if(functionFlag == FLAG_CURRENT && spreadCurrentList != null) {
-                	EasyTracker.getTracker().trackEvent("活動列表", "進入活動介紹", "活動 id:" + spreadCurrentList.get(position).getId(), (long)0);
-                	
-                	newAct.putExtra("spread_id", spreadCurrentList.get(position).getId());
-                	newAct.putExtra("spread_type", functionFlag);
-	                newAct.setClass(SpreadActivity.this, SpreadInfoActivity.class);
-	                startActivity(newAct);
-                } else if(functionFlag == FLAG_RESULT && spreadResultList != null) {
-                	EasyTracker.getTracker().trackEvent("活動列表", "進入名單公布", "活動 id:" + spreadResultList.get(position).getId(), (long)0);
-                	newAct.putExtra("spread_id", spreadResultList.get(position).getId());
-                	newAct.putExtra("spread_type", functionFlag);
-	                newAct.setClass(SpreadActivity.this, SpreadInfoActivity.class);
-	                startActivity(newAct);
-                }                
-            }
-        });
-    }
-
-    private void fetchData() {
-    	MovieAPI movieAPI = new MovieAPI();
-    	if(functionFlag == FLAG_CURRENT && spreadCurrentList == null) {
-            spreadCurrentList = movieAPI.getCurrentSpreadList();
-    	} else if(functionFlag == FLAG_RESULT && spreadResultList == null) {
-            spreadResultList = movieAPI.getResultSpreadList();
-    	}
-    }
-
-    private void setListAdatper() {
-    	if(functionFlag == FLAG_CURRENT) 
-    		spreadAdapter = new SpreadListAdapter(SpreadActivity.this, spreadCurrentList);
-    	else if(functionFlag == FLAG_RESULT)
-    		spreadAdapter = new SpreadListAdapter(SpreadActivity.this, spreadResultList);
-        
-        spreadListView.setAdapter(spreadAdapter);
-    }
-
     private void findViews() {
     	spreadListView = (ListView) findViewById(R.id.listview_spread);
     	viewCurrent = (View)findViewById(R.id.view_1);
     	viewResult = (View)findViewById(R.id.view_2);
+    	viewFooter = LayoutInflater.from(SpreadActivity.this).inflate(R.layout.listview_moviespread_footer, null);
     	
 		imageButtonRefresh = (ImageButton)findViewById(R.id.refresh);
 		imageButtonRefresh.setOnClickListener(new OnClickListener() {
@@ -131,7 +91,9 @@ public class SpreadActivity extends TrackedActivity {
             	initBottonTextViewColor();
             	initBottonImageViewVisible();
             	functionFlag = FLAG_CURRENT;
-            	setBottonView();
+            	setBottonView();            	
+            	spreadListView.removeFooterView(viewFooter);
+            	
             	shIO.SharePreferenceI("tvchannel_flag", functionFlag);
             	
             	if (tast != null && tast.getStatus() != AsyncTask.Status.FINISHED) {
@@ -152,7 +114,9 @@ public class SpreadActivity extends TrackedActivity {
             	initBottonTextViewColor();
             	initBottonImageViewVisible();
             	functionFlag = FLAG_RESULT;
-            	setBottonView();
+            	setBottonView();            	
+            	spreadListView.removeFooterView(viewFooter);
+            	
             	shIO.SharePreferenceI("tvchannel_flag", functionFlag);
 
             	if (tast != null && tast.getStatus() != AsyncTask.Status.FINISHED) {
@@ -170,6 +134,59 @@ public class SpreadActivity extends TrackedActivity {
 		initBottonTextViewColor();
     	initBottonImageViewVisible();
     	setBottonView();
+    }
+
+    private void fetchData() {
+    	MovieAPI movieAPI = new MovieAPI();
+    	if(functionFlag == FLAG_CURRENT && spreadCurrentList == null) {
+            spreadCurrentList = movieAPI.getCurrentSpreadList();
+    	} else if(functionFlag == FLAG_RESULT && spreadResultList == null) {
+            spreadResultList = movieAPI.getResultSpreadList();
+    	}
+    }
+
+    private void setView() {
+    	if((functionFlag == FLAG_CURRENT && spreadCurrentList.size() == 0) ||
+    			(functionFlag == FLAG_RESULT && spreadResultList.size() == 0)) { 
+    		spreadListView.removeFooterView(viewFooter); 
+    		spreadListView.addFooterView(viewFooter);
+    	}
+    }
+    
+    private void setListAdatper() {
+    	if(functionFlag == FLAG_CURRENT) 
+    		spreadAdapter = new SpreadListAdapter(SpreadActivity.this, spreadCurrentList);
+    	else if(functionFlag == FLAG_RESULT)
+    		spreadAdapter = new SpreadListAdapter(SpreadActivity.this, spreadResultList);
+        
+        spreadListView.setAdapter(spreadAdapter);
+    }
+
+    private void setListListener() {
+    	spreadListView.setOnItemClickListener(new OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent newAct = new Intent();
+                
+                if(functionFlag == FLAG_CURRENT && spreadCurrentList != null) {
+                	if(position < spreadCurrentList.size()) {
+    	                EasyTracker.getTracker().trackEvent("活動列表", "進入活動介紹", "活動 id:" + spreadCurrentList.get(position).getId(), (long)0);
+                		newAct.putExtra("spread_id", spreadCurrentList.get(position).getId());
+	                	newAct.putExtra("spread_type", functionFlag);
+		                newAct.setClass(SpreadActivity.this, SpreadInfoActivity.class);
+		                startActivity(newAct);
+                	}
+                } else if(functionFlag == FLAG_RESULT && spreadResultList != null) {
+                	if(position < spreadResultList.size()) {
+    	                EasyTracker.getTracker().trackEvent("活動列表", "進入名單公布", "活動 id:" + spreadResultList.get(position).getId(), (long)0);
+	                	newAct.putExtra("spread_id", spreadResultList.get(position).getId());
+	                	newAct.putExtra("spread_type", functionFlag);
+		                newAct.setClass(SpreadActivity.this, SpreadInfoActivity.class);
+		                startActivity(newAct);
+                	}
+                	
+                }                
+            }
+        });
     }
 
     private void initBottonTextViewColor() {
@@ -237,6 +254,7 @@ public class SpreadActivity extends TrackedActivity {
         		spreadListView.setVisibility(View.GONE);
                 imageButtonRefresh.setVisibility(View.VISIBLE);
         	} else {
+        		setView();
                 setListAdatper();
                 setListListener();
                 spreadListView.setVisibility(View.VISIBLE);
@@ -326,6 +344,4 @@ public class SpreadActivity extends TrackedActivity {
         alert.show();
 
     }
-    
-
 }

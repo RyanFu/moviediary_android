@@ -206,11 +206,17 @@ public class MovieRecord extends TrackedActivity {
         });
         relativeCheckInfo.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                Intent newAct = new Intent();
-                newAct.putExtra("fb_id", record.getUser().getAccount());
-                newAct.putExtra("avoid_check_session", true);
-                newAct.setClass(MovieRecord.this, MyMovieRecord.class);
-                startActivity(newAct);
+            	if (!Utility.IsSessionValid(MovieRecord.this)) {
+                	Intent newAct = new Intent(); 
+                	newAct.setClass( MovieRecord.this, LoginActivity.class );
+                	MovieRecord.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE);
+                } else {
+                	Intent newAct = new Intent();
+                    newAct.putExtra("fb_id", record.getUser().getAccount());
+                    newAct.putExtra("avoid_check_session", true);
+                    newAct.setClass(MovieRecord.this, MyMovieRecord.class);
+                    startActivity(newAct);
+                }
             }
         });
         edit_btn.setOnClickListener(new Button.OnClickListener() {

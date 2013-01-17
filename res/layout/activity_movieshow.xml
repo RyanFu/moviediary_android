@@ -4,6 +4,23 @@
     android:layout_height="fill_parent"
     android:background="@color/white1" >
     <include android:id="@+id/topBar" layout="@layout/topbar" android:layout_alignParentTop="true"/>
+    <ImageButton
+	    android:id="@+id/imagebutton_addfriend"
+	    android:scaleType="fitCenter"
+	    android:layout_width="50dp"
+	    android:layout_height="40dp"
+	    android:layout_alignParentRight="true"
+	    android:layout_alignParentTop="true"
+	    android:padding="5dp"
+	    android:background="@drawable/button_setting_background" 
+	    android:src="@drawable/users_add"/>
+	<View 
+	    android:id="@+id/view_line1"
+	    android:layout_width="0.5dp"
+	    android:layout_height="40dp"
+	    android:layout_toLeftOf="@+id/imagebutton_addfriend"
+	    android:background="@color/grey05"
+	    />
     <ListView android:id="@+id/listview_checks"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -33,6 +50,8 @@
     <ImageButton android:id="@+id/refresh"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_below="@+id/topBar"
+        android:layout_above="@+id/relativelayout_check"
         android:scaleType="fitCenter"
         android:visibility="gone"
         android:background="@drawable/button_background"

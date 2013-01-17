@@ -35,7 +35,6 @@ import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.User;
 import com.jumplife.sharedpreferenceio.SharePreferenceIO;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -148,8 +147,7 @@ public class LoginActivity extends TrackedActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	progressdialogInit.show();
-        switch (requestCode) {
+    	switch (requestCode) {
         	case AUTHORIZE_ACTIVITY_RESULT_CODE: {
                 Utility.mFacebook.authorizeCallback(requestCode, resultCode, data);
                 break;
@@ -223,7 +221,9 @@ public class LoginActivity extends TrackedActivity {
                 }
                 
             } catch (JSONException e) {
-                // TODO Auto-generated catch block
+            	if(LoginActivity.this != null && !LoginActivity.this.isFinishing() 
+            			&& progressdialogInit != null && progressdialogInit.isShowing())
+            		progressdialogInit.dismiss();
                 e.printStackTrace();
             }
         }
@@ -238,6 +238,8 @@ public class LoginActivity extends TrackedActivity {
     public class FbAPIsAuthListener implements AuthListener {
 
         public void onAuthSucceed() {
+        	if(LoginActivity.this != null && !LoginActivity.this.isFinishing() && progressdialogInit != null)
+        		progressdialogInit.show();
             requestUserData();
         }
 

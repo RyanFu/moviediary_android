@@ -33,6 +33,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.jumplife.dialog.CollectDialog;
 import com.jumplife.imageload.ImageLoader;
+import com.jumplife.loginactivity.FacebookIO;
 import com.jumplife.loginactivity.LoginActivity;
 import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.api.MovieAPI;
@@ -55,6 +56,7 @@ public class MovieShowActivity extends TrackedActivity {
     private Button            buttonFriend;
     private Button            buttonAll;
     private Button            buttonCheck;
+	private ImageButton 	  imageAddFriend;
 	private ImageButton 	  imageButtonRefresh;
     private View			  viewFriend;
     private View			  viewAll;
@@ -143,6 +145,20 @@ public class MovieShowActivity extends TrackedActivity {
         viewFriend = (View) viewHeader.findViewById(R.id.view_2);
         relativeMovieInfo = (RelativeLayout) viewHeader.findViewById(R.id.relativelayout_movie_info);
         
+        imageAddFriend = (ImageButton)findViewById(R.id.imagebutton_addfriend);
+        imageAddFriend.setOnClickListener(new OnClickListener() {
+			public void onClick(View arg0) {
+				if (!Utility.IsSessionValid(MovieShowActivity.this)) {
+                	Intent newAct = new Intent(); 
+                	newAct.setClass( MovieShowActivity.this, LoginActivity.class );
+                	MovieShowActivity.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE_LIKE);
+                } else {
+                	FacebookIO fbIO = new FacebookIO(MovieShowActivity.this);
+                	fbIO.requestDialog(Utility.usrName + "邀請你一起來用電影櫃 (一個收藏與分享電影的好Android APP : http://goo.gl/q1Zzu)");
+                }
+			}			
+		});
+		
         imageButtonRefresh = (ImageButton)findViewById(R.id.refresh);
 		imageButtonRefresh.setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {

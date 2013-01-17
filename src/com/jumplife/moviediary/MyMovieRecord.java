@@ -475,7 +475,8 @@ public class MyMovieRecord extends TrackedActivity {
                     listView.setVisibility(View.VISIBLE);
                     imageButtonRefresh.setVisibility(View.GONE);
                 } else if (friendList == null || !Utility.IsSessionValid(MyMovieRecord.this)) {
-                    listView.setVisibility(View.GONE);
+                	if(listView != null)
+                		listView.setVisibility(View.GONE);
                     imageButtonRefresh.setVisibility(View.VISIBLE);
                 } else {
                     setViews();
@@ -573,7 +574,8 @@ public class MyMovieRecord extends TrackedActivity {
                     listView.setVisibility(View.VISIBLE);
                     imageButtonRefresh.setVisibility(View.GONE);
                 } else if (friendList == null || !Utility.IsSessionValid(MyMovieRecord.this)) {
-                    listView.setVisibility(View.GONE);
+                	if(listView != null)
+                		listView.setVisibility(View.GONE);
                     imageButtonRefresh.setVisibility(View.VISIBLE);
                 } else {
                     setViews();
