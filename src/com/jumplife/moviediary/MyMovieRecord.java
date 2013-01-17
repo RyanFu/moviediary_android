@@ -468,16 +468,16 @@ public class MyMovieRecord extends TrackedActivity {
             }
             // 如果要拿的是朋友列表
             else if (functionFlag == FLAG_FRIENDLIST) {
-                if (avoidSessionChecked) {
+            	if (friendList == null || !Utility.IsSessionValid(MyMovieRecord.this)) {
+                	if(listView != null)
+                		listView.setVisibility(View.GONE);
+                    imageButtonRefresh.setVisibility(View.VISIBLE);
+                } else if (avoidSessionChecked) {
                     setViews();
                     setFriendListViewAdapter();
                     setFriendListViewListner();
                     listView.setVisibility(View.VISIBLE);
                     imageButtonRefresh.setVisibility(View.GONE);
-                } else if (friendList == null || !Utility.IsSessionValid(MyMovieRecord.this)) {
-                	if(listView != null)
-                		listView.setVisibility(View.GONE);
-                    imageButtonRefresh.setVisibility(View.VISIBLE);
                 } else {
                     setViews();
                     setFriendListViewAdapter();
@@ -567,16 +567,16 @@ public class MyMovieRecord extends TrackedActivity {
             }
             // 如果要拿的是朋友列表
             else if (functionFlag == FLAG_FRIENDLIST) {
-                if (avoidSessionChecked) {
+                if (friendList == null || !Utility.IsSessionValid(MyMovieRecord.this)) {
+                	if(listView != null)
+                		listView.setVisibility(View.GONE);
+                    imageButtonRefresh.setVisibility(View.VISIBLE);
+                } else if (avoidSessionChecked) {
                     setViews();
                     setFriendListViewAdapter();
                     setFriendListViewListner();
                     listView.setVisibility(View.VISIBLE);
                     imageButtonRefresh.setVisibility(View.GONE);
-                } else if (friendList == null || !Utility.IsSessionValid(MyMovieRecord.this)) {
-                	if(listView != null)
-                		listView.setVisibility(View.GONE);
-                    imageButtonRefresh.setVisibility(View.VISIBLE);
                 } else {
                     setViews();
                     setFriendListViewAdapter();
