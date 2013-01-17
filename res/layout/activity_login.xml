@@ -38,6 +38,6 @@
         android:textStyle="bold"
         android:textSize="16dp"
         android:textColor="@color/white2"
-        android:text="本APP決不會未經允許將使用者內容分享至Facebook。" />
+        android:text="本APP不會未經允許將使用者內容分享至Facebook。" />
     
 </RelativeLayout>
