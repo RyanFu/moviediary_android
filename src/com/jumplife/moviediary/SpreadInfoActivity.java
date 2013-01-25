@@ -22,11 +22,17 @@ import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.TrackedActivity;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerView;
+import com.google.android.youtube.player.YouTubePlayer.ErrorReason;
+import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;
 import com.jumplife.imageload.ImageLoader;
 import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.Spread;
+import com.jumplife.youtubeapi.DeveloperKey;
+import com.jumplife.youtubeapi.YouTubeFailureRecoveryActivity;
 
-public class SpreadInfoActivity extends TrackedActivity {
+public class SpreadInfoActivity extends TrackedActivity/*YouTubeFailureRecoveryActivity*/  {
 
     private TextView spreadTitle;
     private TextView spreadTitleContent;
@@ -60,7 +66,9 @@ public class SpreadInfoActivity extends TrackedActivity {
     private final int FLAG_RESULT = 2;
     
     private int functionFlag = 0;
-    
+
+    private YouTubePlayerView youTubeView;
+    private MyPlayerStateChangeListener playerStateChangeListener;
     //private static String           TAG = "MovieInfo";
     
     @Override
@@ -74,10 +82,19 @@ public class SpreadInfoActivity extends TrackedActivity {
         	taskLoad.execute();
         else
         	taskLoad.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);
-        
-        
     }
 
+    /*public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
+    	if (!wasRestored) {
+    		player.loadVideo("pq070FGJMvU");
+	    }
+    }
+	
+	@Override
+	protected YouTubePlayer.Provider getYouTubePlayerProvider() {
+		return (YouTubePlayerView) findViewById(R.id.youtube_view);
+	}*/
+    	  
     private void findViews() {
     	Bundle extras = getIntent().getExtras();
         spreadId = extras.getInt("spread_id");
@@ -87,6 +104,10 @@ public class SpreadInfoActivity extends TrackedActivity {
         topbarText.setText("活動內容");
 
         imageLoader = new ImageLoader(SpreadInfoActivity.this, 0, R.drawable.post_background);
+        
+        youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
+        //youTubeView.initialize(DeveloperKey.DEVELOPER_KEY, this);
+        playerStateChangeListener = new MyPlayerStateChangeListener();
         
         spreadTitle = (TextView) findViewById(R.id.textview_title);
         spreadTitleContent = (TextView) findViewById(R.id.textview_title_content);
@@ -377,4 +398,37 @@ public class SpreadInfoActivity extends TrackedActivity {
         alert.show();
 
     }
+    
+    private final class MyPlayerStateChangeListener implements PlayerStateChangeListener {
+        String playerState = "UNINITIALIZED";
+
+        public void onLoading() {
+        	playerState = "LOADING";
+        }
+
+        public void onLoaded(String videoId) {
+        	playerState = String.format("LOADED %s", videoId);
+        }
+
+        public void onAdStarted() {
+        	playerState = "AD_STARTED";
+        }
+
+        public void onVideoStarted() {
+        	playerState = "VIDEO_STARTED";
+        }
+
+        public void onVideoEnded() {
+        	playerState = "VIDEO_ENDED";
+        }
+
+        public void onError(ErrorReason reason) {
+        	playerState = "ERROR (" + reason + ")";
+        	if (reason == ErrorReason.UNEXPECTED_SERVICE_DISCONNECTION) {
+        		youTubeView.setVisibility(View.GONE);
+        		ivSpreadPoster.setVisibility(View.VISIBLE);
+        	}
+        }
+
+	}
 }

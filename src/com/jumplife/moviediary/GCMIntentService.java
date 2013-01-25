@@ -90,11 +90,11 @@ public class GCMIntentService extends GCMBaseIntentService {
         String message;
         SharePreferenceIO shIO = new SharePreferenceIO(this);
         boolean shareKey = true;
-        String shareUsrId = "";
+        String shareUsrId = null;
         shareKey = shIO.SharePreferenceO("notification_key", shareKey);
         shareUsrId = shIO.SharePreferenceO("fbID", shareUsrId);
 
-        if(shareKey) {
+        if(shareKey && shareUsrId != null) {
         	/* type
         	 * 1 : 朋友打卡通知	導引至朋友打卡
         	 * 2 : 留言通知		導引至record頁面
@@ -146,7 +146,8 @@ public class GCMIntentService extends GCMBaseIntentService {
     /**
      * Issues a notification to inform the user that server has sent a message.
      */
-    private static void generateCheckNotification(Context context, String message) {
+    @SuppressWarnings("deprecation")
+	private static void generateCheckNotification(Context context, String message) {
         int icon = R.drawable.movie_64;
         long when = System.currentTimeMillis();
         NotificationManager notificationManager = (NotificationManager)
@@ -165,7 +166,8 @@ public class GCMIntentService extends GCMBaseIntentService {
         notificationManager.notify(0, notification);
     }
 
-    private static void generateCommentNotification(Context context, String message, int recordId, boolean owner) {
+    @SuppressWarnings("deprecation")
+	private static void generateCommentNotification(Context context, String message, int recordId, boolean owner) {
         int icon = R.drawable.movie_64;
         long when = System.currentTimeMillis();
         NotificationManager notificationManager = (NotificationManager)

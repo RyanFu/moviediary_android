@@ -19,6 +19,8 @@ package com.jumplife.loginactivity;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -67,7 +69,7 @@ public class LoginActivity extends TrackedActivity {
 
     public static final String APP_ID = "399748073422920";
     public final static String[] permission_normal = { "user_photos", "user_birthday" };
-	public final static String[] permission_publish = { "publish_stream", "user_photos", "user_birthday" };
+	public final static String[] permission_publish = { "publish_actions", "user_photos", "user_birthday" };
 	
 	public final String TAG = "LoginActivity"; 
 	
@@ -190,11 +192,30 @@ public class LoginActivity extends TrackedActivity {
                 if(jsonObject.has("gender"))
                 	Utility.usrGender = jsonObject.getString("gender");
                 
+                JSONObject jsonPermission = jsonObject.getJSONObject("permissions").getJSONArray("data")
+                        .getJSONObject(0);
+                Iterator<?> iterator = jsonPermission.keys();
+                int permissionInt;
+                String permissionStr;
+                String permissionBool = null;
+                String permissionName = null;
+                while (iterator.hasNext()) {
+                	permissionStr = (String) iterator.next();
+                	permissionInt = jsonPermission.getInt(permissionStr);
+                	permissionName = permissionStr + ",";
+                	permissionBool = permissionInt + ",";
+                    Utility.currentPermissions.put(permissionStr, String.valueOf(permissionInt));
+                }
+                permissionName = permissionName.substring(0, permissionName.length()-1);
+                permissionBool = permissionBool.substring(0, permissionBool.length()-1);
+                
                 sharepre.SharePreferenceI("fbID", Utility.usrId);
                 sharepre.SharePreferenceI("fbName", Utility.usrName);
                 sharepre.SharePreferenceI("fbPICURL", Url);
                 sharepre.SharePreferenceI("fbBIRTH", birthdayStr);
                 sharepre.SharePreferenceI("fbGENDER", Utility.usrGender);
+                sharepre.SharePreferenceI("fbPERMISSIONNAME", permissionName);
+                sharepre.SharePreferenceI("fbPERMISSIONBOOL", permissionBool);
                 
                 int count = 0;
                 MovieAPI movieAPI = new MovieAPI();                
@@ -261,12 +282,15 @@ public class LoginActivity extends TrackedActivity {
             Utility.usrImg = null;
             Utility.usrGender = null;
             Utility.usrBirth = null;
+            Utility.currentPermissions.clear();
             
             sharepre.SharePreferenceI("fbID", null);
             sharepre.SharePreferenceI("fbName", null);
             sharepre.SharePreferenceI("fbPICURL", null);
             sharepre.SharePreferenceI("fbBIRTH", null);
             sharepre.SharePreferenceI("fbGENDER", null);
+            sharepre.SharePreferenceI("fbPERMISSIONNAME", null);
+            sharepre.SharePreferenceI("fbPERMISSIONBOOL", null);
         }
     }
 
@@ -275,7 +299,7 @@ public class LoginActivity extends TrackedActivity {
      */
     public void requestUserData() {
         Bundle params = new Bundle();
-        params.putString("fields", "id, name, picture, birthday, gender");
+        params.putString("fields", "id, name, picture, birthday, gender, permissions");
         Utility.mAsyncRunner.request("me", params, new UserRequestListener());
     }
     

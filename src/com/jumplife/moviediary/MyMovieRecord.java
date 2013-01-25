@@ -24,6 +24,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -227,6 +228,7 @@ public class MyMovieRecord extends TrackedActivity {
 	}
 	
 	//設定Grid View 或是 List View
+	@SuppressWarnings("deprecation")
 	private void setViews() {
 		LinearLayout linearlayout = (LinearLayout)findViewById(R.id.linearlayout_content);
 		//先remove view
@@ -236,7 +238,8 @@ public class MyMovieRecord extends TrackedActivity {
 		//如果要取得的是打卡紀錄
 		if(functionFlag == FLAG_CHECKIN) {
 			recordGridView = (PullToRefreshGridView)inflater.inflate(R.layout.gridview_records, null, false);
-
+			LayoutParams llp = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+			recordGridView.setLayoutParams(llp);
 			linearlayout.addView(recordGridView);
 			
 			ImageLoader imageLoader = new ImageLoader(this);

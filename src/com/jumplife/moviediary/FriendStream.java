@@ -128,11 +128,15 @@ public class FriendStream extends TrackedActivity {
 
         recordListView.setOnRefreshListener(new OnRefreshListener2<ListView>() {
            @SuppressWarnings("deprecation")
-		public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+           public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
         	   recordListView.setLastUpdatedLabel(DateUtils.formatDateTime(getApplicationContext(),
 						System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
 								| DateUtils.FORMAT_ABBREV_ALL));
-            	new RefreshTask().execute();
+        	   RefreshTask task = new RefreshTask();
+				if(Build.VERSION.SDK_INT < 11)
+					task.execute();
+		        else
+		        	task.executeOnExecutor(RefreshTask.THREAD_POOL_EXECUTOR, 0);
             }
 
             @SuppressWarnings("deprecation")
@@ -140,7 +144,11 @@ public class FriendStream extends TrackedActivity {
             	recordListView.setLastUpdatedLabel(DateUtils.formatDateTime(getApplicationContext(),
 						System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
 								| DateUtils.FORMAT_ABBREV_ALL));
-            	new NextPageTask().execute();
+            	NextPageTask task = new NextPageTask();
+				if(Build.VERSION.SDK_INT < 11)
+					task.execute();
+		        else
+		        	task.executeOnExecutor(NextPageTask.THREAD_POOL_EXECUTOR, 0);
             }
         });
         

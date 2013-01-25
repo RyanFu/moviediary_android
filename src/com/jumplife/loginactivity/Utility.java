@@ -9,7 +9,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Iterator;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.facebook.android.AsyncFacebookRunner;
@@ -26,6 +28,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
+import android.os.Bundle;
 import android.provider.MediaStore;
 
 public class Utility extends Application {
@@ -42,13 +45,14 @@ public class Utility extends Application {
     public static FriendsGetProfilePics model;
     public static AndroidHttpClient httpclient = null;
     public static Hashtable<String, String> currentPermissions = new Hashtable<String, String>();
+    private static Activity mActivity;
     private static int MAX_IMAGE_DIMENSION = 720;
-    public static final String HACK_ICON_URL = "http://www.facebookmobileweb.com/hackbook/img/facebook_icon_large.png";
     
     public static boolean IsSessionValid(Activity activity) {
+    	mActivity = activity;
     	
     	SharePreferenceIO sharepre = new SharePreferenceIO(activity);
-    	if(mFacebook == null) {
+    	if(mFacebook == null || mAsyncRunner == null) {
     		mFacebook = new Facebook(LoginActivity.APP_ID);
     		mAsyncRunner = new AsyncFacebookRunner(mFacebook);
     		SessionStore.restore(Utility.mFacebook, activity);
@@ -61,6 +65,23 @@ public class Utility extends Application {
     		
     		if(usrName == null)
     			usrName = sharepre.SharePreferenceO("fbName", null);
+    		
+    		if(currentPermissions == null || currentPermissions.isEmpty()) {
+	    		currentPermissions.clear();
+	    		String permissionBooltmp = sharepre.SharePreferenceO("fbPERMISSIONNAME", null);
+	    		String permissionNametmp = sharepre.SharePreferenceO("fbPERMISSIONBOOL", null);
+	    		if(permissionBooltmp != null && permissionNametmp != null) {
+		    		String permissionBool[] = permissionBooltmp.split(",");
+		            String permissionName[] = permissionNametmp.split(",");
+		    		for(int i=0; i<permissionBool.length; i++)
+		                currentPermissions.put(permissionName[i], permissionBool[i]);
+	    		} else {
+	    			Bundle bundle = new Bundle();
+	            	bundle.putString("access_token", Utility.mFacebook.getAccessToken());
+	            	mAsyncRunner = new AsyncFacebookRunner(mFacebook);
+	                mAsyncRunner.request("me/permissions", bundle, new permissionsRequestListener());
+	    		}
+    		}
 
     		if(usrId != null && usrName != null)
     			return true;
@@ -70,7 +91,40 @@ public class Utility extends Application {
     		return false;
     }
 
-    @SuppressLint("NewApi")
+    public static class permissionsRequestListener extends BaseRequestListener {
+
+        public void onComplete(final String response, final Object state) {
+        	Utility.currentPermissions.clear();
+            
+            try {
+                JSONObject jsonObject = new JSONObject(response).getJSONArray("data")
+                        .getJSONObject(0);
+                Iterator<?> iterator = jsonObject.keys();
+                
+                int permissionInt;
+                String permissionStr;
+                String permissionBool = null;
+                String permissionName = null;
+                
+                while (iterator.hasNext()) {
+                	permissionStr = (String) iterator.next();
+                	permissionInt = jsonObject.getInt(permissionStr);
+                	permissionName = permissionStr + ",";
+                	permissionBool = permissionInt + ",";
+                	Utility.currentPermissions.put(permissionStr, String.valueOf(permissionInt));
+                }
+            	permissionName = permissionName.substring(0, permissionName.length()-1);
+                permissionBool = permissionBool.substring(0, permissionBool.length()-1);
+                
+                SharePreferenceIO sharepre= new SharePreferenceIO(mActivity);
+                sharepre.SharePreferenceI("fbPERMISSIONNAME", permissionName);
+                sharepre.SharePreferenceI("fbPERMISSIONBOOL", permissionBool);
+            } catch (JSONException e) {
+            }
+        }
+    }
+
+	@SuppressLint("NewApi")
 	public static Bitmap getBitmap(String url) {
     	Bitmap bitmap = null;
         try {
@@ -173,7 +227,7 @@ public class Utility extends Application {
         baos.close();
         return bMapArray;
     }
-
+    
     public static int getOrientation(Context context, Uri photoUri) {
         /* it's on the external media. */
         Cursor cursor = context.getContentResolver().query(photoUri,

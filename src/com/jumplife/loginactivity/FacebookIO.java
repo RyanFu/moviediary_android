@@ -144,6 +144,7 @@ public class FacebookIO {
             Utility.usrImg = null;
             Utility.usrGender = null;
             Utility.usrBirth = null;
+            Utility.currentPermissions.clear();
             
             SharePreferenceIO sharepre = new SharePreferenceIO(mActivity);
             sharepre.SharePreferenceI("fbID", null);
@@ -151,6 +152,8 @@ public class FacebookIO {
             sharepre.SharePreferenceI("fbPICURL", null);
             sharepre.SharePreferenceI("fbBIRTH", null);
             sharepre.SharePreferenceI("fbGENDER", null);
+            sharepre.SharePreferenceI("fbPERMISSIONNAME", null);
+            sharepre.SharePreferenceI("fbPERMISSIONBOOL", null);
         }
     }
 	

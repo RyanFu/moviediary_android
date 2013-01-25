@@ -59,17 +59,17 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
         topbarLayout = (LinearLayout) findViewById(R.id.topbar);
 
         topbar_text = (TextView) findViewById(R.id.topbar_text);
-        topbar_text.setText("活動快報");
+        topbar_text.setText("電影打卡");
 
         Gcm gcm = new Gcm(this);
         
         tabHost = getTabHost(); // The activity TabHost
         tabHost.setup();
 
-        tabSpread();
         tabActivityList();
-        tabCreate();
         tabMyList();
+        tabCreate();
+        tabSpread();
         tabNews();
 
         setting = (ImageButton) findViewById(R.id.imagebutton_setting);
@@ -85,7 +85,7 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
 
         line.setVisibility(View.GONE);
         search.setVisibility(View.GONE);
-        topbarLayout.setVisibility(View.VISIBLE);
+        topbarLayout.setVisibility(View.GONE);
         setting.setVisibility(View.VISIBLE);
 
         tabHost.setOnTabChangedListener(this);
@@ -148,7 +148,7 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
         ImageView image = (ImageView) ActivitysTab.findViewById(R.id.imageview_tabicon);
         image.setImageResource(R.drawable.activitybar);
         TextView ActivitysTabLabel = (TextView) ActivitysTab.findViewById(R.id.textview_tabicon);
-        ActivitysTabLabel.setText("活動快報");
+        ActivitysTabLabel.setText("會員獨享");
 
         Intent intentSpread = new Intent().setClass(this, SpreadActivity.class);
         spec = tabHost.newTabSpec("tab4").setIndicator(ActivitysTab).setContent(intentSpread);
@@ -261,7 +261,7 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
             setting.setVisibility(View.VISIBLE);
             topbarLayout.setVisibility(View.VISIBLE);
             // topbarLayout.setVisibility(View.GONE);
-            topbar_text.setText("活動快報");
+            topbar_text.setText("會員獨享");
         } else if (tabId == "tab5") {
             tabIdNumber = 4;
             line.setVisibility(View.GONE);
@@ -310,7 +310,9 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
 
         @Override
         protected void onPostExecute(String result) {
-            progressdialogInit.dismiss();
+        	if (MovieTabActivities.this != null && !MovieTabActivities.this.isFinishing() &&
+        			progressdialogInit != null && progressdialogInit.isShowing())
+        		progressdialogInit.dismiss();
             if (promotion != null && !promotion[1].equals("null") && Integer.valueOf(promotion[4]) > version) {
                 View viewPromotion;
                 LayoutInflater factory = LayoutInflater.from(MovieTabActivities.this);
@@ -337,7 +339,8 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
                     public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
                     	sharepre.SharePreferenceI("version", Integer.valueOf(promotion[4]));
                         if (KeyEvent.KEYCODE_BACK == keyCode)
-                            if (dialogPromotion != null && dialogPromotion.isShowing())
+                            if (MovieTabActivities.this != null && !MovieTabActivities.this.isFinishing() &&
+                            		dialogPromotion != null && dialogPromotion.isShowing())
                                 dialogPromotion.cancel();
                         return false;
                     }
@@ -346,7 +349,8 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
                     public void onClick(View v) {
                         // 取得文字方塊中的關鍵字字串
                         sharepre.SharePreferenceI("version", Integer.valueOf(promotion[4]));
-                        if (dialogPromotion != null && dialogPromotion.isShowing())
+                        if (MovieTabActivities.this != null && !MovieTabActivities.this.isFinishing() &&
+                        		dialogPromotion != null && dialogPromotion.isShowing())
                             dialogPromotion.cancel();
 
                         Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(promotion[1]));

@@ -21,7 +21,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.widget.ImageView;
 
 public class ImageLoader {
@@ -31,13 +30,14 @@ public class ImageLoader {
     private int REQUIRED_SIZE = 0;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     private ExecutorService executorService;
-    //private int width;
     private Bitmap btStub;
+    private Context mContext;
     
     public ImageLoader(Context context){
         fileCache = new FileCache(context);
         executorService = Executors.newFixedThreadPool(3);
         btStub  = BitmapFactory.decodeResource(context.getResources(), R.drawable.stub);
+        this.mContext = context;
     }
     
     public ImageLoader(Context context, int size){
@@ -45,6 +45,7 @@ public class ImageLoader {
         executorService = Executors.newFixedThreadPool(3);
         REQUIRED_SIZE = size;
         btStub = BitmapFactory.decodeResource(context.getResources(), R.drawable.stub);
+        this.mContext = context;
     }
     
     public ImageLoader(Context context, int size, int resStub){
@@ -73,6 +74,8 @@ public class ImageLoader {
         imageViews.put(imageView, url);
         Bitmap bitmap = memoryCache.get(url);
         
+        if(btStub == null)
+            btStub  = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.stub);
         btStub = Bitmap.createScaledBitmap(btStub, width, btStub.getHeight() * width / btStub.getWidth(), true);
         
         if(bitmap!=null) {
@@ -94,7 +97,7 @@ public class ImageLoader {
         
     private void queuePhoto(String url, ImageView imageView)
     {
-        PhotoToLoad p=new PhotoToLoad(url, imageView);
+        PhotoToLoad p = new PhotoToLoad(url, imageView);
         executorService.submit(new PhotosLoader(p));
     }
     
@@ -170,6 +173,7 @@ public class ImageLoader {
 	                scale *= 2;
 	            }
             }
+            
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
@@ -230,9 +234,7 @@ public class ImageLoader {
         public void run() {
             if(imageViewReused(photoToLoad))
                 return;
-            Bitmap bitmap = getBitmap(photoToLoad.url);
-            Log.d(null, "Bitmap Height : " + bitmap.getHeight() + " Width : " + bitmap.getWidth());
-            
+            Bitmap bitmap = getBitmap(photoToLoad.url);            
             double height = (double)(photoToLoad.width * ((double)bitmap.getHeight() / (double)bitmap.getWidth()));       	
             
             memoryCache.put(photoToLoad.url, bitmap);
@@ -304,9 +306,6 @@ public class ImageLoader {
         {
             if(imageViewReused(photoToLoad))
                 return;
-            
-            Log.d("Ben", "width: " + width);
-        	Log.d("Ben", "height: " + (int)height);
             
             photoToLoad.imageView.getLayoutParams().width = width;
             photoToLoad.imageView.getLayoutParams().height = height;

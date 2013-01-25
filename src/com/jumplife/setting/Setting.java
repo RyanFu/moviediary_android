@@ -1,7 +1,9 @@
 package com.jumplife.setting;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import com.jumplife.loginactivity.FacebookIO;
 import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.MovieTabActivities;
 import com.jumplife.moviediary.R;
+import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.sharedpreferenceio.SharePreferenceIO;
 
 public class Setting extends TrackedActivity {
@@ -26,6 +29,7 @@ public class Setting extends TrackedActivity {
     private Button             buttonFans;
     private Button             buttonLogout;
     private ToggleButton       togglebuttonNotify;
+    private String             fbId;
     private FacebookIO         fbIO;
     private SharePreferenceIO  shIO;
 
@@ -78,6 +82,7 @@ public class Setting extends TrackedActivity {
             boolean shareKey = true;
             shareKey = shIO.SharePreferenceO("notification_key", shareKey);
             togglebuttonNotify.setClickable(true);
+            fbId = Utility.usrId;
             if (shareKey)
                 togglebuttonNotify.setChecked(true);
             else
@@ -89,11 +94,23 @@ public class Setting extends TrackedActivity {
     }
 
     class FBLogoutTask extends AsyncTask<Integer, Integer, String> {
-        private ProgressDialog progressdialog;
+    	private ProgressDialog         progressdialogInit;
+        private final OnCancelListener cancelListener = new OnCancelListener() {
+		      public void onCancel(DialogInterface arg0) {
+		    	  FBLogoutTask.this.cancel(true);
+		    	  finish();
+		      }
+		  };
 
         @Override
         protected void onPreExecute() {
-            progressdialog = ProgressDialog.show(Setting.this, "Load", "Loading…");
+            progressdialogInit = new ProgressDialog(Setting.this);
+            progressdialogInit.setTitle("Load");
+            progressdialogInit.setMessage("Loading…");
+            progressdialogInit.setOnCancelListener(cancelListener);
+            progressdialogInit.setCanceledOnTouchOutside(false);
+            progressdialogInit.show();
+
             super.onPreExecute();
         }
 
@@ -107,12 +124,16 @@ public class Setting extends TrackedActivity {
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
-                        progressdialog.dismiss();
+                        progressdialogInit.dismiss();
                         return "progress failed";
                     }
                     break;
                 }
             }
+            MovieAPI movieAPI = new MovieAPI();
+            if(!movieAPI.logoutUser(fbId))
+            	return "progress failed";
+            
             return "progress end";
         }
 
@@ -124,7 +145,7 @@ public class Setting extends TrackedActivity {
         @Override
         protected void onPostExecute(String result) {
             if (result.equals("progress end")) {
-                progressdialog.dismiss();
+            	progressdialogInit.dismiss();
                 shIO.SharePreferenceI("notification_key", false);
 
                 Intent intent = new Intent(Setting.this, MovieTabActivities.class);

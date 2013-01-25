@@ -5,6 +5,10 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -18,7 +22,9 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,17 +41,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.android.DialogError;
+import com.facebook.android.FacebookError;
+import com.facebook.android.Facebook.DialogListener;
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.jumplife.imageload.ImageLoader;
 import com.jumplife.imageprocess.ImageProcess;
 import com.jumplife.jome.entity.Comment;
+import com.jumplife.loginactivity.BaseRequestListener;
 import com.jumplife.loginactivity.FacebookIO;
 import com.jumplife.loginactivity.LoginActivity;
+import com.jumplife.loginactivity.SessionEvents;
 import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.Movie;
 import com.jumplife.moviediary.entity.Record;
 import com.jumplife.sectionlistview.CommentAdapter;
+import com.jumplife.sharedpreferenceio.SharePreferenceIO;
 
 public class MovieRecord extends TrackedActivity {
 
@@ -85,11 +97,14 @@ public class MovieRecord extends TrackedActivity {
     private AddCommentTask    addCommentTask;
     private DeleteCommentTask deleteCommentTask;
     private LoadDataTask      loadDataTask;
+    private Handler 		  mHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movierecord);
+        
+        mHandler = new Handler();
         imageLoader = new ImageLoader(MovieRecord.this);
         Bundle extras = getIntent().getExtras();
         record_id = extras.getInt("record_id");
@@ -724,28 +739,38 @@ public class MovieRecord extends TrackedActivity {
 
         @Override
         protected String doInBackground(Integer... params) {
-        	int drawableId = R.drawable.fbgood;
-        	int score = record.getScore();
-            if (score == MovieAPI.SCORE_GOOD) {
-                drawableId = R.drawable.fbgood;
-            } else if (score == MovieAPI.SCORE_NORMAL) {
-                drawableId = R.drawable.fbsoso;
-            } else if (score == MovieAPI.SCORE_BAD) {
-                drawableId = R.drawable.fbbad;
-            }
-
-            String posterUrl = movie.getPosterUrl();
-            posterUrl = posterUrl.replaceFirst("mpost2", "mpost");
-            
-            InputStream is = MovieRecord.this.getResources().openRawResource(drawableId);
-            Bitmap sec = BitmapFactory.decodeStream(is);
-            sec = Bitmap.createScaledBitmap(sec, sec.getWidth(), sec.getHeight(), true);
-            Bitmap fst = imageLoader.getBitmapFromURL(posterUrl);
-            fst = Bitmap.createScaledBitmap(fst, 291, 418, true);
-
-            FacebookIO fbIO = new FacebookIO(MovieRecord.this);                
-            fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), record.getComment());
-			return null;
+        	 if (Utility.IsSessionValid(MovieRecord.this)
+             		&& Utility.currentPermissions.containsKey("publish_actions") 
+                     && Utility.currentPermissions.get("publish_actions").equals("1")) {
+	        	int drawableId = R.drawable.fbgood;
+	        	int score = record.getScore();
+	            if (score == MovieAPI.SCORE_GOOD) {
+	                drawableId = R.drawable.fbgood;
+	            } else if (score == MovieAPI.SCORE_NORMAL) {
+	                drawableId = R.drawable.fbsoso;
+	            } else if (score == MovieAPI.SCORE_BAD) {
+	                drawableId = R.drawable.fbbad;
+	            }
+	
+	            String posterUrl = movie.getPosterUrl();
+	            posterUrl = posterUrl.replaceFirst("mpost2", "mpost");
+	            
+	            InputStream is = MovieRecord.this.getResources().openRawResource(drawableId);
+	            Bitmap sec = BitmapFactory.decodeStream(is);
+	            sec = Bitmap.createScaledBitmap(sec, sec.getWidth(), sec.getHeight(), true);
+	            Bitmap fst = imageLoader.getBitmapFromURL(posterUrl);
+	            fst = Bitmap.createScaledBitmap(fst, 291, 418, true);
+	
+	            FacebookIO fbIO = new FacebookIO(MovieRecord.this);                
+	            fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), record.getComment());                   
+                return "progress end";
+        	 } else {
+             	Bundle bundle = new Bundle();
+             	bundle.putString("access_token", Utility.mFacebook.getAccessToken());
+                Utility.mAsyncRunner.request("me/permissions", bundle,
+                         new permissionsRequestListener());
+             	return "facebook error";
+             }
         }
 
         @Override
@@ -755,10 +780,90 @@ public class MovieRecord extends TrackedActivity {
 
         @Override
         protected void onPostExecute(String result) {
+        	if (result.equals("progress end")) {
+                Toast toast = Toast.makeText(MovieRecord.this, "FB分享成功", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            } else if(result.equals("facebook error")){
+                Toast toast = Toast.makeText(MovieRecord.this, "FB分享 需要Facebook張貼權限", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
+            }
+        	
             progressdialogInit.dismiss();
+            	
             super.onPostExecute(result);
         }
 
+    }
+    
+    /*
+     * Callback for the permission OAuth Dialog
+     */
+    public class permissionsRequestListener extends BaseRequestListener {
+
+        public void onComplete(final String response, final Object state) {
+        	/*
+             * Clear the current permission list and repopulate with new
+             * permissions. This is used to mark assigned permission green and
+             * unclickable.
+             */
+            Utility.currentPermissions.clear();
+            
+            try {
+                JSONObject jsonObject = new JSONObject(response).getJSONArray("data")
+                        .getJSONObject(0);
+                Iterator<?> iterator = jsonObject.keys();
+                
+                int permissionInt;
+                String permissionStr;
+                String permissionBool = null;
+                String permissionName = null;
+                
+                while (iterator.hasNext()) {
+                	permissionStr = (String) iterator.next();
+                	permissionInt = jsonObject.getInt(permissionStr);
+                	permissionName = permissionStr + ",";
+                	permissionBool = permissionInt + ",";
+                	Utility.currentPermissions.put(permissionStr, String.valueOf(permissionInt));
+                }
+            	permissionName = permissionName.substring(0, permissionName.length()-1);
+                permissionBool = permissionBool.substring(0, permissionBool.length()-1);
+                SharePreferenceIO sharepre= new SharePreferenceIO(MovieRecord.this);
+                sharepre.SharePreferenceI("fbPERMISSIONNAME", permissionName);
+                sharepre.SharePreferenceI("fbPERMISSIONBOOL", permissionBool);
+            } catch (JSONException e) {
+            }
+            mHandler.post(new Runnable() {
+                public void run() {
+                    Utility.mFacebook.authorize(MovieRecord.this, LoginActivity.permission_publish, new LoginDialogListener());
+                }
+            });
+        }
+
+        public void onFacebookError(FacebookError error) {
+        }
+
+    }
+    
+    /*
+     * Callback when user has authorized the app with the new permissions
+     */
+    private final class LoginDialogListener implements DialogListener {
+        public void onComplete(Bundle values) {
+            // Inform the parent loginlistener so it can update the user's
+            // profile pic and name on the home screen.
+            SessionEvents.onLoginSuccess();
+        }
+
+        public void onFacebookError(FacebookError error) {
+        }
+
+        public void onError(DialogError error) {
+        }
+
+        public void onCancel() {
+        }
     }
     
     @Override

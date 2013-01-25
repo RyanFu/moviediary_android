@@ -23,7 +23,7 @@
 	        android:background="@color/transparent100"
 	        android:textColor="@color/black"
 	        android:textSize="20dp"
-	        android:text="活動列表" />
+	        android:text="贈獎活動" />
 	    <View 
 	        android:layout_width="0.1dp"
 	        android:layout_height="fill_parent"

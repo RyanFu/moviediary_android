@@ -1326,6 +1326,41 @@ public class MovieAPI {
 		return result;
 	}
 	
+	public boolean logoutUser(String userId) {
+		boolean result = false;
+		
+		try{
+			DefaultHttpClient httpClient = new DefaultHttpClient();
+			HttpDelete httpDelete = new HttpDelete("http://106.187.101.252/api/v1/users/" + userId + ".json");
+			
+			/*List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
+		    nameValuePairs.add(new BasicNameValuePair("score", record.getScore()+"" ));
+		    nameValuePairs.add(new BasicNameValuePair("comment", record.getComment()));
+		    
+		    httpPut.setEntity(new UrlEncodedFormEntity(nameValuePairs,"UTF-8"));*/
+			HttpResponse response = httpClient.execute(httpDelete);
+			
+			StatusLine statusLine =  response.getStatusLine();
+			if (statusLine.getStatusCode() == 200){
+				result = true;
+			}
+		} 
+	    catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return result;
+		} 
+		catch (ClientProtocolException e) {
+			e.printStackTrace();
+			return result;
+		} 
+		catch (IOException e){
+			e.printStackTrace();
+			return result;
+		}
+		
+		return result;
+	}
+	
 	// Spread
 	public ArrayList<Spread> getCurrentSpreadList() {
 		ArrayList<Spread> spreadList = new ArrayList<Spread>(10);
