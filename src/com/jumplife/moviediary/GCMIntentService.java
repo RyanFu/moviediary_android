@@ -104,10 +104,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 	        	generateCheckNotification(context, message);
         	} else if(type == 2  && userId != null && record_id != 0) {
 	        	message = userName + "回應了在 " + movieName + " 的留言";
-	        	if(userId.equals(shareUsrId))
-	        		generateCommentNotification(context, message, record_id, true);
-	        	else
-	        		generateCommentNotification(context, message, record_id, false);
+	        	generateCommentNotification(context, message, record_id);
         	}
         }
         
@@ -167,7 +164,7 @@ public class GCMIntentService extends GCMBaseIntentService {
     }
 
     @SuppressWarnings("deprecation")
-	private static void generateCommentNotification(Context context, String message, int recordId, boolean owner) {
+	private static void generateCommentNotification(Context context, String message, int recordId) {
         int icon = R.drawable.movie_64;
         long when = System.currentTimeMillis();
         NotificationManager notificationManager = (NotificationManager)
@@ -176,7 +173,6 @@ public class GCMIntentService extends GCMBaseIntentService {
         String title = context.getString(R.string.app_name);
         Intent notificationIntent = new Intent(context, MovieRecord.class);
         notificationIntent.putExtra("record_id", recordId);
-        notificationIntent.putExtra("Owner", owner);
         // set intent so it does not start a new activity
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_SINGLE_TOP);

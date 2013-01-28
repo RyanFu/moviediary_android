@@ -108,7 +108,6 @@ public class MovieRecord extends TrackedActivity {
         imageLoader = new ImageLoader(MovieRecord.this);
         Bundle extras = getIntent().getExtras();
         record_id = extras.getInt("record_id");
-        owner = extras.getBoolean("Owner");
         if(Utility.IsSessionValid(MovieRecord.this))
         	fb_id = Utility.usrId;
 
@@ -175,6 +174,11 @@ public class MovieRecord extends TrackedActivity {
         	likecount.setTextColor(MovieRecord.this.getResources().getColor(R.color.black));
             imageviewLike.setImageResource(R.drawable.md_unlike_short);
         }
+        
+        if(record.getUser().getAccount() != null && record.getUser().getAccount().equals(fb_id))
+        	owner = true;
+        else
+        	owner = false;
         
         if (owner)
         	rlShare.setVisibility(View.VISIBLE);
