@@ -149,7 +149,8 @@ public class LoginActivity extends TrackedActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	switch (requestCode) {
+    	super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
         	case AUTHORIZE_ACTIVITY_RESULT_CODE: {
                 Utility.mFacebook.authorizeCallback(requestCode, resultCode, data);
                 break;

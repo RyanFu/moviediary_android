@@ -27,4 +27,5 @@
     <bool name="ga_debug">true</bool>
     <item format="integer" name="ga_dispatchPeriod" type="integer">120</item>
     <bool name="ga_dryRun">false</bool>
+
 </resources>

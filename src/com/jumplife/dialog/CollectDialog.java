@@ -189,9 +189,11 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
 
             user.setAccount(fb_id);
             Record record = new Record(-1, new Date(), score, commentStr, user, movie, 0, false);
-            if (facebook_check && Utility.IsSessionValid(CollectDialog.this)
-            		&& Utility.currentPermissions.containsKey("publish_actions") 
-                    && Utility.currentPermissions.get("publish_actions").equals("1")) {
+            if ((!facebook_check && Utility.IsSessionValid(CollectDialog.this)) || 
+            	( facebook_check && Utility.IsSessionValid(CollectDialog.this) &&
+            	  Utility.currentPermissions.containsKey("publish_actions") && 
+            	  Utility.currentPermissions.get("publish_actions").equals("1"))
+            	) {
             	int recordResult = movieAPI.recordMovie(record); 
 	            if (recordResult == 1) {
 	
