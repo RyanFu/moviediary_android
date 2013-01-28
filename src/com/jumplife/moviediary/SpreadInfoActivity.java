@@ -22,15 +22,15 @@ import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.TrackedActivity;
-import com.google.android.youtube.player.YouTubePlayer;
+/*import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.google.android.youtube.player.YouTubePlayer.ErrorReason;
-import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;
+import com.google.android.youtube.player.YouTubePlayer.PlayerStateChangeListener;*/
 import com.jumplife.imageload.ImageLoader;
 import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.Spread;
-import com.jumplife.youtubeapi.DeveloperKey;
-import com.jumplife.youtubeapi.YouTubeFailureRecoveryActivity;
+/*import com.jumplife.youtubeapi.DeveloperKey;
+import com.jumplife.youtubeapi.YouTubeFailureRecoveryActivity;*/
 
 public class SpreadInfoActivity extends TrackedActivity/*YouTubeFailureRecoveryActivity*/  {
 
@@ -67,8 +67,8 @@ public class SpreadInfoActivity extends TrackedActivity/*YouTubeFailureRecoveryA
     
     private int functionFlag = 0;
 
-    private YouTubePlayerView youTubeView;
-    private MyPlayerStateChangeListener playerStateChangeListener;
+    //private YouTubePlayerView youTubeView;
+    //private MyPlayerStateChangeListener playerStateChangeListener;
     //private static String           TAG = "MovieInfo";
     
     @Override
@@ -105,9 +105,9 @@ public class SpreadInfoActivity extends TrackedActivity/*YouTubeFailureRecoveryA
 
         imageLoader = new ImageLoader(SpreadInfoActivity.this, 0, R.drawable.post_background);
         
-        youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
+        //youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
         //youTubeView.initialize(DeveloperKey.DEVELOPER_KEY, this);
-        playerStateChangeListener = new MyPlayerStateChangeListener();
+        //playerStateChangeListener = new MyPlayerStateChangeListener();
         
         spreadTitle = (TextView) findViewById(R.id.textview_title);
         spreadTitleContent = (TextView) findViewById(R.id.textview_title_content);
@@ -399,7 +399,7 @@ public class SpreadInfoActivity extends TrackedActivity/*YouTubeFailureRecoveryA
 
     }
     
-    private final class MyPlayerStateChangeListener implements PlayerStateChangeListener {
+    /*private final class MyPlayerStateChangeListener implements PlayerStateChangeListener {
         String playerState = "UNINITIALIZED";
 
         public void onLoading() {
@@ -425,10 +425,10 @@ public class SpreadInfoActivity extends TrackedActivity/*YouTubeFailureRecoveryA
         public void onError(ErrorReason reason) {
         	playerState = "ERROR (" + reason + ")";
         	if (reason == ErrorReason.UNEXPECTED_SERVICE_DISCONNECTION) {
-        		youTubeView.setVisibility(View.GONE);
+        		//youTubeView.setVisibility(View.GONE);
         		ivSpreadPoster.setVisibility(View.VISIBLE);
         	}
         }
 
-	}
+	}*/
 }
