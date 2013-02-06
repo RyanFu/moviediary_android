@@ -285,7 +285,7 @@ public class SpreadActivity extends TrackedActivity {
 		super.onStart();
 		EasyTracker.getInstance().activityStart(this);
 		EasyTracker.getTracker().trackView("/campaign/index");
-		EasyTracker.getTracker().trackEvent("內部宣傳活動", "活動列表", null, (long)0);
+		EasyTracker.getTracker().trackEvent("會員獨享", "活動列表", null, (long)0);
     }
     
     @Override

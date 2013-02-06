@@ -186,11 +186,13 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
 			
             user.setAccount(fb_id);
             Record record = new Record(-1, new Date(), score, commentStr, user, movie, 0, false);
-            int recordResult = movieAPI.recordMovie(record); 
-            if (recordResult == 1) {
 
-                if (facebook_check) {
-                	EasyTracker.getTracker().trackEvent("電影打卡", "收藏", movie.getChineseName(), (long)0);
+            int recordResult = movieAPI.recordMovie(record); 
+			if (recordResult == 1) {
+				EasyTracker.getTracker().trackEvent("電影打卡_V2", "收藏", movie.getChineseName(), (long)0);
+			
+			    if (facebook_check) {
+			    	EasyTracker.getTracker().trackEvent("電影打卡_V2", "分享FB", movie.getChineseName() + " and FB ID = " + fb_id, (long)0);
 
                     Log.d(TAG, "facebook is checked");
                     int drawableId = R.drawable.fbgood;
