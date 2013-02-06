@@ -5,11 +5,6 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
@@ -22,9 +17,9 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,23 +36,24 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.android.DialogError;
-import com.facebook.android.FacebookError;
-import com.facebook.android.Facebook.DialogListener;
+import com.facebook.Session;
+import com.facebook.widget.ProfilePictureView;
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.jumplife.imageload.ImageLoader;
 import com.jumplife.imageprocess.ImageProcess;
 import com.jumplife.jome.entity.Comment;
-import com.jumplife.loginactivity.BaseRequestListener;
+/*import com.jumplife.loginactivity.BaseRequestListener;
 import com.jumplife.loginactivity.FacebookIO;
 import com.jumplife.loginactivity.LoginActivity;
 import com.jumplife.loginactivity.SessionEvents;
+import com.jumplife.loginactivity.Utility;*/
+import com.jumplife.loginactivity.FacebookIO;
+import com.jumplife.loginactivity.LoginActivity;
 import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.Movie;
 import com.jumplife.moviediary.entity.Record;
 import com.jumplife.sectionlistview.CommentAdapter;
-import com.jumplife.sharedpreferenceio.SharePreferenceIO;
 
 public class MovieRecord extends TrackedActivity {
 
@@ -66,7 +62,8 @@ public class MovieRecord extends TrackedActivity {
     private TextView          chinese_name;
     private TextView          english_name;
     private ImageView         level;
-    private ImageView         user_avatar;
+    //private ImageView         user_avatar;
+    private ProfilePictureView user_avatar;
     private TextView          user_name;
     private TextView          likecount;
     private TextView          runningtime;
@@ -97,14 +94,18 @@ public class MovieRecord extends TrackedActivity {
     private AddCommentTask    addCommentTask;
     private DeleteCommentTask deleteCommentTask;
     private LoadDataTask      loadDataTask;
-    private Handler 		  mHandler;
 
+    private boolean boolLike = false;
+    
+    public final static int RECORD_LIKE_REQUEST_CODE = 120;
+    public final static int RECORD_LIKE_RESULT_CODE_SUCCESS = 121;
+    public final static int RECORD_LIKE_RESULT_CODE_FAIL = 122;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movierecord);
-        
-        mHandler = new Handler();
+
         imageLoader = new ImageLoader(MovieRecord.this);
         Bundle extras = getIntent().getExtras();
         record_id = extras.getInt("record_id");
@@ -147,12 +148,31 @@ public class MovieRecord extends TrackedActivity {
         }
     }
     
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+        	if(boolLike) {                
+                Intent intent = MovieRecord.this.getIntent();
+                setResult(RECORD_LIKE_RESULT_CODE_SUCCESS, intent);
+        	} else {                
+                Intent intent = MovieRecord.this.getIntent();
+                setResult(RECORD_LIKE_RESULT_CODE_FAIL, intent);
+        	}
+        	MovieRecord.this.finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    
     private void setView() {
         movie = record.getMovie();
         topbar_text.setText("收藏");
         imageLoader.DisplayImage(movie.getPosterUrl(), poster);
         imageLoader.DisplayImage(movie.getLevelUrl(), level);
-        imageLoader.DisplayImage(record.getUser().getIconUrl(), user_avatar);
+        //imageLoader.DisplayImage(record.getUser().getIconUrl(), user_avatar);
+        if(record.getUser().getAccount() != null)
+        	user_avatar.setProfileId(record.getUser().getAccount());
+        else
+        	user_avatar.setProfileId(null);
         chinese_name.setText(movie.getChineseName());
         english_name.setText(movie.getEnglishName());
         if (movie.getRunningTime() != -1)
@@ -207,7 +227,7 @@ public class MovieRecord extends TrackedActivity {
                     }
                     LikeTask likeTask = new LikeTask(record.getIsLovedByUser(), record.getId() + "");
                     likeTask.execute();
-                    record.setIsLovedByUser(!record.getIsLovedByUser());
+                    record.setIsLovedByUser(!record.getIsLovedByUser());                    
                 } else {
                 	Intent newAct = new Intent(); 
                 	newAct.setClass( MovieRecord.this, LoginActivity.class );
@@ -278,7 +298,7 @@ public class MovieRecord extends TrackedActivity {
         Button OK = (Button) view.findViewById(R.id.Confirm);
         ImageView poster = (ImageView) view.findViewById(R.id.imageview_movie_poster);
         final RadioGroup radio_group = (RadioGroup) view.findViewById(R.id.myRadioGroup);
-        ImageView user_img = (ImageView) view.findViewById(R.id.imageview_userimg);
+        ProfilePictureView user_img = (ProfilePictureView) view.findViewById(R.id.imageview_userimg);
         final EditText comment = (EditText) view.findViewById(R.id.textview_descripe);
 
         ImageLoader imageLoader = new ImageLoader(MovieRecord.this);
@@ -299,10 +319,14 @@ public class MovieRecord extends TrackedActivity {
         }
         radio_group.check(score_id);
 
-        Bitmap uerImg = Utility.usrImg;
+        /*Bitmap uerImg = Utility.usrImg;
         if (uerImg != null)
-            user_img.setImageBitmap(uerImg);
-
+            user_img.setImageBitmap(uerImg);*/
+        if(record.getUser().getAccount() != null)
+        	user_img.setProfileId(record.getUser().getAccount());
+        else
+        	user_img.setProfileId(null);
+        
         comment.setText(record.getComment());
 
         Builder builder = new AlertDialog.Builder(MovieRecord.this);
@@ -370,7 +394,8 @@ public class MovieRecord extends TrackedActivity {
         chinese_name = (TextView) viewHeader.findViewById(R.id.textView_chinese_name);
         english_name = (TextView) viewHeader.findViewById(R.id.textView_english_name);
         likecount = (TextView) viewHeader.findViewById(R.id.textView_like);
-        user_avatar = (ImageView) viewHeader.findViewById(R.id.user_avatar);
+        //user_avatar = (ImageView) viewHeader.findViewById(R.id.user_avatar);
+        user_avatar = (ProfilePictureView) viewHeader.findViewById(R.id.user_avatar);
         user_name = (TextView) viewHeader.findViewById(R.id.user_name);
         level = (ImageView) viewHeader.findViewById(R.id.imageView_level);
         runningtime = (TextView) viewHeader.findViewById(R.id.textView_runningtime);
@@ -464,6 +489,7 @@ public class MovieRecord extends TrackedActivity {
         @Override
         protected void onPostExecute(String result) {
             progressdialogInit.dismiss();
+            boolLike = true;
             super.onPostExecute(result);
         }
 
@@ -734,7 +760,8 @@ public class MovieRecord extends TrackedActivity {
     class PostRecordTask extends AsyncTask<Integer, Integer, String> {
 
         private ProgressDialog progressdialogInit;
-
+        private Bitmap fst, sec;
+        
         @Override
         protected void onPreExecute() {
             progressdialogInit = ProgressDialog.show(MovieRecord.this, "上傳", "上傳中…");
@@ -743,9 +770,7 @@ public class MovieRecord extends TrackedActivity {
 
         @Override
         protected String doInBackground(Integer... params) {
-        	 if (Utility.IsSessionValid(MovieRecord.this)
-             		&& Utility.currentPermissions.containsKey("publish_actions") 
-                     && Utility.currentPermissions.get("publish_actions").equals("1")) {
+        	if (Utility.IsSessionValid(MovieRecord.this)) {
 	        	int drawableId = R.drawable.fbgood;
 	        	int score = record.getScore();
 	            if (score == MovieAPI.SCORE_GOOD) {
@@ -760,21 +785,17 @@ public class MovieRecord extends TrackedActivity {
 	            posterUrl = posterUrl.replaceFirst("mpost2", "mpost");
 	            
 	            InputStream is = MovieRecord.this.getResources().openRawResource(drawableId);
-	            Bitmap sec = BitmapFactory.decodeStream(is);
+	            sec = BitmapFactory.decodeStream(is);
 	            sec = Bitmap.createScaledBitmap(sec, sec.getWidth(), sec.getHeight(), true);
-	            Bitmap fst = imageLoader.getBitmapFromURL(posterUrl);
-	            fst = Bitmap.createScaledBitmap(fst, 291, 418, true);
-	
-	            FacebookIO fbIO = new FacebookIO(MovieRecord.this);                
-	            fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), record.getComment());                   
-                return "progress end";
-        	 } else {
-             	Bundle bundle = new Bundle();
-             	bundle.putString("access_token", Utility.mFacebook.getAccessToken());
-                Utility.mAsyncRunner.request("me/permissions", bundle,
-                         new permissionsRequestListener());
-             	return "facebook error";
-             }
+	            fst = imageLoader.getBitmapFromURL(posterUrl);
+	            fst = Bitmap.createScaledBitmap(fst, 291, 418, true);                   
+		        return "progress end";
+	    	} else {
+            	Intent newAct = new Intent(); 
+            	newAct.setClass( MovieRecord.this, LoginActivity.class );
+            	MovieRecord.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE);                  
+		        return "facebook error";
+            } 
         }
 
         @Override
@@ -784,7 +805,9 @@ public class MovieRecord extends TrackedActivity {
 
         @Override
         protected void onPostExecute(String result) {
-        	if (result.equals("progress end")) {
+        	if (result.equals("progress end")) {	
+	            FacebookIO fbIO = new FacebookIO(MovieRecord.this);                
+	            fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), record.getComment());
                 Toast toast = Toast.makeText(MovieRecord.this, "FB分享成功", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
@@ -799,75 +822,6 @@ public class MovieRecord extends TrackedActivity {
             super.onPostExecute(result);
         }
 
-    }
-    
-    /*
-     * Callback for the permission OAuth Dialog
-     */
-    public class permissionsRequestListener extends BaseRequestListener {
-
-        public void onComplete(final String response, final Object state) {
-        	/*
-             * Clear the current permission list and repopulate with new
-             * permissions. This is used to mark assigned permission green and
-             * unclickable.
-             */
-            Utility.currentPermissions.clear();
-            
-            try {
-                JSONObject jsonObject = new JSONObject(response).getJSONArray("data")
-                        .getJSONObject(0);
-                Iterator<?> iterator = jsonObject.keys();
-                
-                int permissionInt;
-                String permissionStr;
-                String permissionBool = null;
-                String permissionName = null;
-                
-                while (iterator.hasNext()) {
-                	permissionStr = (String) iterator.next();
-                	permissionInt = jsonObject.getInt(permissionStr);
-                	permissionName = permissionStr + ",";
-                	permissionBool = permissionInt + ",";
-                	Utility.currentPermissions.put(permissionStr, String.valueOf(permissionInt));
-                }
-            	permissionName = permissionName.substring(0, permissionName.length()-1);
-                permissionBool = permissionBool.substring(0, permissionBool.length()-1);
-                SharePreferenceIO sharepre= new SharePreferenceIO(MovieRecord.this);
-                sharepre.SharePreferenceI("fbPERMISSIONNAME", permissionName);
-                sharepre.SharePreferenceI("fbPERMISSIONBOOL", permissionBool);
-            } catch (JSONException e) {
-            }
-            mHandler.post(new Runnable() {
-                public void run() {
-                    Utility.mFacebook.authorize(MovieRecord.this, LoginActivity.permission_publish, new LoginDialogListener());
-                }
-            });
-        }
-
-        public void onFacebookError(FacebookError error) {
-        }
-
-    }
-    
-    /*
-     * Callback when user has authorized the app with the new permissions
-     */
-    private final class LoginDialogListener implements DialogListener {
-        public void onComplete(Bundle values) {
-            // Inform the parent loginlistener so it can update the user's
-            // profile pic and name on the home screen.
-            SessionEvents.onLoginSuccess();
-        }
-
-        public void onFacebookError(FacebookError error) {
-        }
-
-        public void onError(DialogError error) {
-        }
-
-        public void onCancel() {
-        }
     }
     
     @Override

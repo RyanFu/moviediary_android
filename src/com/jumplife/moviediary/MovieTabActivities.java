@@ -22,8 +22,11 @@ import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 
+import com.facebook.Session;
 import com.google.analytics.tracking.android.TrackedTabActivity;
 import com.jumplife.imageload.ImageLoader;
+/*import com.jumplife.loginactivity.LoginActivity;
+import com.jumplife.loginactivity.Utility;*/
 import com.jumplife.loginactivity.LoginActivity;
 import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.api.MovieAPI;
@@ -122,6 +125,7 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
             if (resultCode == FBLOGOUT) {
                 tabHost.setCurrentTab(0);
             }
+            break;
 
         case LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE:
         	if (Utility.IsSessionValid(MovieTabActivities.this) && resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_SUCCESS) {
@@ -131,6 +135,7 @@ public class MovieTabActivities extends TrackedTabActivity implements OnTabChang
                 Log.d(TAG, "Success tab number : " + tabIdNumber);
 	        }  else if(resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_FAIL)
 	        	tabHost.setCurrentTab(0);
+        	break;
         }
     }
 

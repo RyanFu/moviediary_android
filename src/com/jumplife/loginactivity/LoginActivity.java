@@ -1,5 +1,5 @@
-/*
- * Copyright 2004 - Present Facebook, Inc.
+/**
+ * Copyright 2012 Facebook
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,85 +16,55 @@
 
 package com.jumplife.loginactivity;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Iterator;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.DialogInterface.OnCancelListener;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.Facebook;
-import com.facebook.android.Util;
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.TrackedActivity;
-import com.jumplife.loginactivity.SessionEvents.AuthListener;
-import com.jumplife.loginactivity.SessionEvents.LogoutListener;
+import com.facebook.LoggingBehavior;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.Settings;
+import com.facebook.model.GraphUser;
 import com.jumplife.moviediary.R;
 import com.jumplife.moviediary.ServerUtilities;
 import com.jumplife.moviediary.api.MovieAPI;
 import com.jumplife.moviediary.entity.User;
 import com.jumplife.sharedpreferenceio.SharePreferenceIO;
 
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.DialogInterface.OnCancelListener;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
-import android.widget.Toast;
-
-public class LoginActivity extends TrackedActivity {
-
-    /*
-     * Your Facebook Application ID must be set before running this example See
-     * http://www.facebook.com/developers/createapp.php
-     */
-    private LoginButton fbLoginButton;
-    private ProgressDialog progressdialogInit;
-    private SharePreferenceIO sharepre;
+public class LoginActivity extends Activity {
     
+
     public final static int LOGIN_ACTIVITY_REQUEST_CODE = 90;
     public final static int LOGIN_ACTIVITY_RESULT_CODE_SUCCESS = 95;
     public final static int LOGIN_ACTIVITY_RESULT_CODE_FAIL = 96;
     public final static int LOGIN_ACTIVITY_REQUEST_CODE_LIKE = 100;
+    public static Session session;
+    private ImageButton buttonLoginLogout;
+    private ProgressDialog progressdialogInit;
+    private CreateUserTask task;
     
-    final static int AUTHORIZE_ACTIVITY_RESULT_CODE = 0;
+    private Session.StatusCallback statusCallback = new SessionStatusCallback();
 
-    public static final String APP_ID = "399748073422920";
-    public final static String[] permission_normal = { "user_photos", "user_birthday" };
-	public final static String[] permission_publish = { "publish_actions", "user_photos", "user_birthday" };
-	
-	public final String TAG = "LoginActivity"; 
-	
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        
-
-        if (APP_ID == null) {
-            Util.showAlert(this, "Warning", "Facebook Applicaton ID must be "
-                    + "specified before running this example: see FbAPIs.java");
-            return;
-        }
-
         setContentView(R.layout.activity_login);
-        
-        // Create the Facebook Object using the app id.
-        Utility.mFacebook = new Facebook(APP_ID);
-        // Instantiate the asynrunner object for asynchronous api calls.
-        Utility.mAsyncRunner = new AsyncFacebookRunner(Utility.mFacebook);
-
-        fbLoginButton = (LoginButton) findViewById(R.id.login);
-        
+        buttonLoginLogout = (ImageButton)findViewById(R.id.login);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int screenHeight = displayMetrics.heightPixels;
@@ -102,211 +72,97 @@ public class LoginActivity extends TrackedActivity {
         		LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
         params.topMargin = screenHeight*2/3;
-        fbLoginButton.setLayoutParams(params);
+        buttonLoginLogout.setLayoutParams(params);
         
-        // restore session if one exists
-        SessionStore.restore(Utility.mFacebook, this);
-        SessionEvents.addAuthListener(new FbAPIsAuthListener());
-        SessionEvents.addLogoutListener(new FbAPIsLogoutListener());
+        Settings.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
 
-        /*
-         * Source Tag: login_tag
-         */
-        fbLoginButton.init(this, AUTHORIZE_ACTIVITY_RESULT_CODE, Utility.mFacebook, permission_publish);
+        session = Session.getActiveSession();
+        if (session == null) {
+            if (savedInstanceState != null) {
+                session = Session.restoreSession(this, null, statusCallback, savedInstanceState);
+            }
+            if (session == null) {
+                session = new Session(this);
+            }
+            Session.setActiveSession(session);
+            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED)) {
+                session.openForRead(new Session.OpenRequest(this).setCallback(statusCallback));
+            }
+        }
 
-        sharepre = new SharePreferenceIO(LoginActivity.this);
-        		
-        progressdialogInit = new ProgressDialog(this);
+        buttonLoginLogout.setOnClickListener(new OnClickListener() {
+            public void onClick(View view) {
+	            if (!session.isOpened() && !session.isClosed()) {
+	                session.openForRead(new Session.OpenRequest(LoginActivity.this).setCallback(statusCallback));
+	            } else {
+	                Session.openActiveSession(LoginActivity.this, true, statusCallback);
+	            }}
+        });
+        /*.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+            public void onUserInfoFetched(GraphUser user) {
+            	Session session = Session.getActiveSession();
+            	if(session.isOpened()) {
+	                SharePreferenceIO sharepre;
+	                sharepre = new SharePreferenceIO(LoginActivity.this);
+	                
+	                Utility.usrId = user.getId();
+	                Utility.usrName = user.getName();
+	                Utility.usrBirth = user.getBirthday();
+	                
+	                sharepre.SharePreferenceI("fbID", Utility.usrId);
+	                sharepre.SharePreferenceI("fbName", Utility.usrName);
+	                sharepre.SharePreferenceI("fbBIRTH", Utility.usrBirth);
+	                
+	                LoginActivity.this.finish();
+            	}
+            }
+        });*/
+        
+        progressdialogInit = new ProgressDialog(LoginActivity.this);
         progressdialogInit.setTitle("Load");
         progressdialogInit.setMessage("Loading…");
-        progressdialogInit.setOnCancelListener(new OnCancelListener() {
-            public void onCancel(DialogInterface arg0) {
-                finish();
-            }
-        });        
+        progressdialogInit.setOnCancelListener(cancelListener);
         progressdialogInit.setCanceledOnTouchOutside(false);
-        
-        if (Utility.IsSessionValid(LoginActivity.this)) {
-        	progressdialogInit.show();
-            requestUserData();
-        }
-        
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(Utility.mFacebook != null) {
-            if (!Utility.mFacebook.isSessionValid()) {
-            	Utility.usrId = null;
-                Utility.usrName = null;
-                Utility.usrImg = null;
-            } else {
-                Utility.mFacebook.extendAccessTokenIfNeeded(this, null);
-            }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-        	case AUTHORIZE_ACTIVITY_RESULT_CODE: {
-                Utility.mFacebook.authorizeCallback(requestCode, resultCode, data);
-                break;
-            }
-        }
-    }
-
-    /*
-     * Callback for fetching current user's name, picture, uid.
-     */
-    public class UserRequestListener extends BaseRequestListener {
-
-        public void onComplete(final String response, final Object state) {
-            JSONObject jsonObject;
-            try {
-                jsonObject = new JSONObject(response);
-
-                Utility.usrId = jsonObject.getString("id");
-                Utility.usrName = jsonObject.getString("name");
-                
-                JSONObject picture = jsonObject.getJSONObject("picture");
-                JSONObject data = picture.getJSONObject("data");
-                String Url = data.getString("url");
-                Utility.usrImg = Utility.getBitmap(Url);
-                if(Utility.usrImg == null)
-                	Utility.usrImg = BitmapFactory.decodeResource(LoginActivity.this.getResources(), R.drawable.stub);
-                
-                String birthdayStr = null;
-                DateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-                if(jsonObject.has("birthday")) {
-                	birthdayStr = jsonObject.getString("birthday");
-                	try {
-						Utility.usrBirth = formatter.parse(birthdayStr);
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-                }
-                
-                if(jsonObject.has("gender"))
-                	Utility.usrGender = jsonObject.getString("gender");
-                
-                JSONObject jsonPermission = jsonObject.getJSONObject("permissions").getJSONArray("data")
-                        .getJSONObject(0);
-                Iterator<?> iterator = jsonPermission.keys();
-                int permissionInt;
-                String permissionStr;
-                String permissionBool = null;
-                String permissionName = null;
-                while (iterator.hasNext()) {
-                	permissionStr = (String) iterator.next();
-                	permissionInt = jsonPermission.getInt(permissionStr);
-                	permissionName = permissionStr + ",";
-                	permissionBool = permissionInt + ",";
-                    Utility.currentPermissions.put(permissionStr, String.valueOf(permissionInt));
-                }
-                permissionName = permissionName.substring(0, permissionName.length()-1);
-                permissionBool = permissionBool.substring(0, permissionBool.length()-1);
-                
-                sharepre.SharePreferenceI("fbID", Utility.usrId);
-                sharepre.SharePreferenceI("fbName", Utility.usrName);
-                sharepre.SharePreferenceI("fbPICURL", Url);
-                sharepre.SharePreferenceI("fbBIRTH", birthdayStr);
-                sharepre.SharePreferenceI("fbGENDER", Utility.usrGender);
-                sharepre.SharePreferenceI("fbPERMISSIONNAME", permissionName);
-                sharepre.SharePreferenceI("fbPERMISSIONBOOL", permissionBool);
-                
-                int count = 0;
-                MovieAPI movieAPI = new MovieAPI();                
-                User user = new User(Utility.usrId, Utility.usrName, Utility.usrGender, Utility.usrBirth);                
-                while(!movieAPI.createUser(user, Utility.mFacebook.getAccessToken(), ServerUtilities.regGcmId) && count < 200) 
-                	count++;
-
-                if(LoginActivity.this != null && !LoginActivity.this.isFinishing() 
-            			&& progressdialogInit != null && progressdialogInit.isShowing())
-            		progressdialogInit.dismiss();
-                
-                if(count < 200 && Utility.mFacebook.isSessionValid() && Utility.usrId != null ) {
-                	Intent intent = LoginActivity.this.getIntent();
-                    setResult(LOGIN_ACTIVITY_RESULT_CODE_SUCCESS, intent);
-                	LoginActivity.this.finish();
-                	Log.d(TAG, "Login Success count : " + count);
-                } else {
-                	LoginActivity.this.runOnUiThread(new Runnable() {
-                		public void run() {
-                			Toast.makeText(LoginActivity.this, "登入失敗 請重新登入", Toast.LENGTH_LONG).show();
-                		}
-                	});
-                    Log.d(TAG, "Login Fail count : " + count);
-                }
-                
-            } catch (JSONException e) {
-            	if(LoginActivity.this != null && !LoginActivity.this.isFinishing() 
-            			&& progressdialogInit != null && progressdialogInit.isShowing())
-            		progressdialogInit.dismiss();
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    /*
-     * The Callback for notifying the application when authorization succeeds or
-     * fails.
-     */
-
-    public class FbAPIsAuthListener implements AuthListener {
-
-        public void onAuthSucceed() {
-        	if(LoginActivity.this != null && !LoginActivity.this.isFinishing() && progressdialogInit != null)
-        		progressdialogInit.show();
-            requestUserData();
-        }
-
-        public void onAuthFail(String error) {
-        }
-    }
-
-    /*
-     * The Callback for notifying the application when log out starts and
-     * finishes.
-     */
-    public class FbAPIsLogoutListener implements LogoutListener {
-        public void onLogoutBegin() {
-        }
-
-        public void onLogoutFinish() {
-        	Utility.usrId = null;
-            Utility.usrName = null;
-            Utility.usrImg = null;
-            Utility.usrGender = null;
-            Utility.usrBirth = null;
-            Utility.currentPermissions.clear();
-            
-            sharepre.SharePreferenceI("fbID", null);
-            sharepre.SharePreferenceI("fbName", null);
-            sharepre.SharePreferenceI("fbPICURL", null);
-            sharepre.SharePreferenceI("fbBIRTH", null);
-            sharepre.SharePreferenceI("fbGENDER", null);
-            sharepre.SharePreferenceI("fbPERMISSIONNAME", null);
-            sharepre.SharePreferenceI("fbPERMISSIONBOOL", null);
-        }
-    }
-
-    /*
-     * Request user name, and picture to show on the main screen.
-     */
-    public void requestUserData() {
-        Bundle params = new Bundle();
-        params.putString("fields", "id, name, picture, birthday, gender, permissions");
-        Utility.mAsyncRunner.request("me", params, new UserRequestListener());
     }
     
+    private final OnCancelListener cancelListener = new OnCancelListener() {
+        public void onCancel(DialogInterface arg0) {
+        	if(task!= null && task.getStatus() != AsyncTask.Status.FINISHED)
+        		task.cancel(true);
+        	Intent intent = LoginActivity.this.getIntent();
+            setResult(LOGIN_ACTIVITY_RESULT_CODE_FAIL, intent);
+            LoginActivity.this.finish();
+        }
+    };
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Session.getActiveSession().addCallback(statusCallback);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Session.getActiveSession().removeCallback(statusCallback);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Session session = Session.getActiveSession();
+        Session.saveSession(session, outState);
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
         	Intent intent = LoginActivity.this.getIntent();
             setResult(LOGIN_ACTIVITY_RESULT_CODE_FAIL, intent);
             LoginActivity.this.finish();
@@ -314,16 +170,111 @@ public class LoginActivity extends TrackedActivity {
         return super.onKeyDown(keyCode, event);
     }
     
-	@Override
-    public void onStart() {
-      super.onStart();
-      EasyTracker.getInstance().activityStart(this);
-      EasyTracker.getTracker().trackView("/facebook/login");
+    private class SessionStatusCallback implements Session.StatusCallback {
+        public void call(Session session, SessionState state, Exception exception) {
+        	if (session != null && session.isOpened()) {
+                // Get the user's data.
+                progressdialogInit.show();
+                makeMeRequest(session);
+            }
+        }
     }
     
-    @Override
-    public void onStop() {
-      super.onStop();
-      EasyTracker.getInstance().activityStop(this);
+    private void makeMeRequest(final Session session) {
+        // Make an API call to get user data and define a 
+        // new callback to handle the response.
+        Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
+            public void onCompleted(GraphUser user, Response response) {
+				Session session = Session.getActiveSession();
+            	if(session.isOpened() && user.getId() != null && user.getName() != null ) {
+	                task = new CreateUserTask(user);
+	                task.execute();
+            	} else {
+            		if(LoginActivity.this != null && !LoginActivity.this.isFinishing() 
+                			&& progressdialogInit != null && progressdialogInit.isShowing())
+                		progressdialogInit.dismiss();
+            	}
+            		
+                if (response.getError() != null) {
+                    // Handle errors, will do so later.
+                }
+			}
+        });
+        request.executeAsync();
+    }
+    
+    class CreateUserTask extends AsyncTask<Integer, Integer, String> {
+
+        private GraphUser user;
+        private int count;
+        
+        public CreateUserTask(GraphUser user) {
+	    	this.user = user;
+	    }
+	    
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(Integer... params) {
+        	Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        	int count = 0;
+            MovieAPI movieAPI = new MovieAPI();                
+            User userEnity = new User(user.getId(), user.getName(), "", user.getBirthday());                
+            Session session = Session.getActiveSession();        	
+            while(!movieAPI.createUser(userEnity, session.getAccessToken(), ServerUtilities.regGcmId) && count < 200) 
+            	count++;
+            
+            return "progress end";
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            super.onProgressUpdate(progress);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            
+        	if(LoginActivity.this != null && !LoginActivity.this.isFinishing() 
+        			&& progressdialogInit != null && progressdialogInit.isShowing())
+        		progressdialogInit.dismiss();
+
+        	SharePreferenceIO sharepre = new SharePreferenceIO(LoginActivity.this);
+        	if(count < 200) {
+                
+                Utility.usrId = user.getId();
+                Utility.usrName = user.getName();
+                Utility.usrBirth = user.getBirthday();
+                
+                sharepre.SharePreferenceI("fbID", Utility.usrId);
+                sharepre.SharePreferenceI("fbName", Utility.usrName);
+                sharepre.SharePreferenceI("fbBIRTH", Utility.usrBirth);
+                
+                Intent intent = LoginActivity.this.getIntent();
+                setResult(LOGIN_ACTIVITY_RESULT_CODE_SUCCESS, intent);
+                Log.d("Login", "Create Success");
+            	LoginActivity.this.finish();
+            } else {
+            	
+            	Utility.usrId = null;
+                Utility.usrName = null;
+                Utility.usrBirth = null;
+                
+                sharepre.SharePreferenceI("fbID", null);
+                sharepre.SharePreferenceI("fbName", null);
+                sharepre.SharePreferenceI("fbBIRTH", null);
+                
+            	LoginActivity.this.runOnUiThread(new Runnable() {
+            		public void run() {
+            			Toast.makeText(LoginActivity.this, "登入失敗 請重新登入", Toast.LENGTH_LONG).show();
+            		}
+            	});
+            }
+        }
+
     }
 }

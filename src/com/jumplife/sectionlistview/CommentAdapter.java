@@ -1,26 +1,27 @@
 package com.jumplife.sectionlistview;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import com.facebook.android.FacebookError;
 import com.facebook.android.Util;
-//import com.jumplife.facebook.FacebookIO;
-import com.jumplife.imageload.ImageLoader;
+import com.facebook.widget.ProfilePictureView;
 import com.jumplife.jome.entity.Comment;
 import com.jumplife.loginactivity.FacebookIO;
-import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.R;
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,7 @@ public class CommentAdapter extends BaseAdapter{
 	
 	Activity mActivity;
 	private ArrayList<Comment> comments;
-	private ImageLoader imageLoader;
+	//private ImageLoader imageLoader;
 	private String mUsrId;
 	private Map<String, String> mapName;
 	
@@ -40,7 +41,7 @@ public class CommentAdapter extends BaseAdapter{
 		this.comments = commentList;
 		this.mActivity = mActivity;
 		this.mUsrId = usrId;
-		imageLoader=new ImageLoader(mActivity);
+		//imageLoader=new ImageLoader(mActivity);
 		
 		FacebookIO fbIO = new FacebookIO(mActivity);
 		String[] nameArray = new String[commentList.size()]; 
@@ -73,13 +74,17 @@ public class CommentAdapter extends BaseAdapter{
 		
 		LayoutInflater myInflater = LayoutInflater.from(mActivity);
 		View converView = myInflater.inflate(R.layout.listview_comments, null);
-		ImageView user_avatar = (ImageView)converView.findViewById(R.id.user_img);
+		ProfilePictureView user_avatar = (ProfilePictureView)converView.findViewById(R.id.user_img);
 		TextView user_name = (TextView)converView.findViewById(R.id.post_name);
 		TextView record_date = (TextView)converView.findViewById(R.id.post_time);
 		TextView user_comment = (TextView)converView.findViewById(R.id.content);
 		ImageView delete_comment = (ImageView)converView.findViewById(R.id.delete_img);
-		imageLoader.DisplayImage("http://graph.facebook.com/" + comments.get(position).getAccount() + 
-				"/picture?type=square", user_avatar);
+		/*imageLoader.DisplayImage("http://graph.facebook.com/" + comments.get(position).getAccount() + 
+				"/picture?type=square", user_avatar);*/
+		if (comments.get(position).getAccount() != null)
+			user_avatar.setProfileId(comments.get(position).getAccount());
+		else 
+			user_avatar.setProfileId(null);
 		
 		String usrName = mapName.get(comments.get(position).getAccount());
 		if (usrName != null)
@@ -119,29 +124,24 @@ public class CommentAdapter extends BaseAdapter{
         }  
           
         @Override  
-        protected String doInBackground(Integer... params) {
-			String response = null;
-			try {
-				response = Utility.mFacebook.request(fb_id);
-			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			JSONObject json = null;
-			try {
-				json = Util.parseJson(response);
-				name = json.getString("name");
-			} catch (FacebookError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+        @SuppressWarnings("deprecation")
+		protected String doInBackground(Integer... params) {
+			String url = "https://graph.facebook.com/" + fb_id;
+        	String result = "";
+        	
+        	try{
+        		HttpClient httpClient = new DefaultHttpClient();
+        		HttpGet method = new HttpGet(new URI(url));
+        		HttpResponse response = httpClient.execute(method);
+        		if (response != null) {
+        			result= EntityUtils.toString((response.getEntity()));
+        			JSONObject JSONobj;
+        			JSONobj = Util.parseJson(result);
+    				name = JSONobj.getString("name");
+        		}
+        	}catch(Exception e){
+        		Log.e("HttpConnFail", e.toString());
+        	}
 			
 			return "progress end";  
         }  

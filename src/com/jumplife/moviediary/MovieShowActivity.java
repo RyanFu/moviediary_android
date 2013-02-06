@@ -1,7 +1,5 @@
 package com.jumplife.moviediary;
 
-import java.io.ByteArrayOutputStream;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.jumplife.dialog.CollectDialog;
@@ -76,6 +74,9 @@ public class MovieShowActivity extends TrackedActivity {
     public final static int   CHECK        = 1;
     public final static int   CHECK_SUCESS = 10;
     public final static int   CHECK_FAIL   = 11;
+    
+    public final static int   BUTTON_FRIEND = 15;
+    public final static int   BUTTON_CHECK = 16;
 
     
     /** Called when the activity is first created. */
@@ -98,22 +99,44 @@ public class MovieShowActivity extends TrackedActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
 	        case CHECK:
-	            if (resultCode == CHECK_SUCESS) {
-	            	initBottonTextViewColor();
+	        	if (resultCode == CHECK_SUCESS) {
+                    initBottonTextViewColor();
                 	initBottonImageViewVisible();
                 	functionFlag = FLAG_ALL;
                 	setBottonView();
-                    /*buttonFriend.setBackgroundColor(getResources().getColor(R.color.white1));
-                    buttonAll.setBackgroundColor(getResources().getColor(R.color.light_grey));*/
-	                LoadRecordTask loadRecordTask = new LoadRecordTask(false);
+	        		LoadRecordTask loadRecordTask = new LoadRecordTask(false);
 	                loadRecordTask.execute();
 	            }
+	            break;
 	
-	        case LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE:
+	        case BUTTON_FRIEND:
+	        	if (Utility.IsSessionValid(MovieShowActivity.this) && resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_SUCCESS) {
+	        		initBottonTextViewColor();
+                	initBottonImageViewVisible();
+                	functionFlag = FLAG_FRIEND;
+                	setBottonView();
+	        		LoadRecordTask loadRecordTask = new LoadRecordTask(true);
+	                loadRecordTask.execute();
+		        } 
+	        	break;
+	        
+	        case BUTTON_CHECK:
 	        	if (Utility.IsSessionValid(MovieShowActivity.this) && resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_SUCCESS) {
 	        		ClickMovieTask task = new ClickMovieTask();
-	                task.execute();
+                    task.execute();
+		        } 
+	        	break;
+	        	
+	        case MovieRecord.RECORD_LIKE_REQUEST_CODE:
+	        	if (resultCode == MovieRecord.RECORD_LIKE_RESULT_CODE_SUCCESS) {
+	        		initBottonTextViewColor();
+                	initBottonImageViewVisible();
+                	functionFlag = FLAG_ALL;
+                	setBottonView();
+	        		LoadRecordTask loadRecordTask = new LoadRecordTask(false);
+	                loadRecordTask.execute();
 		        }
+	        	break;
         }
     }
 
@@ -151,7 +174,7 @@ public class MovieShowActivity extends TrackedActivity {
 				if (!Utility.IsSessionValid(MovieShowActivity.this)) {
                 	Intent newAct = new Intent(); 
                 	newAct.setClass( MovieShowActivity.this, LoginActivity.class );
-                	MovieShowActivity.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE_LIKE);
+                	MovieShowActivity.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE);
                 } else {
                 	FacebookIO fbIO = new FacebookIO(MovieShowActivity.this);
                 	fbIO.requestDialog(Utility.usrName + "邀請你一起來用電影櫃 (一個收藏與分享電影的好Android APP : http://goo.gl/q1Zzu)");
@@ -177,14 +200,18 @@ public class MovieShowActivity extends TrackedActivity {
         MovieAPI movieAPI = new MovieAPI();
         if(Utility.IsSessionValid(MovieShowActivity.this))
         	fb_id = Utility.usrId;
+        
+        if(fb_id != null)
+        	Log.d("", "fbid : " + fb_id);
+        else
+        	Log.d("", "fbid is null");
+        
         movie = movieAPI.getMovieMoreInfo(movie_id, fb_id);
-        // recordList = MovieInfo.records;
         recordList = movieAPI.getMovieRecordList(fb_id, movie_id + "");
     }
 
     private void setView() {
         ImageLoader imageLoader = new ImageLoader(MovieShowActivity.this, 140);
-        // imageLoader.DisplayImage(posterUrl, poster);
         imageLoader.DisplayImage(movie.getLevelUrl(), level);
         imageLoader.DisplayImage(movie.getPosterUrl(), poster);
 
@@ -194,9 +221,7 @@ public class MovieShowActivity extends TrackedActivity {
             runningtime.setText("片長 : 未提供");
         else
             runningtime.setText("片長 : " + movie.getRunningTime() + "分");
-        /*buttonAll.setBackgroundColor(getResources().getColor(R.color.white1));
-        buttonFriend.setBackgroundColor(getResources().getColor(R.color.light_grey));*/
-
+        
         poster.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 Intent newAct = new Intent();
@@ -221,14 +246,12 @@ public class MovieShowActivity extends TrackedActivity {
                 if (!Utility.IsSessionValid(MovieShowActivity.this)) {
                 	Intent newAct = new Intent(); 
                 	newAct.setClass( MovieShowActivity.this, LoginActivity.class );
-                	MovieShowActivity.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE);
+                	MovieShowActivity.this.startActivityForResult(newAct, BUTTON_FRIEND);
                 } else {
                 	initBottonTextViewColor();
                 	initBottonImageViewVisible();
                 	functionFlag = FLAG_FRIEND;
                 	setBottonView();
-                    /*buttonFriend.setBackgroundColor(getResources().getColor(R.color.white1));
-                    buttonAll.setBackgroundColor(getResources().getColor(R.color.light_grey));*/
                     LoadRecordTask loadRecordTask = new LoadRecordTask(true);
                     loadRecordTask.execute();
                 }
@@ -242,8 +265,6 @@ public class MovieShowActivity extends TrackedActivity {
             	initBottonImageViewVisible();
             	functionFlag = FLAG_ALL;
             	setBottonView();
-                /*buttonAll.setBackgroundColor(getResources().getColor(R.color.white1));
-                buttonFriend.setBackgroundColor(getResources().getColor(R.color.light_grey));*/
                 LoadRecordTask loadRecordTask = new LoadRecordTask(false);
                 loadRecordTask.execute();
             }
@@ -252,15 +273,12 @@ public class MovieShowActivity extends TrackedActivity {
         buttonCheck.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if (Utility.IsSessionValid(MovieShowActivity.this)) {
-                	
-                    // createGooglePlayDialog();
-                    // alertDialog.show();
-                    ClickMovieTask task = new ClickMovieTask();
+                	ClickMovieTask task = new ClickMovieTask();
                     task.execute();
                 } else {
                 	Intent newAct = new Intent(); 
                 	newAct.setClass( MovieShowActivity.this, LoginActivity.class );
-                	MovieShowActivity.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE);
+                	MovieShowActivity.this.startActivityForResult(newAct, BUTTON_CHECK);
                 }
             }
         });
@@ -272,7 +290,7 @@ public class MovieShowActivity extends TrackedActivity {
 	                newAct.putExtra("record_id", recordList.get(position - 1).getId());
 	                newAct.putExtra("Owner", false);
 	                newAct.setClass(MovieShowActivity.this, MovieRecord.class);
-	                startActivity(newAct);
+	                startActivityForResult(newAct, MovieRecord.RECORD_LIKE_REQUEST_CODE);
             	}
             }
 
@@ -356,7 +374,6 @@ public class MovieShowActivity extends TrackedActivity {
             if (movie == null || recordList == null) {
             	listviewShow.setVisibility(View.GONE);
                 imageButtonRefresh.setVisibility(View.VISIBLE);
-                //showReloadDialog(MovieShowActivity.this);
             } else {
                 setView();
                 listviewShow.setVisibility(View.VISIBLE);
@@ -400,6 +417,8 @@ public class MovieShowActivity extends TrackedActivity {
         protected String doInBackground(Integer... params) {
             MovieAPI movieAPI = new MovieAPI();
             recordList.clear();
+            if(Utility.IsSessionValid(MovieShowActivity.this))
+            	fb_id = Utility.usrId;
             if (onlyfriend) {
                 recordList = movieAPI.getMovieFriendRecordList(fb_id, movie_id + "");
             } else {
@@ -420,7 +439,6 @@ public class MovieShowActivity extends TrackedActivity {
             if (recordList == null) {
             	listviewShow.setVisibility(View.GONE);
                 imageButtonRefresh.setVisibility(View.VISIBLE);
-                //showReloadDialog(MovieShowActivity.this);
             } else {
                 if (recordList.size() == 0) {
                     listviewShow.removeFooterView(viewFooter);
@@ -483,14 +501,7 @@ public class MovieShowActivity extends TrackedActivity {
 
         @Override
         protected String doInBackground(Integer... params) {
-            ByteArrayOutputStream bsUser = new ByteArrayOutputStream();
-
             Intent intentMain = new Intent();
-            Bitmap uerImg = Utility.usrImg;
-            if (uerImg != null) {
-                uerImg.compress(Bitmap.CompressFormat.PNG, 50, bsUser);
-                intentMain.putExtra("userImage", bsUser.toByteArray());
-            }
             
             EasyTracker.getTracker().trackEvent("電影打卡列表", "打卡", movie.getChineseName(), (long)0);
 

@@ -2,7 +2,10 @@ package com.jumplife.sectionlistview;
 
 import java.util.ArrayList;
 
+import com.facebook.widget.ProfilePictureView;
 import com.jumplife.imageload.ImageLoader;
+/*import com.jumplife.loginactivity.LoginActivity;
+import com.jumplife.loginactivity.Utility;*/
 import com.jumplife.loginactivity.LoginActivity;
 import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.R;
@@ -28,7 +31,6 @@ public class RecordListAdapter extends BaseAdapter{
     private Activity mActivity;
     private String fbId;
 	private ArrayList<Record> records;
-	private ImageLoader imageLoader;
 	private TextView textviewLike;
 	private ImageView imageviewLike;
 	//private LinearLayout linearLike;
@@ -37,7 +39,7 @@ public class RecordListAdapter extends BaseAdapter{
 		this.records = recordList;
 		this.mActivity = mActivity;
 		this.fbId = fbId;
-		imageLoader=new ImageLoader(mActivity);
+		new ImageLoader(mActivity);
 	}
 
 	public int getCount() {
@@ -59,7 +61,7 @@ public class RecordListAdapter extends BaseAdapter{
 		
 		LayoutInflater myInflater = LayoutInflater.from(mActivity);
 		View converView = myInflater.inflate(R.layout.listview_movieshow, null);
-		ImageView user_avatar = (ImageView)converView.findViewById(R.id.user_avatar);
+		ProfilePictureView user_avatar = (ProfilePictureView)converView.findViewById(R.id.user_avatar);
 		TextView name = (TextView)converView.findViewById(R.id.user_name);
 		TextView score = (TextView)converView.findViewById(R.id.user_score);
 		TextView user_comment = (TextView)converView.findViewById(R.id.user_comment);
@@ -67,7 +69,11 @@ public class RecordListAdapter extends BaseAdapter{
 		imageviewLike = (ImageView)converView.findViewById(R.id.imageview_like);
 		//linearLike = (LinearLayout)converView.findViewById(R.id.linearlayout_like);
 		
-		imageLoader.DisplayImage(records.get(position).getUser().getIconUrl(), user_avatar);
+		//imageLoader.DisplayImage(records.get(position).getUser().getIconUrl(), user_avatar);
+		if (records.get(position).getUser().getAccount() != null)
+			user_avatar.setProfileId(records.get(position).getUser().getAccount());
+		else 
+			user_avatar.setProfileId(null);
 		
 		name.setText(records.get(position).getUser().getName());
 		score.setText("評價 :" + records.get(position).getScoreString());

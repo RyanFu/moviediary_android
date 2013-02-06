@@ -22,12 +22,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.facebook.Session;
+import com.facebook.widget.ProfilePictureView;
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -35,8 +36,8 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-//import com.jumplife.facebook.FacebookIO;
-import com.jumplife.imageload.ImageLoader;
+/*import com.jumplife.loginactivity.FacebookIO;
+import com.jumplife.loginactivity.Utility;*/
 import com.jumplife.loginactivity.FacebookIO;
 import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.api.MovieAPI;
@@ -56,7 +57,7 @@ public class MyMovieRecord extends TrackedActivity {
     private boolean               avoidSessionChecked = false;
 
     private TextView              topbarText;
-    private ImageView             imageviewUserIcon;
+    private ProfilePictureView    imageviewUserIcon;
     private TextView              textviewName;
     private TextView              textviewRecordCount;
     private TextView              textviewFriendCount;
@@ -127,6 +128,11 @@ public class MyMovieRecord extends TrackedActivity {
         if (loadDataTask != null && loadDataTask.getStatus() != AsyncTask.Status.FINISHED)
             loadDataTask.cancel(true);
         super.onDestroy();
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -232,9 +238,14 @@ public class MyMovieRecord extends TrackedActivity {
 	private void setViews() {
 		LinearLayout linearlayout = (LinearLayout)findViewById(R.id.linearlayout_content);
 		//先remove view
-		linearlayout.removeAllViews();
-		
+		linearlayout.removeAllViews();		
 		LayoutInflater inflater = LayoutInflater.from(this);
+		
+		if (fbId != null)
+			imageviewUserIcon.setProfileId(fbId);
+		else 
+			imageviewUserIcon.setProfileId(null);
+		
 		//如果要取得的是打卡紀錄
 		if(functionFlag == FLAG_CHECKIN) {
 			recordGridView = (PullToRefreshGridView)inflater.inflate(R.layout.gridview_records, null, false);
@@ -242,10 +253,9 @@ public class MyMovieRecord extends TrackedActivity {
 			recordGridView.setLayoutParams(llp);
 			linearlayout.addView(recordGridView);
 			
-			ImageLoader imageLoader = new ImageLoader(this);
+			//ImageLoader imageLoader = new ImageLoader(this);
 			
-			imageLoader.DisplayImage("http://graph.facebook.com/" + fbId + 
-					"/picture?type=square", imageviewUserIcon);
+			//imageLoader.DisplayImage("http://graph.facebook.com/" + fbId + "/picture?type=square", imageviewUserIcon);
 
 			if(user.getName() != null)
 				textviewName.setText(user.getName());
@@ -294,7 +304,7 @@ public class MyMovieRecord extends TrackedActivity {
 		buttonCheckins = (Button)findViewById(R.id.button_checkin);
 		buttonFriends = (Button)findViewById(R.id.button_friend);
 		
-		imageviewUserIcon = (ImageView) findViewById(R.id.imageView_person);
+		imageviewUserIcon = (ProfilePictureView) findViewById(R.id.imageView_person);
 		textviewName = (TextView) findViewById(R.id.textView_name);
 		textviewRecordCount = (TextView) findViewById(R.id.textView_checkin_number);
 		textviewFriendCount = (TextView) findViewById(R.id.textView_friend_number);

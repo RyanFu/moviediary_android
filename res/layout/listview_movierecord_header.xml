@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:background="#eeeeee">
@@ -110,13 +111,23 @@
 	            android:layout_alignParentRight="true"
 	            android:layout_centerVertical="true"
 	            android:src="@drawable/navigation_next" />
-			<ImageView android:id="@+id/user_avatar"
+			<!-- <ImageView android:id="@+id/user_avatar"
 		        android:layout_width="50dp" android:layout_height="50dp"
 		        android:layout_gravity="center_vertical" 
 		        android:layout_alignParentTop="true"
 		        android:layout_alignParentLeft="true"
 		        android:layout_margin="5dp"
-		        android:background="@color/white1"></ImageView>
+		        android:background="@color/white1"></ImageView> -->
+		    <com.facebook.widget.ProfilePictureView
+                android:id="@+id/user_avatar"
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical" 
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_margin="5dp"
+                android:background="@color/white1"
+                facebook:preset_size="small" />
 			<TextView android:id="@+id/user_name"
 	            android:layout_width="50dp" android:layout_height="wrap_content"
 	            android:layout_gravity="center_vertical" 

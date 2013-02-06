@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
 	android:layout_width="fill_parent" android:layout_height="wrap_content"
 	android:orientation="horizontal" android:background="@drawable/button_background"
 	android:gravity="center_vertical" 
 	android:paddingBottom="5sp"
 	>
-	<ImageView android:id="@+id/fb_icon"
+	<!-- <ImageView 
+	    android:id="@+id/fb_icon"
 		android:layout_width="60sp" android:layout_height="60sp"
 		android:layout_gravity="center_vertical" 
 		android:src="@drawable/facebooknoprofile" 
-        android:background="@color/white1"></ImageView>
+        android:background="@color/white1"></ImageView> -->
+    <com.facebook.widget.ProfilePictureView
+        android:id="@+id/fb_icon"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical" 
+        android:background="@color/white1"
+        facebook:preset_size="small" />
 	<RelativeLayout android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:orientation="vertical">
 

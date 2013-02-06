@@ -21,11 +21,16 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import com.facebook.Session;
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.jumplife.jome.entity.Comment;
+/*import com.jumplife.loginactivity.FacebookIO;
+import com.jumplife.loginactivity.Utility;*/
 import com.jumplife.loginactivity.FacebookIO;
 import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.api.MovieAPI;
@@ -42,7 +47,7 @@ public class FriendStream extends TrackedActivity {
     private ImageButton           imageButtonRefresh;
     private LoadDataTask          loadDataTask;
     private String                fb_id;
-    private int                           loginState = 0;
+    private int                   loginState = 0;
     
     private int page = 1;
     //private LinearLayout pullMore;
@@ -61,6 +66,11 @@ public class FriendStream extends TrackedActivity {
             	tast.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);
             loginState = 1;
         }
+    }
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -114,14 +124,7 @@ public class FriendStream extends TrackedActivity {
 
             public void onClick(View arg0) {
                 FacebookIO fbIO = new FacebookIO(FriendStream.this);
-                // test
-                // FacebookIO.usrName = null;
-                // if(FacebookIO.usrName != null)
                 fbIO.requestDialog(Utility.usrName + "邀請你一起來用電影櫃 (一個收藏與分享電影的好Android APP : http://goo.gl/XWlP6)");
-                /*
-                 * else { Bundle params = new Bundle(); params.putString("fields", "name, picture, gender, birthday"); FacebookIO.mAsyncRunner.request("me",
-                 * params, new UserRequestListener()); }
-                 */
             }
 
         });
@@ -171,7 +174,7 @@ public class FriendStream extends TrackedActivity {
 
         });
 
-        /*recordListView.setOnLastItemVisibleListener(new OnLastItemVisibleListener() {
+        recordListView.setOnLastItemVisibleListener(new OnLastItemVisibleListener() {
 			public void onLastItemVisible() {
 				// TODO Auto-generated method stub
 				new NextPageTask().execute();
@@ -187,7 +190,7 @@ public class FriendStream extends TrackedActivity {
                 // Do work to refresh the list here.
                 new RefreshTask().execute();
             }
-        });*/
+        });
     }
 
     private void setListAdatper() {

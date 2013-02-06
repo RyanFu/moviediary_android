@@ -24,10 +24,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.jumplife.dialog.CollectDialog;
 import com.jumplife.imageload.ImageLoader;
+/*import com.jumplife.loginactivity.LoginActivity;
+import com.jumplife.loginactivity.Utility;*/
 import com.jumplife.loginactivity.LoginActivity;
 import com.jumplife.loginactivity.Utility;
 import com.jumplife.moviediary.api.MovieAPI;
@@ -87,7 +90,6 @@ public class MovieInfo extends TrackedActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //Log.d(TAG, "onActivityResult");
-        //Utility.mFacebook.authorizeCallback(requestCode, resultCode, data);
         switch (requestCode) {
 	        case LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE:
 	        	if (Utility.IsSessionValid(MovieInfo.this) && resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_SUCCESS) {
@@ -98,7 +100,7 @@ public class MovieInfo extends TrackedActivity {
     }
 
     private void setViews() {
-        uerImg = Utility.usrImg;
+        //uerImg = Utility.usrImg;
         topbar_text.setText("電影資訊");
         imageLoader.DisplayImage(movie.getPosterUrl(), poster);
         chinese_name.setText(movie.getChineseName());

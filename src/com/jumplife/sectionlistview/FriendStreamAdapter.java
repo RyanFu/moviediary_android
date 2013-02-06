@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import com.facebook.widget.ProfilePictureView;
 import com.jumplife.imageload.ImageLoader;
 import com.jumplife.jome.entity.Comment;
 import com.jumplife.moviediary.R;
@@ -27,7 +28,6 @@ public class FriendStreamAdapter extends BaseAdapter{
     Context mContext;
     private String fbId;
 	private ArrayList<Object> objects;
-	private ImageLoader imageLoader;
 	private TextView textviewLike;
 	private ImageView imageviewLike;
 	//private LinearLayout linearLike;
@@ -36,7 +36,7 @@ public class FriendStreamAdapter extends BaseAdapter{
 		this.objects = objectList;
 		this.mContext = mContext;
 		this.fbId = fbId;
-		imageLoader=new ImageLoader(mContext);
+		new ImageLoader(mContext);
 	}
 
 	public int getCount() {
@@ -66,7 +66,7 @@ public class FriendStreamAdapter extends BaseAdapter{
 		
 		if(objects.get(position) instanceof Record) {
 			Record record = (Record) objects.get(position);
-			ImageView user_avatar = (ImageView)converView.findViewById(R.id.user_avatar);
+			ProfilePictureView user_avatar = (ProfilePictureView)converView.findViewById(R.id.user_avatar);
 			TextView name = (TextView)converView.findViewById(R.id.user_name);
 			TextView score = (TextView)converView.findViewById(R.id.user_score);
 			TextView user_comment = (TextView)converView.findViewById(R.id.user_comment);
@@ -75,7 +75,11 @@ public class FriendStreamAdapter extends BaseAdapter{
 			imageviewLike = (ImageView)converView.findViewById(R.id.imageview_like);
 			//linearLike = (LinearLayout)converView.findViewById(R.id.linearlayout_like);
 			
-			imageLoader.DisplayImage(record.getUser().getIconUrl(), user_avatar);
+			//imageLoader.DisplayImage(record.getUser().getIconUrl(), user_avatar);
+			if (record.getUser().getAccount() != null)
+				user_avatar.setProfileId(record.getUser().getAccount());
+			else 
+				user_avatar.setProfileId(null);
 			
 			String text = record.getUser().getName() + " 覺得<b>《<font color='#3366FF'>" + record.getMovie().getChineseName()
 					+ "</font>》</b>" + record.getScoreString();
@@ -118,7 +122,7 @@ public class FriendStreamAdapter extends BaseAdapter{
 			DateFormat createFormatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 			record_date.setText(createFormatter.format(record.getCheckinTime()));*/
 		} else {
-			ImageView user_avatar = (ImageView)converView.findViewById(R.id.user_avatar);
+			ProfilePictureView user_avatar = (ProfilePictureView)converView.findViewById(R.id.user_avatar);
 			TextView user_name = (TextView)converView.findViewById(R.id.user_name);
 			TextView user_comment = (TextView)converView.findViewById(R.id.user_comment);
 			TextView record_date = (TextView)converView.findViewById(R.id.record_date);
@@ -126,7 +130,11 @@ public class FriendStreamAdapter extends BaseAdapter{
 			Comment comment = (Comment) objects.get(position);
 			//String text = comment.getUserName() + " 回應了 \"" + "<font color='#3366FF'>" + comment.getMovieName() + "</font>\"";
 			String text = comment.getUserName() + " 回應了<b>《<font color='#3366FF'>" + comment.getMovieName() + "</font>》</b>";
-			imageLoader.DisplayImage("http://graph.facebook.com/" + comment.getAccount() + "/picture?type=square", user_avatar);
+			//imageLoader.DisplayImage("http://graph.facebook.com/" + comment.getAccount() + "/picture?type=square", user_avatar);
+			if (comment.getAccount() != null)
+				user_avatar.setProfileId(comment.getAccount());
+			else 
+				user_avatar.setProfileId(null);
 			user_name.setText(Html.fromHtml(text));
 			user_comment.setText(comment.getContext());
 			DateFormat createFormatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");

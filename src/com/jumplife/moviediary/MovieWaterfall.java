@@ -304,7 +304,9 @@ public class MovieWaterfall extends TrackedActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            progressdialogInit.dismiss();
+        	if(MovieWaterfall.this != null && !MovieWaterfall.this.isFinishing() 
+        			&& progressdialogInit != null && progressdialogInit.isShowing())
+        		progressdialogInit.dismiss();
 
             if (movieList == null) {
                 // showReloadDialog(MovieWaterfall.this);

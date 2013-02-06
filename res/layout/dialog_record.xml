@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:id="@+id/scrollview_moreinfo"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -95,15 +96,22 @@
             android:background="@color/grey05"
             android:text="評論" 
             />
-        <ImageView 
+        <!-- <ImageView 
             android:id="@+id/imageview_userimg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView_section_comment"
             android:src="@drawable/person_color"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="4dp" /> -->
+        <com.facebook.widget.ProfilePictureView 
+            android:id="@+id/imageview_userimg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView_section_comment"
+            android:layout_marginTop="10dp"
             android:layout_marginLeft="4dp"
-            />
+            facebook:preset_size="small" />
         <EditText 
             android:id="@+id/textview_descripe"
             android:layout_width="fill_parent"

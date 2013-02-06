@@ -3,31 +3,27 @@ package com.jumplife.sectionlistview;
 import java.util.ArrayList;
 
 
-import com.jumplife.imageload.ImageLoader;
-import com.jumplife.imageload.UrlImageLoader;
+import com.facebook.widget.ProfilePictureView;
 import com.jumplife.moviediary.R;
-import com.jumplife.moviediary.entity.Movie;
 import com.jumplife.moviediary.entity.User;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class FriendListAdapter extends BaseAdapter{
 	
     Context mContext;
 	private ArrayList<User> friends;
-	private ImageLoader imageLoader;
+	//private ImageLoader imageLoader;
 	
 	public FriendListAdapter(Context mContext, ArrayList<User> friendList){
 		this.friends = friendList;
 		this.mContext = mContext;
-		imageLoader=new ImageLoader(mContext);
+		//imageLoader=new ImageLoader(mContext);
 	}
 
 	public int getCount() {
@@ -50,7 +46,7 @@ public class FriendListAdapter extends BaseAdapter{
 		LayoutInflater myInflater = LayoutInflater.from(mContext);
 		View converView = myInflater.inflate(R.layout.listview_friends, null);
 		
-		ImageView userIcon = (ImageView)converView.findViewById(R.id.fb_icon);
+		ProfilePictureView userIcon = (ProfilePictureView)converView.findViewById(R.id.fb_icon);
 		TextView name = (TextView)converView.findViewById(R.id.user_name);
 		TextView recordCount = (TextView)converView.findViewById(R.id.record_count);
 		
@@ -58,7 +54,11 @@ public class FriendListAdapter extends BaseAdapter{
 		
 		recordCount.setText("目前打卡收藏了 " + String.valueOf(friends.get(position).getRecordCount()) + " 部電影");
 //		poster.setImageBitmap(UrlImageLoader.returnBitMap(movies.get(position).getPosterUrl()));
-		imageLoader.DisplayImage("http://graph.facebook.com/" + friends.get(position).getAccount() + "/picture?type=square", userIcon);
+		//imageLoader.DisplayImage("http://graph.facebook.com/" + friends.get(position).getAccount() + "/picture?type=square", userIcon);
+		if (friends.get(position).getAccount() != null)
+			userIcon.setProfileId(friends.get(position).getAccount());
+		else 
+			userIcon.setProfileId(null);
 		
 		return converView;
 

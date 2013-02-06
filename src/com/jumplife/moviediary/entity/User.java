@@ -1,7 +1,5 @@
 package com.jumplife.moviediary.entity;
 
-import java.util.Date;
-
 import android.graphics.Bitmap;
 
 public class User {	
@@ -9,7 +7,7 @@ public class User {
 	private String name;
 	//use User.SEX_MALE or User.SEX_FEMALE 
 	private String sex;
-	private Date birthday;
+	private String birthday;
 	private Bitmap icon;
 	private int recordCount;
 	private int friendCount;
@@ -18,23 +16,23 @@ public class User {
 	public static String SEX_FEMAILE = "FEMALE";
 
 	public User() {
-		this("", "", "", new Date());
+		this("", "", "", "");
 	}
 	
 	public User(String account) {
-		this(account, "", "", new Date());
+		this(account, "", "", "");
 	}
 	
-	public User(String account, String name, String sex, Date birthday) {
+	public User(String account, String name, String sex, String string) {
 		this.account = account;
 		this.name = name;
 		this.sex = sex;
-		this.birthday = birthday;
+		this.birthday = string;
 		this.recordCount = -1;
 		this.friendCount = -1;
 	}
 	
-	public User(String account, String name, String sex, Date birthday, int recordCount, int friendCount) {
+	public User(String account, String name, String sex, String birthday, int recordCount, int friendCount) {
 		this.account = account;
 		this.name = name;
 		this.sex = sex;
@@ -67,11 +65,11 @@ public class User {
 		this.sex = sex;
 	}
 	
-	public Date getBirthday() {
+	public String getBirthday() {
 		return birthday;
 	}
 	
-	public void setBirthday(Date date) {
+	public void setBirthday(String date) {
 		this.birthday = date;
 	}
 

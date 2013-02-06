@@ -1284,20 +1284,16 @@ public class MovieAPI {
 	public boolean createUser(User user, String fbToken, String regId) {
 		boolean result = false;
 		
-		DateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
 		try{
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpPost httpPost = new HttpPost("http://106.187.101.252/api/v1/users.json");
-			Date birthDay = user.getBirthday();
 			
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
 		    nameValuePairs.add(new BasicNameValuePair("fb_token", fbToken));
 		    nameValuePairs.add(new BasicNameValuePair("name", user.getName()));
 		    nameValuePairs.add(new BasicNameValuePair("sex", user.getSex()));
-		    if(birthDay != null)
-		    	nameValuePairs.add(new BasicNameValuePair("birthday", formatter.format(birthDay)));
-		    else
-		    	nameValuePairs.add(new BasicNameValuePair("birthday", formatter.format(new Date())));
+		    nameValuePairs.add(new BasicNameValuePair("birthday", user.getBirthday()));
+		    
 		    nameValuePairs.add(new BasicNameValuePair("fb_id", user.getAccount()));
 		    nameValuePairs.add(new BasicNameValuePair("registration_id", regId));
 	    
