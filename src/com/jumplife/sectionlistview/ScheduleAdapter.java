@@ -2,8 +2,6 @@ package com.jumplife.sectionlistview;
 
 import java.util.ArrayList;
 
-import java.util.HashMap;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -22,7 +20,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.google.analytics.tracking.android.EasyTracker;
-import com.jumplife.flurry.FlurryLog;
+import com.jumplife.moviediary.EzCheckActivity;
 import com.jumplife.moviediary.R;
 import com.jumplife.moviediary.entity.Theater;
 
@@ -50,6 +48,7 @@ public class ScheduleAdapter extends BaseAdapter{
 		return position;
 	}
 
+	@SuppressWarnings("deprecation")
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
 		LayoutInflater myInflater = LayoutInflater.from(mContext);
@@ -70,8 +69,14 @@ public class ScheduleAdapter extends BaseAdapter{
 					public void onClick(View arg0) {
 						EasyTracker.getTracker().trackEvent("電影訂票", "戲院", theater.getName(), (long)0);
 						
-						Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
-						mContext.startActivity(intent);
+						if(theater.getBuyLink().contains("http://www.ezding.com.tw/jumplife")) {
+							Intent newAct = new Intent();
+			                newAct.setClass(mContext, EzCheckActivity.class);
+			                mContext.startActivity(newAct);
+						} else {
+							Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(url));
+							mContext.startActivity(intent);
+						}
 					}				
 				});
 			} else

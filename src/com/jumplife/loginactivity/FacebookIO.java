@@ -27,6 +27,9 @@ import com.facebook.FacebookException;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.Session.StatusCallback;
+import com.facebook.SessionDefaultAudience;
+import com.facebook.SessionState;
 import com.facebook.android.Util;
 import com.facebook.widget.WebDialog;
 import com.facebook.widget.WebDialog.OnCompleteListener;
@@ -35,41 +38,66 @@ import com.jumplife.sharedpreferenceio.SharePreferenceIO;
 public class FacebookIO {
 
 	private static Activity mActivity;
-	private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
-	
-	public final String tag = "FacebookIO"; 
+    private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
+    public static final int REAUTH_ACTIVITY_CODE = 200;
+    public final String tag = "FacebookIO"; 
 		
 	public FacebookIO(Activity activity) {
 		new SharePreferenceIO(activity);
 		mActivity = activity;
 	}
 	
-	public void photo(Bitmap bitmap, String message) {
-		Log.d(tag, "photo");
-		if (hasPublishPermission()) {
-			Request request = Request.newUploadPhotoRequest(Session.getActiveSession(), bitmap, new Request.Callback() {
-                public void onCompleted(Response response) { }
-            });
-            Bundle params = request.getParameters();
-			params.putString("message", message);
-			request.executeAsync();
-        } else {
-        	Session session = Session.getActiveSession();
-        	if (session == null) 
-                session = new Session(mActivity);        	
-        	if(!session.isOpened())
-        		session = Session.openActiveSessionFromCache(mActivity);
-        	
-        	Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(mActivity, PERMISSIONS);
-            session.requestNewPublishPermissions(newPermissionsRequest);
-            return;
-        }
+	public boolean photo(Bitmap bitmap, String message) {
+		
+		Session session = Session.getActiveSession();
+        if (session != null) {
+            if (hasPublishPermission()) {
+            	Request request = Request.newUploadPhotoRequest(Session.getActiveSession(), bitmap, new Request.Callback() {
+                    public void onCompleted(Response response) {
+                    	if(response.getError() != null)
+                    		Log.d(tag, "error : " + response.getError().getErrorMessage());
+                    }
+                });
+                Bundle params = request.getParameters();
+    			params.putString("message", message);
+    			request.executeAsync();
+    			return true;
+            } else {
+            	Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(mActivity, PERMISSIONS)
+            			.setDefaultAudience(SessionDefaultAudience.EVERYONE)
+            			.setRequestCode(REAUTH_ACTIVITY_CODE);
+            	session.requestNewPublishPermissions(newPermissionsRequest);
+            	return false;
+            }
+        } else
+        	return false;
 	}
-	
+	    
 	private boolean hasPublishPermission() {
         Session session = Session.getActiveSession();
         return session != null && session.getPermissions().contains("publish_actions");
     }
+	
+	/*public boolean getBirthdayPermission() {
+		
+		Session session = Session.getActiveSession();
+        if (session != null) {
+            if (hasBirthPermission()) {
+            	return true;
+            } else {
+            	Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(mActivity, Arrays.asList("user_birthday"))
+            			.setRequestCode(REAUTH_ACTIVITY_CODE);
+            	session.requestNewReadPermissions(newPermissionsRequest);
+            	return false;
+            }
+        } else
+        	return false;
+	}
+	    
+	private boolean hasBirthPermission() {
+        Session session = Session.getActiveSession();
+        return session != null && session.getPermissions().contains("user_birthday");
+    }*/
     
     public void requestDialog(String message) {
     	Log.d(tag, "Request");

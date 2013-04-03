@@ -52,6 +52,7 @@ public class MovieWaterfall extends TrackedActivity {
     private LoadDataTask     loadTask;
 
     private ArrayList<Movie> movieList;
+    private ArrayList<String> movieNameList;
 
     private final int        FLAG_FIRSTROUND  = 1;
     private final int        FLAG_SECONDROUND = 2;
@@ -66,7 +67,8 @@ public class MovieWaterfall extends TrackedActivity {
         super.onCreate(savedInstanceState);
 
         movieList = new ArrayList<Movie>(30);
-
+        movieNameList = new ArrayList<String>(30);
+        
         setContentView(R.layout.activity_moviewaterfall);
         functionFlag = FLAG_TOP;
 
@@ -221,6 +223,10 @@ public class MovieWaterfall extends TrackedActivity {
 
         movieGridView.setAdapter(new MovieGridAdapter(MovieWaterfall.this, movieList, ((screenWidth / 2) - 40), (int) (((screenWidth / 2) - 40) * 1.5)));
 
+        movieNameList.clear();
+        for(int i=0 ; i<movieList.size(); i++)
+        	movieNameList.add(movieList.get(i).getChineseName());
+        
         if (functionFlag == FLAG_FIRSTROUND) {
             title.setText("首輪電影");
         } else if (functionFlag == FLAG_SECONDROUND) {
@@ -241,7 +247,6 @@ public class MovieWaterfall extends TrackedActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent newAct = new Intent();
                 newAct.putExtra("movie_id", movieList.get(position).getId());
-
                 newAct.setClass(MovieWaterfall.this, MovieShowActivity.class);
                 startActivity(newAct);
             }

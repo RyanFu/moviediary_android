@@ -9,9 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import org.json.JSONObject;
 
-import com.facebook.LoggingBehavior;
 import com.facebook.Session;
-import com.facebook.Settings;
 import com.facebook.android.Facebook;
 import com.jumplife.sharedpreferenceio.SharePreferenceIO;
 
@@ -26,7 +24,6 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
 import android.provider.MediaStore;
-import android.util.Log;
 
 public class Utility extends Application {
 
@@ -34,15 +31,14 @@ public class Utility extends Application {
     public static JSONObject mFriendsList;
 	public static String usrId = null, 
 						usrName = null,
-						usrBirth = null;
+						usrBirth = null,
+						usrGender = null;
     public static String objectID = null;
     public static AndroidHttpClient httpclient = null;
     private static int MAX_IMAGE_DIMENSION = 720;
     
     public static boolean IsSessionValid(Activity activity) {
-    	SharePreferenceIO sharepre = new SharePreferenceIO(activity);
-    	
-    	Settings.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
+    	SharePreferenceIO sharepre = new SharePreferenceIO(activity);    	
     	Session session = Session.getActiveSession();
     	if (session == null) 
             session = new Session(activity);        	
@@ -54,8 +50,14 @@ public class Utility extends Application {
 		
 		if(usrName == null)
 			usrName = sharepre.SharePreferenceO("fbName", null);
+		
+		if(usrBirth == null)
+			usrBirth = sharepre.SharePreferenceO("fbBIRTH", null);
+		
+		if(usrGender == null)
+			usrGender = sharepre.SharePreferenceO("fbGENDER", null);
 
-		if(usrId != null && usrName != null && session.isOpened())
+		if(usrId != null && usrName != null && session != null && session.isOpened())
 			return true;
 		else
 			return false;

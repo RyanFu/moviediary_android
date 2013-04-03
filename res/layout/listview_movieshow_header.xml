@@ -23,121 +23,78 @@
 	    android:layout_height="130dp" 
 	    android:layout_alignParentLeft="true"
 	    android:scaleType="fitCenter"
-	    android:padding="2dp"
+	    android:layout_marginTop="10dp"
+	    android:layout_marginBottom="10dp"
 	    android:layout_marginLeft="10dp"
 	    android:src="@drawable/stub" 
 	    />
-	 <RelativeLayout
-        android:id="@+id/relativelayout_movie_info"
-        android:layout_width="fill_parent"
+	<LinearLayout 
+	    android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/imageview_movie_poster"
         android:layout_alignBottom="@+id/imageview_movie_poster"
-        android:background="@drawable/button_profile_selector">
-        <ImageView
-            android:id="@+id/imageView_info"
-            android:layout_width="wrap_content"
+        android:layout_toRightOf="@+id/imageview_movie_poster"
+        android:paddingTop="5dp"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:weightSum="1.0"
+        android:gravity="center"
+        android:orientation="vertical">
+	    <TextView android:id="@+id/good_rate"
+	        android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:src="@drawable/navigation_next_light" />
-        <TextView 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/imageView_info"
-            android:layout_alignBottom="@+id/imageView_info"
-            android:layout_toLeftOf="@+id/imageView_info"
+            android:layout_weight="0.13"
             android:gravity="center"
-            android:textSize="15dp"
-            android:text="更多介紹"/> 
-                    
-    </RelativeLayout>
-    <TextView
-            android:id="@+id/textView_chinese_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/imageview_movie_poster"
-            android:layout_toRightOf="@+id/imageview_movie_poster"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="5dp"
-            android:singleLine="true"
-            android:maxEms="10"
-            android:textColor="@color/grey05"
+            android:textColor="@color/white2"
             android:textSize="18dp"
-            android:text="電影名稱" />
-        
-        <TextView
-            android:id="@+id/textView_english_name"
-            android:layout_width="wrap_content"
+            android:text="好評度 : 100%"/>
+	    <RelativeLayout 
+	        android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView_chinese_name"
-            android:layout_below="@+id/textView_chinese_name"
-            android:layout_marginTop="5dp"
-            android:singleLine="true"
-            android:maxEms="20"
-            android:textColor="@color/grey05"
-            android:textSize="18dp"
-            android:text="English Name" />
-        
-        <ImageView
-            android:id="@+id/imageView_level"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_alignLeft="@+id/textView_english_name"
-            android:layout_below="@+id/textView_english_name"
-            android:layout_marginTop="12dp"
-            android:layout_marginLeft="3dp"
-            android:src="@drawable/stub" 
-            android:background="@drawable/button_profile_selector"
-             />
-        
-        <TextView
-            android:id="@+id/textView_runningtime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/imageView_level"
-            android:layout_toRightOf="@+id/imageView_level"
-            android:layout_toLeftOf="@+id/imageView_info"
-            android:layout_marginTop="2dp"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/light_grey"
-            android:textSize="15dp"
-            android:text="片長: 165分" />
-        
-    <!-- <LinearLayout android:id="@+id/ll_button"
-        android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-        android:layout_below="@+id/relativelayout_movie_info"
-	    android:orientation="horizontal"
-	    android:background="@color/grey05">
-        <Button android:id="@+id/button_all"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:padding="5dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="0.5"
-            android:background="@color/white1"
-            android:textSize="16dp"
-            android:text="所 有 打 卡"/>
-        <Button android:id="@+id/button_friend"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:padding="5dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="0.5"
-            android:background="@color/light_grey"
-            android:textSize="16dp"
-            android:text="朋 友 打 卡"/>
-    </LinearLayout> -->
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.87" >
+	        <ImageButton android:id="@+id/ivbtn_more"
+	            android:layout_width="58dp"
+	            android:layout_height="58dp"
+                android:layout_alignParentLeft="true"
+	            android:scaleType="fitCenter"
+	            android:background="@drawable/button_moreinfo" />
+	        <TextView android:id="@+id/tv_more"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignLeft="@+id/ivbtn_more"	            
+                android:layout_alignRight="@+id/ivbtn_more"
+                android:layout_below="@+id/ivbtn_more"
+                android:layout_marginTop="4dp"
+	            android:gravity="center"
+                android:textColor="@color/white2"
+	            android:textSize="14dp"
+	            android:text="更多介紹"/>	        
+            <ImageButton android:id="@+id/ivbtn_ezcheck"
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:layout_alignParentRight="true"
+                android:clickable="false"
+                android:scaleType="fitCenter"
+                android:background="@drawable/ticket_normal_non" />
+            <TextView android:id="@+id/tv_ezcheck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/ivbtn_ezcheck"              
+                android:layout_alignRight="@+id/ivbtn_ezcheck"
+                android:layout_below="@+id/ivbtn_ezcheck"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:textColor="@color/text"
+                android:textSize="14dp"
+                android:text="電影訂票"/>
+	    </RelativeLayout>
+	</LinearLayout>  
     <LinearLayout
         android:id="@+id/ll_spread_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/relativelayout_movie_info"
+        android:layout_below="@+id/imageview_movie_poster"
         android:background="@color/fake_tab_background"
         android:gravity="center_horizontal"
         android:orientation="horizontal"

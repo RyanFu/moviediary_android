@@ -54,15 +54,16 @@ public class Setting extends TrackedActivity {
             public void onClick(View v) {
             	Session session = Session.getActiveSession();
                 if (!session.isClosed()) {
-                    session.closeAndClearTokenInformation();
-                    Utility.usrId = null;
+                	session.closeAndClearTokenInformation();
+                	Utility.usrId = null;
                     Utility.usrName = null;
                     Utility.usrBirth = null;
+                    Utility.usrGender = null;
                     
-                    SharePreferenceIO sharepre = new SharePreferenceIO(Setting.this);
-                    sharepre.SharePreferenceI("fbID", null);
-                    sharepre.SharePreferenceI("fbName", null);
-                    sharepre.SharePreferenceI("fbBIRTH", null);
+                    shIO.SharePreferenceI("fbID", null);
+                    shIO.SharePreferenceI("fbName", null);
+                    shIO.SharePreferenceI("fbBIRTH", null);
+                    shIO.SharePreferenceI("fbGENDER", null);
                     
                     shIO.SharePreferenceI("notification_key", false);
               	    Intent intent = new Intent(Setting.this, MovieTabActivities.class);

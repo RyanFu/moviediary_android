@@ -15,14 +15,17 @@ public class Spread {
     private String spreadGiftUrl;
     private String spreadNotifyContent;
     private int movieId;
+    private String moviePosterUrl;
+    private String movieNameCH;
 	
 	public Spread() {
-		this(-1, "", "", "", "", "", "", "", "", "", "", "", 0);
+		this(-1, "", "", "", "", "", "", "", "", "", "", "", 0, "", "");
 	}
 	
 	public Spread(int id, String imageUrl, String spreadPosterUrl, String spreadTitle, String spreadTitleContent,
 			String spreadTimeContent, String spreadMethodStep, String spreadMethodStepUrl, String spreadMethodResult, 
-			String spreadGiftContent, String spreadGiftUrl, String spreadNotifyContent, int movieId) {
+			String spreadGiftContent, String spreadGiftUrl, String spreadNotifyContent, int movieId, String moviePosterUrl,
+			String movieNameCH) {
 		this.id = id;
 		this.imageUrl = imageUrl;
 		this.spreadPosterUrl = spreadPosterUrl;   
@@ -36,6 +39,8 @@ public class Spread {
 		this.spreadGiftUrl = spreadGiftUrl;
 		this.spreadNotifyContent = spreadNotifyContent;
 		this.movieId = movieId;
+		this.moviePosterUrl = moviePosterUrl;
+		this.movieNameCH = movieNameCH;
 	}
 	
 	public int getId() {
@@ -115,5 +120,17 @@ public class Spread {
 	}
 	public void setMovieId(int movieId) {
 		this.movieId = movieId;
+	}
+	public String getMoviePosterUrl() {
+		return moviePosterUrl;
+	}
+	public void setMoviePosterUrl(String moviePosterUrl) {
+		this.moviePosterUrl = moviePosterUrl;
+	}
+	public String getMovieNameCH() {
+		return movieNameCH;
+	}
+	public void setMovieNameCH(String movieNameCH) {
+		this.movieNameCH = movieNameCH;
 	}
 }

@@ -35,8 +35,10 @@ public class ImageLoader {
     
     public ImageLoader(Context context){
         fileCache = new FileCache(context);
-        executorService = Executors.newFixedThreadPool(3);
-        btStub  = BitmapFactory.decodeResource(context.getResources(), R.drawable.stub);
+        executorService = Executors.newFixedThreadPool(1);
+        //btStub  = BitmapFactory.decodeResource(context.getResources(), R.drawable.post_background);
+        InputStream inputStream = context.getResources().openRawResource(R.drawable.stub);
+        btStub = BitmapFactory.decodeStream(inputStream, null, getBitmapOptions());
         this.mContext = context;
     }
     
@@ -44,7 +46,8 @@ public class ImageLoader {
     	fileCache = new FileCache(context);
         executorService = Executors.newFixedThreadPool(3);
         REQUIRED_SIZE = size;
-        btStub = BitmapFactory.decodeResource(context.getResources(), R.drawable.stub);
+        InputStream inputStream = context.getResources().openRawResource(R.drawable.stub);
+        btStub = BitmapFactory.decodeStream(inputStream, null, getBitmapOptions());
         this.mContext = context;
     }
     
@@ -53,13 +56,22 @@ public class ImageLoader {
         executorService = Executors.newFixedThreadPool(3);
         if(size != 0)
         	REQUIRED_SIZE = size;
-        btStub = BitmapFactory.decodeResource(context.getResources(), resStub);
+        InputStream inputStream = context.getResources().openRawResource(R.drawable.stub);
+        btStub = BitmapFactory.decodeStream(inputStream, null, getBitmapOptions());
+        this.mContext = context;
+    }
+    
+    public BitmapFactory.Options getBitmapOptions() {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPurgeable = true;
+        options.inInputShareable = true;
+        return options;
     }
     
     public void DisplayImage(String url, ImageView imageView)
     {
     	imageViews.put(imageView, url);
-        Bitmap bitmap = memoryCache.get(url);
+        Bitmap bitmap=memoryCache.get(url);
         
         if(bitmap!=null) {
             imageView.setImageBitmap(bitmap);        	
@@ -72,10 +84,13 @@ public class ImageLoader {
     public void DisplayImage(String url, ImageView imageView, int width)
     {
         imageViews.put(imageView, url);
-        Bitmap bitmap = memoryCache.get(url);
+        Bitmap bitmap=memoryCache.get(url);
         
-        if(btStub == null)
-            btStub  = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.stub);
+        if(btStub == null) {
+            //btStub  = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.stub);
+            InputStream inputStream = mContext.getResources().openRawResource(R.drawable.stub);
+            btStub = BitmapFactory.decodeStream(inputStream, null, getBitmapOptions());
+        }
         btStub = Bitmap.createScaledBitmap(btStub, width, btStub.getHeight() * width / btStub.getWidth(), true);
         
         if(bitmap!=null) {
@@ -103,7 +118,7 @@ public class ImageLoader {
     
     private void queuePhoto(String url, ImageView imageView, int width)
     {
-        FillPhotoToLoad p=new FillPhotoToLoad(url, imageView, width);
+    	FillPhotoToLoad p=new FillPhotoToLoad(url, imageView, width);
         executorService.submit(new FillPhotosLoader(p));
     }
     
@@ -198,7 +213,7 @@ public class ImageLoader {
         public String url;
         public ImageView imageView;
         public int width;
-        
+
 		public FillPhotoToLoad(String u, ImageView i, int width){
 			this.url=u; 
             this.imageView=i;
@@ -306,7 +321,7 @@ public class ImageLoader {
         {
             if(imageViewReused(photoToLoad))
                 return;
-            
+
             photoToLoad.imageView.getLayoutParams().width = width;
             photoToLoad.imageView.getLayoutParams().height = height;
             photoToLoad.imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);

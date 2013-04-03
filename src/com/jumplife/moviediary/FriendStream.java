@@ -21,11 +21,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
-import com.facebook.Session;
 import com.google.analytics.tracking.android.TrackedActivity;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.jumplife.jome.entity.Comment;
@@ -174,7 +171,7 @@ public class FriendStream extends TrackedActivity {
 
         });
 
-        recordListView.setOnLastItemVisibleListener(new OnLastItemVisibleListener() {
+        /*recordListView.setOnLastItemVisibleListener(new OnLastItemVisibleListener() {
 			public void onLastItemVisible() {
 				// TODO Auto-generated method stub
 				new NextPageTask().execute();
@@ -190,7 +187,7 @@ public class FriendStream extends TrackedActivity {
                 // Do work to refresh the list here.
                 new RefreshTask().execute();
             }
-        });
+        });*/
     }
 
     private void setListAdatper() {

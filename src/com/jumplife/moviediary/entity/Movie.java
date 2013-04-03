@@ -19,13 +19,15 @@ public class Movie {
 	private String youtubeId;
 	private int recordsCount;
 	private int goodCount;
+	private boolean isEzding = false;
 	
 	public Movie() {
-		this(-1, "", "", "", new Date(), "", -1, "", new ArrayList<String>(10), new ArrayList<String>(10), new ArrayList<Record>(10), "", 0,0);
+		this(-1, "", "", "", new Date(), "", -1, "", new ArrayList<String>(10), new ArrayList<String>(10), new ArrayList<Record>(10), "", 0, 0, false);
 	}
 	
 	public Movie (int id, String chineseName, String englishName, String introduction, Date releaseDate, String posterUrl, 
-				  int runningTime, String levelUrl, ArrayList<String> actors, ArrayList<String> directors, ArrayList<Record> recordList, String youtubeId, int recordsCount, int goodCount) {
+				  int runningTime, String levelUrl, ArrayList<String> actors, ArrayList<String> directors, 
+				  ArrayList<Record> recordList, String youtubeId, int recordsCount, int goodCount, boolean isEzding) {
 		this.id = id;
 		this.chineseName = chineseName;
 		this.englishName = englishName;
@@ -40,6 +42,7 @@ public class Movie {
 		this.youtubeId = youtubeId;
 		this.recordsCount = recordsCount;
 		this.goodCount = goodCount;
+		this.isEzding = isEzding;
 	}
 	
 	
@@ -134,5 +137,10 @@ public class Movie {
 	public void setGoodCount(int goodCount){
 		this.goodCount = goodCount;
 	}
-	
+	public void setIsEzding(boolean isEzding){
+		this.isEzding = isEzding;
+	}
+	public boolean getIsEzding(){
+		return this.isEzding;
+	}
 }

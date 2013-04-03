@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -43,10 +44,8 @@ import com.jumplife.sharedpreferenceio.SharePreferenceIO;
 public class MovieShowActivity extends TrackedActivity {
 
     private ImageView         poster;
-    private ImageView         level;
-    private TextView          chinese_name;
-    private TextView          english_name;
-    private TextView          runningtime;
+    private TextView          goodRate;
+    private TextView          ezCheckText;
     private TextView          topbarText;
     private ListView          listviewShow;
     private View              viewHeader;
@@ -56,16 +55,17 @@ public class MovieShowActivity extends TrackedActivity {
     private Button            buttonCheck;
 	private ImageButton 	  imageAddFriend;
 	private ImageButton 	  imageButtonRefresh;
+    private ImageButton		  imageButtonMovieInfo;
+    private ImageButton		  imageButtonEzCheck;
     private View			  viewFriend;
     private View			  viewAll;
-    private RelativeLayout    relativeMovieInfo;
     private LoadDataTask      loadDataTask;
 
     private String            fb_id;
     private Movie             movie;
-    private int               movie_id;
+    //private int               movie_id;
     private RecordListAdapter recordListAdapter;
-    private ArrayList<Record> recordList   = new ArrayList<Record>();
+    private ArrayList<Record> recordList;
     
     private int functionFlag = 0;
     private final int FLAG_ALL = 1;
@@ -137,6 +137,17 @@ public class MovieShowActivity extends TrackedActivity {
 	                loadRecordTask.execute();
 		        }
 	        	break;
+	        	
+	        case LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE_LIKE:
+	        	if (resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_SUCCESS) {
+	        		initBottonTextViewColor();
+                	initBottonImageViewVisible();
+                	functionFlag = FLAG_ALL;
+                	setBottonView();
+	        		LoadRecordTask loadRecordTask = new LoadRecordTask(false);
+	                loadRecordTask.execute();
+		        }
+	        	break;
         }
     }
 
@@ -148,6 +159,10 @@ public class MovieShowActivity extends TrackedActivity {
     }
 
     private void findViews() {
+    	Bundle extras = getIntent().getExtras();
+        movie = new Movie();
+        movie.setId(extras.getInt("movie_id"));
+        
         listviewShow = (ListView) findViewById(R.id.listview_checks);
         buttonCheck = (Button) findViewById(R.id.button_check);
 
@@ -156,17 +171,25 @@ public class MovieShowActivity extends TrackedActivity {
         poster = (ImageView) viewHeader.findViewById(R.id.imageview_movie_poster);
 
         topbarText = (TextView) findViewById(R.id.topbar_text);
-        topbarText.setText("電影打卡");
 
-        chinese_name = (TextView) viewHeader.findViewById(R.id.textView_chinese_name);
-        english_name = (TextView) viewHeader.findViewById(R.id.textView_english_name);
-        level = (ImageView) viewHeader.findViewById(R.id.imageView_level);
-        runningtime = (TextView) viewHeader.findViewById(R.id.textView_runningtime);
+        goodRate = (TextView) viewHeader.findViewById(R.id.good_rate);
+        ezCheckText = (TextView) viewHeader.findViewById(R.id.tv_ezcheck);
         buttonFriend = (Button) viewHeader.findViewById(R.id.button_friend);
         buttonAll = (Button) viewHeader.findViewById(R.id.button_all);
     	viewAll = (View) viewHeader.findViewById(R.id.view_1);
         viewFriend = (View) viewHeader.findViewById(R.id.view_2);
-        relativeMovieInfo = (RelativeLayout) viewHeader.findViewById(R.id.relativelayout_movie_info);
+        
+        imageButtonEzCheck = (ImageButton) viewHeader.findViewById(R.id.ivbtn_ezcheck);
+        
+        imageButtonMovieInfo = (ImageButton) viewHeader.findViewById(R.id.ivbtn_more);
+        imageButtonMovieInfo.setOnClickListener(new OnClickListener(){
+			public void onClick(View arg0) {
+				Intent newAct = new Intent();
+                newAct.putExtra("movie_id", movie.getId());
+                newAct.setClass(MovieShowActivity.this, MovieInfo.class);
+                startActivity(newAct);
+			}        	
+        });
         
         imageAddFriend = (ImageButton)findViewById(R.id.imagebutton_addfriend);
         imageAddFriend.setOnClickListener(new OnClickListener() {
@@ -195,32 +218,37 @@ public class MovieShowActivity extends TrackedActivity {
     }
 
     private void fetchData() {
-        Bundle extras = getIntent().getExtras();
-        movie_id = extras.getInt("movie_id");
-        MovieAPI movieAPI = new MovieAPI();
         if(Utility.IsSessionValid(MovieShowActivity.this))
         	fb_id = Utility.usrId;
         
-        if(fb_id != null)
-        	Log.d("", "fbid : " + fb_id);
-        else
-        	Log.d("", "fbid is null");
-        
-        movie = movieAPI.getMovieMoreInfo(movie_id, fb_id);
-        recordList = movieAPI.getMovieRecordList(fb_id, movie_id + "");
+        /*if(movie.getChineseName() == null || movie.getPosterUrl() == null) {
+        	Log.d("", "poster or name == null");
+        	movie = movieAPI.getMovieMoreInfo(movie.getId(), fb_id);
+        }*/
+        MovieAPI movieAPI = new MovieAPI();
+        //movie = movieAPI.getMovieInfo(movie);
+        movie = movieAPI.getMovieMoreInfo(movie.getId(), fb_id);
+        recordList = new ArrayList<Record>();
+        recordList = movieAPI.getMovieRecordList(fb_id, movie.getId() + "");
     }
 
     private void setView() {
+
+        topbarText.setText(movie.getChineseName());
+        
         ImageLoader imageLoader = new ImageLoader(MovieShowActivity.this, 140);
-        imageLoader.DisplayImage(movie.getLevelUrl(), level);
+        //imageLoader.DisplayImage(movie.getLevelUrl(), level);
         imageLoader.DisplayImage(movie.getPosterUrl(), poster);
 
-        chinese_name.setText(movie.getChineseName());
-        english_name.setText(movie.getEnglishName());
-        if (movie.getRunningTime() == -1)
-            runningtime.setText("片長 : 未提供");
-        else
-            runningtime.setText("片長 : " + movie.getRunningTime() + "分");
+        int rate = 0;
+        int goodCount = 0;
+        for(int i = 0; i < recordList.size(); i++)
+        	if(recordList.get(i).getScore() == MovieAPI.SCORE_GOOD)
+        		goodCount += 1;
+        if(goodCount != 0 && recordList.size() != 0)
+        	rate = goodCount * 100 / recordList.size();
+        String styledText = "好評度 : <font color='red'>" + rate + "%</font>";
+        goodRate.setText(Html.fromHtml(styledText), TextView.BufferType.SPANNABLE);
         
         poster.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
@@ -230,15 +258,19 @@ public class MovieShowActivity extends TrackedActivity {
                 startActivity(newAct);
             }
         });
-
-        relativeMovieInfo.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                Intent newAct = new Intent();
-                newAct.putExtra("movie_id", movie.getId());
-                newAct.setClass(MovieShowActivity.this, MovieInfo.class);
-                startActivity(newAct);
-            }
-        });
+        
+        if(movie.getIsEzding()) {
+        	ezCheckText.setTextColor(getResources().getColor(R.color.white2));
+        	imageButtonEzCheck.setClickable(true);
+        	imageButtonEzCheck.setImageDrawable(getResources().getDrawable(R.drawable.button_ezcheck));
+			imageButtonEzCheck.setOnClickListener(new OnClickListener() {
+		    	public void onClick(View v) {
+		    		Intent newAct = new Intent();
+	                newAct.setClass(MovieShowActivity.this, EzCheckActivity.class);
+	                startActivity(newAct);
+				}
+			});
+		}
 
         buttonFriend.setOnClickListener(new RelativeLayout.OnClickListener() {
             public void onClick(View v) {
@@ -417,12 +449,14 @@ public class MovieShowActivity extends TrackedActivity {
         protected String doInBackground(Integer... params) {
             MovieAPI movieAPI = new MovieAPI();
             recordList.clear();
+            recordList = new ArrayList<Record>();
+            
             if(Utility.IsSessionValid(MovieShowActivity.this))
             	fb_id = Utility.usrId;
             if (onlyfriend) {
-                recordList = movieAPI.getMovieFriendRecordList(fb_id, movie_id + "");
+                recordList = movieAPI.getMovieFriendRecordList(fb_id, movie.getId() + "");
             } else {
-                recordList = movieAPI.getMovieRecordList(fb_id, movie_id + "");
+                recordList = movieAPI.getMovieRecordList(fb_id, movie.getId() + "");
             }
 
             return "progress end";
@@ -547,6 +581,8 @@ public class MovieShowActivity extends TrackedActivity {
                 haveContent.add(recordList.get(i));
         }
         recordList.clear();
+        recordList = new ArrayList<Record>();
+        
         for (int i = 0; i < haveContent.size(); i++)
             recordList.add(haveContent.get(i));
         for (int i = 0; i < nonhaveContent.size(); i++)

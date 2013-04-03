@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.facebook.Session;
 import com.facebook.widget.ProfilePictureView;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.TrackedActivity;
@@ -47,12 +48,11 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
 
     private Movie        movie;
     private Bitmap       posterDrawable;
-    //private Bitmap       userDrawable;
     private RadioGroup   radio_group;
     private CheckBox     facebook;
     private ImageView    poster;
     private ProfilePictureView user_img;
-    private String		 fb_id;
+    private User 		 user;
     private EditText     comment;
     private Button       collect;
     private int          score;
@@ -78,9 +78,15 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
         if(Build.VERSION.SDK_INT < 11)
         	tast.execute();
         else
-        	tast.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);
-        
-        
+        	tast.executeOnExecutor(LoadDataTask.THREAD_POOL_EXECUTOR, 0);        
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == FacebookIO.REAUTH_ACTIVITY_CODE) {
+        	Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+        }        
     }
 
     @Override
@@ -106,20 +112,31 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
         });
     }
 
-    private void setViews() {    	
-    	poster.setImageBitmap(posterDrawable);        
-        comment.setText(shIO.SharePreferenceO("comment_tmp", ""));
+    private void intentTrans() {
+
+        Bundle extra = getIntent().getExtras();
+        String posterUrl = extra.getString("posterUrl");
+        posterDrawable = imageLoader.getBitmapFromURL(posterUrl);
         
-        fb_id = Utility.usrId;
-	    if (fb_id == null) {
-	        SharePreferenceIO sharepre = new SharePreferenceIO(CollectDialog.this);
-	        fb_id = sharepre.SharePreferenceO("fbID", fb_id);
-	    }
-        if(fb_id != null)
-        	user_img.setProfileId(fb_id);
-        else
-        	user_img.setProfileId(null);
-        //user_img.setImageBitmap(userDrawable);
+        movie = new Movie();
+        movie.setId(extra.getInt("id", 0));
+        movie.setChineseName(extra.getString("chineseName"));
+        movie.setPosterUrl(posterUrl);
+        
+        String usrId = Utility.usrId;
+        if(usrId == null) 
+			usrId = shIO.SharePreferenceO("fbID", null);
+        String usrName = Utility.usrName;
+		if(usrName == null)
+			usrName = shIO.SharePreferenceO("fbName", null);
+		String usrGender = Utility.usrGender;
+		if(usrGender == null)
+			usrGender = shIO.SharePreferenceO("fbGENDER", null);
+		String usrBirth = Utility.usrBirth;
+		if(usrBirth == null)
+			usrBirth = shIO.SharePreferenceO("fbBIRTH", null);		
+		user = new User(usrId, usrName, usrGender, usrBirth); 
+        
     }
 
     private void findViews() {
@@ -131,20 +148,14 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
         collect = (Button) findViewById(R.id.button_collect);
     }
 
-    private void intentTrans() {
-
-        Bundle extra = getIntent().getExtras();
-        String posterUrl = extra.getString("posterUrl");
-        //posterUrl = posterUrl.replaceFirst("mpost2", "mpost");
-        posterDrawable = imageLoader.getBitmapFromURL(posterUrl);
-        /*if (getIntent().hasExtra("userImage")) {
-            userDrawable = BitmapFactory.decodeByteArray(getIntent().getByteArrayExtra("userImage"), 0, getIntent().getByteArrayExtra("userImage").length);
-        }*/
-
-        movie = new Movie();
-        movie.setId(extra.getInt("id", 0));
-        movie.setChineseName(extra.getString("chineseName"));
-        movie.setPosterUrl(posterUrl);
+    private void setViews() {    	
+    	poster.setImageBitmap(posterDrawable);        
+        comment.setText(shIO.SharePreferenceO("comment_tmp", ""));
+		
+        if(user.getAccount() != null)
+        	user_img.setProfileId(user.getAccount());
+        else
+        	user_img.setProfileId(null);
     }
 
     public void onClick(View v) {
@@ -182,9 +193,6 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
         @Override
         protected String doInBackground(Integer... params) {
             MovieAPI movieAPI = new MovieAPI();
-            User user = new User();
-			
-            user.setAccount(fb_id);
             Record record = new Record(-1, new Date(), score, commentStr, user, movie, 0, false);
 
             int recordResult = movieAPI.recordMovie(record); 
@@ -192,7 +200,7 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
 				EasyTracker.getTracker().trackEvent("電影打卡_V2", "收藏", movie.getChineseName(), (long)0);
 			
 			    if (facebook_check) {
-			    	EasyTracker.getTracker().trackEvent("電影打卡_V2", "分享FB", movie.getChineseName() + " and FB ID = " + fb_id, (long)0);
+			    	EasyTracker.getTracker().trackEvent("電影打卡_V2", "分享FB", movie.getChineseName() + " and FB ID = " + user.getAccount(), (long)0);
 
                     Log.d(TAG, "facebook is checked");
                     int drawableId = R.drawable.fbgood;
@@ -226,23 +234,46 @@ public class CollectDialog extends TrackedActivity implements OnClickListener {
         @Override
         protected void onPostExecute(String result) {
             if (result.equals("progress end")) {
-            	if (facebook_check)
-            		fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), commentStr);
-                
-                Toast toast = Toast.makeText(CollectDialog.this, "電影櫃打卡成功", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-                Intent intent = new Intent(CollectDialog.this, MovieShowActivity.class);
-                setResult(MovieShowActivity.CHECK_SUCESS, intent);
-                CollectDialog.this.finish();
+            	if (facebook_check) {
+            		if(fst != null && sec != null && fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), commentStr)) {                
+		                Toast toast = Toast.makeText(CollectDialog.this, "電影櫃打卡成功", Toast.LENGTH_LONG);
+		                toast.setGravity(Gravity.CENTER, 0, 0);
+		                toast.show();
+		                Intent intent = new Intent(CollectDialog.this, MovieShowActivity.class);
+		                setResult(MovieShowActivity.CHECK_SUCESS, intent);
+		                CollectDialog.this.finish();
+            		} else {
+            			Toast toast = Toast.makeText(CollectDialog.this, "電影櫃打卡成功 Facebook分享失敗 請再分享一次", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+            		}
+            	} else {
+            		Toast toast = Toast.makeText(CollectDialog.this, "電影櫃打卡成功", Toast.LENGTH_LONG);
+	                toast.setGravity(Gravity.CENTER, 0, 0);
+	                toast.show();
+	                Intent intent = new Intent(CollectDialog.this, MovieShowActivity.class);
+	                setResult(MovieShowActivity.CHECK_SUCESS, intent);
+	                CollectDialog.this.finish();
+            	}
             } else if (result.equals("double check")) {
-                Toast toast = Toast.makeText(CollectDialog.this, "已有相同打卡  可至電影櫃修改內容", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-            } else if (result.equals("facebook error")){
-                Toast toast = Toast.makeText(CollectDialog.this, "電影櫃打卡失敗 需要Facebook張貼權限", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
+            	if (facebook_check) {
+            		if(fst != null && sec != null && fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), commentStr)) {                
+		                Toast toast = Toast.makeText(CollectDialog.this, "電影櫃打卡成功", Toast.LENGTH_LONG);
+		                toast.setGravity(Gravity.CENTER, 0, 0);
+		                toast.show();
+		                Intent intent = new Intent(CollectDialog.this, MovieShowActivity.class);
+		                setResult(MovieShowActivity.CHECK_SUCESS, intent);
+		                CollectDialog.this.finish();
+            		} else {
+                        Toast toast = Toast.makeText(CollectDialog.this, "電影櫃打卡成功 Facebook分享失敗 請再分享一次", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+            		}
+            	} else {
+                    Toast toast = Toast.makeText(CollectDialog.this, "已有相同打卡  可至電影櫃修改內容", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+        		}
             } else {
             	Toast toast = Toast.makeText(CollectDialog.this, "電影櫃打卡失敗", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);

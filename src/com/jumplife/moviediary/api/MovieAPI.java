@@ -441,7 +441,7 @@ public class MovieAPI {
 		
 		return movieList;
 	}
-	
+		
 	//取得詳細電影資訊
 	public Movie getMovieMoreInfo (int movieId, String fbId) {
 		//http://106.187.101.252/api/v1/movies/1.json?fb_id=3346731036355
@@ -1560,14 +1560,18 @@ public class MovieAPI {
 				}
 				Date releaseDate = null;
 				int runningTime = -1;
+				boolean isEzding = false;
+				
 				if(!movieJson.isNull("release"))
 					releaseDate = formatter.parse(movieJson.getString("release"));
 				if(!movieJson.isNull("running_time"))
 					runningTime = movieJson.getInt("running_time");
+				if(!movieJson.isNull("is_ezding"))
+					isEzding = movieJson.getBoolean("is_ezding");
 				
 				 movie = new Movie(movieJson.getInt("id"), movieJson.getString("name"), movieJson.getString("name_en"), movieJson.getString("intro"), 
 						 releaseDate, movieJson.getString("poster_url"), runningTime, movieJson.getString("level_url"), actors, directors, recordList, 
-						 movieJson.getString("youtube_video_id"), 0,0);
+						 movieJson.getString("youtube_video_id"), 0, 0, isEzding);
 				 
 			} 
 			catch (JSONException e) {

@@ -35,7 +35,7 @@ public class SearchMovieActivity extends TrackedActivity {
     private MovieListAdapter movieAdapter;
     private TextView 		 topbar_text;
     
-    private static String    TAG       = "SearchMovieActivity";
+    //private static String    TAG       = "SearchMovieActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,6 @@ public class SearchMovieActivity extends TrackedActivity {
                 Movie movie = arraySort.get(post);
                 Intent newAct = new Intent();
                 newAct.putExtra("movie_id", movie.getId());
-                // newAct.setClass(SearchMovieActivity.this, MovieInfo.class );
                 newAct.setClass(SearchMovieActivity.this, MovieShowActivity.class);
                 startActivity(newAct);
             }

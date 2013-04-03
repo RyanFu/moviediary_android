@@ -123,11 +123,12 @@ public class MovieRecord extends TrackedActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        
         switch (requestCode) {
-        case LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE:
-        	if (Utility.IsSessionValid(MovieRecord.this) && resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_SUCCESS) {
-        		fb_id = Utility.usrId;
-	        }
+	        case LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE:
+	        	if (Utility.IsSessionValid(MovieRecord.this) && resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_SUCCESS) {
+	        		fb_id = Utility.usrId;
+		        }
 	        case LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE_LIKE:
 	        	if (Utility.IsSessionValid(MovieRecord.this) && resultCode == LoginActivity.LOGIN_ACTIVITY_RESULT_CODE_SUCCESS) {
 	        		if (record.getIsLovedByUser()) {
@@ -145,6 +146,8 @@ public class MovieRecord extends TrackedActivity {
 	                likeTask.execute();
 	                record.setIsLovedByUser(!record.getIsLovedByUser());
 		        }
+	        case FacebookIO.REAUTH_ACTIVITY_CODE:
+	            Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
         }
     }
     
@@ -788,13 +791,13 @@ public class MovieRecord extends TrackedActivity {
 	            sec = BitmapFactory.decodeStream(is);
 	            sec = Bitmap.createScaledBitmap(sec, sec.getWidth(), sec.getHeight(), true);
 	            fst = imageLoader.getBitmapFromURL(posterUrl);
-	            fst = Bitmap.createScaledBitmap(fst, 291, 418, true);                   
-		        return "progress end";
+	            fst = Bitmap.createScaledBitmap(fst, 291, 418, true); 
+	            return "progress end";
 	    	} else {
             	Intent newAct = new Intent(); 
             	newAct.setClass( MovieRecord.this, LoginActivity.class );
             	MovieRecord.this.startActivityForResult(newAct, LoginActivity.LOGIN_ACTIVITY_REQUEST_CODE);                  
-		        return "facebook error";
+		        return "facebook login error";
             } 
         }
 
@@ -805,14 +808,19 @@ public class MovieRecord extends TrackedActivity {
 
         @Override
         protected void onPostExecute(String result) {
-        	if (result.equals("progress end")) {	
-	            FacebookIO fbIO = new FacebookIO(MovieRecord.this);                
-	            fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), record.getComment());
-                Toast toast = Toast.makeText(MovieRecord.this, "FB分享成功", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-            } else if(result.equals("facebook error")){
-                Toast toast = Toast.makeText(MovieRecord.this, "FB分享 需要Facebook張貼權限", Toast.LENGTH_LONG);
+        	if (result.equals("progress end")) {
+        		FacebookIO fbIO = new FacebookIO(MovieRecord.this);                
+ 	           if(fbIO.photo(ImageProcess.mergeBitmap(fst, sec, 103, 84), record.getComment())) { 
+		            Toast toast = Toast.makeText(MovieRecord.this, "FB分享成功", Toast.LENGTH_LONG);
+	                toast.setGravity(Gravity.CENTER, 0, 0);
+	                toast.show();
+        		} else {
+                     Toast toast = Toast.makeText(MovieRecord.this, "FB分享失敗 請再分享一次", Toast.LENGTH_LONG);
+                     toast.setGravity(Gravity.CENTER, 0, 0);
+                     toast.show();
+                }
+            }  else if(result.equals("facebook login error")){
+                Toast toast = Toast.makeText(MovieRecord.this, "很抱歉 FB發生錯誤 請再分享一次", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.show();
             }

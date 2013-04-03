@@ -29,8 +29,10 @@ public class SQLiteMovieDiary extends SQLiteOpenHelper {
 		super(mActivity, DB_NAME, null, DATABASE_VERSION);
 		checkFileSystem(mActivity);
 		
-		if(!checkDataBase())
-			db = this.getWritableDatabase();
+		if(!checkDataBase()) {
+            db = this.getWritableDatabase();
+            closeDB();
+        }
 		
 		//test
 		//LoadDataTask tast = new LoadDataTask();

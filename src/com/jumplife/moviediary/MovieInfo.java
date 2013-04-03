@@ -362,12 +362,14 @@ public class MovieInfo extends TrackedActivity {
                 intentMain.putExtra("userImage", bsUser.toByteArray());
             }
 
-            intentMain.putExtra("id", movie.getId());
-            intentMain.putExtra("chineseName", movie.getChineseName());
-            intentMain.putExtra("posterUrl", movie.getPosterUrl());
-
-            intentMain.setClass(MovieInfo.this, CollectDialog.class);
-            startActivity(intentMain);
+            if(movie != null) {
+	            intentMain.putExtra("id", movie.getId());
+	            intentMain.putExtra("chineseName", movie.getChineseName());
+	            intentMain.putExtra("posterUrl", movie.getPosterUrl());
+	
+	            intentMain.setClass(MovieInfo.this, CollectDialog.class);
+	            startActivity(intentMain);
+            }
             return "progress end";
         }
 
