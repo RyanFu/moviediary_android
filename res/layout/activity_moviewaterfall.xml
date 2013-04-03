@@ -2,13 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical">
-    
-    <RelativeLayout android:id="@+id/relativelayout_toptitle"
-		android:layout_width="fill_parent" 
-		android:layout_height="40dp" 
-		android:background="@drawable/button_return"
-		>   
+    android:orientation="vertical">"
+    
+    <RelativeLayout
+        android:id="@+id/relativelayout_toptitle"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top"
+        android:gravity="top"
+        android:background="@drawable/button_return" >
+   
 		<TextView android:id="@+id/topbar_text1"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -83,7 +86,8 @@
 	    android:id="@+id/waterfall_linear_layout"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
-	    android:orientation="vertical" >
+	    android:orientation="vertical"
+	    android:visibility="invisible" >
             
         <View xmlns:android="http://schemas.android.com/apk/res/android"  
            android:background="@color/background"
